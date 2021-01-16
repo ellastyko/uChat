@@ -1,9 +1,9 @@
 #include "../inc/header.h"
 
 
-sqlite3 *users;
-sqlite3 *online_users;
-sqlite3 *chats;
+// sqlite3 *users;
+// sqlite3 *online_users;
+// sqlite3 *chats;
 
 
 int main(int argc , char *argv[])
@@ -11,9 +11,9 @@ int main(int argc , char *argv[])
     // sqlite3_open("../databases/users.db", &users);
     // sqlite3_open("../databases/online_users.db", &online_users);
     // sqlite3_open("../databases/chats.db", &chats);
-    hello();
-
-
+    // char *a = "Vadim";
+    // char *b = "Sergeev";
+    // sign_in(a, b);
 
 
     /*int socket_desc , client_sock , c , read_size;
