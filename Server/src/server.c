@@ -24,7 +24,6 @@ int main()
     // sqlite3_open("../databases/users.db", &users);
     // sqlite3_open("../databases/online_users.db", &online_users);
     // sqlite3_open("../databases/chats.db", &chats);
-//START:
     //Create socket
     int server_socket, client_socket;
 
@@ -72,6 +71,5 @@ int main()
         }
     }
     close(server_socket);
-    //goto START;
     return 0;  
 }

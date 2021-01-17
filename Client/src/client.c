@@ -21,13 +21,15 @@ int main (int    argc, char **argv)
   g_object_unref (app);
 
   return status;
-}*/
+}
 void destroy(GtkWidget *widget, gpointer data)
 {
     gtk_main_quit();
-}
+}*/
 
-int sign_up(int client_socket) {
+int sign_up(void* cl_socket) {
+    int *temp = cl_socket;
+    int client_socket = *temp;
     char login[20], password[20];
     printf("Enter username: "); scanf("%s", login);
     printf("Enter password: "); scanf("%s", password);
@@ -65,36 +67,35 @@ int main(int argc, char *argv[])
     //memset(buf, 0, sizeof(buf));
     
 
-    // int action, result;
-    // while(1) {
-    //     printf("What do you want:\n 1 - Sign up\n 2 - Sign in\n 3 - Delete account\n");
-    //     scanf("%d",&action);
-    //     switch(action) {
-    //         case 1: result = sign_up(client_socket); break;
-    //         //case 2: sign_in(); break;
-    //         //case 3: delete_user(); break;
-    //         case 4: printf("%i", client_socket); write(client_socket, a, strlen(a));
-    //         //default: break;
-    //     }
-    // }
+    int action, result;
+    while(1) {
+        printf("What do you want:\n 1 - Sign up\n 2 - Sign in\n 3 - Delete account\n");
+        scanf("%d",&action);
+        switch(action) {
+            case 1: result = sign_up(&client_socket); break;
+            //case 2: sign_in(); break;
+            //case 3: delete_user(); break;
+            case 4: printf("%i", client_socket); write(client_socket, a, strlen(a));
+            default: break;
+        }
+    }
 
 
     
-    GtkWidget *window;
+    /*GtkWidget *window;
     
     gtk_init(&argc, &argv);
 
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(window), "Hello World!");
-    write(client_socket, a, strlen(a));
     gtk_widget_show (window);
-    write(client_socket, a, strlen(a));
+
     //Connect the main window to the destroy 
     g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(destroy), NULL);
 
     gtk_widget_show(window);
 
-    gtk_main();
+    gtk_main();*/
     close(client_socket);
     return 0;
 }
