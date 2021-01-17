@@ -12,5 +12,5 @@
 #include <pthread.h>
 #include <gtk/gtk.h>
 #include<stdlib.h>
-#define PORT 9091
+#define PORT 9090
 #define ADDR "localhost"

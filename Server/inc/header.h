@@ -10,12 +10,13 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <sqlite3.h> 
-#define PORT 9091
+#define PORT 9090
 #define ADDR "localhost"
 
 
 
 // server
+void *user_connect(void *cl_socket);
 
 // database 
 void sign_up(char *login,char *password);
