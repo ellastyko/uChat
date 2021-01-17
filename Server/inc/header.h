@@ -10,7 +10,8 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <sqlite3.h> 
-#define PORT 9090
+#include <time.h>
+#define PORT 9092
 #define ADDR "localhost"
 
 
