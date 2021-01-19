@@ -1,26 +1,26 @@
 #include "../inc/header.h"
 
-// void sign_up(char *login,char *password)
-// {
-//     //Sign up
-// }
+/*Функции в которых будет происходить взаимодействие с базами данных. В них можешь писать код*/
 
-// void sign_in(char *login,char *password) 
-// {
-//     // Sign in
-//     printf("%s %s", login, password);
+void sign_up(char *login,char *password)
+{
+    //Sign up
+}
 
-// }
+void sign_in(char *login,char *password)  {
+    // Sign in
+}
 
-// void delete_user(char *login)
-// {
-//     // Delete user
-// }
+bool delete_user(char *login) {
+    // Delete user
+}
 
-// void change_password(char *password) 
-// {
-//     // Change of password
-// }
+bool change_password(char* login, char *password) {
+    // Change of password for login(пользователь с таким логином)
+}
 
+bool send_message(char *login1, char *login2) {
+    // Send message from login1 to login2
+}
 
 

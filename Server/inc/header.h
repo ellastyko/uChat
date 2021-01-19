@@ -11,16 +11,18 @@
 #include <stdlib.h>
 #include <sqlite3.h> 
 #include <time.h>
-#define PORT 9092
+#include "cJSON.h"
+#include <malloc.h>
+#define PORT 8000
 #define ADDR "localhost"
 
 
 
-// server
-void *user_connect(void *cl_socket);
-
+//parsing
+char *type_of_request(char *str);
 // database 
 void sign_up(char *login,char *password);
 void sign_in(char *login,char *password);
-void delete_user(char *login);
-void change_password(char *password);
+bool send_message(char *login1, char *login2);
+bool delete_user(char *login);
+bool change_password(char *login, char *password);
