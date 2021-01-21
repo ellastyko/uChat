@@ -44,7 +44,7 @@
 #include <limits.h>
 #include <ctype.h>
 #include <float.h>
-#include "../inc/header.h"
+
 #ifdef ENABLE_LOCALES
 #include <locale.h>
 #endif
@@ -56,7 +56,7 @@
 #pragma GCC visibility pop
 #endif
 
-#include "../inc/cJSON.h"
+#include "cJSON.h"
 
 /* define our own boolean type */
 #ifdef true

@@ -1,39 +1,47 @@
 #include "../inc/header.h"
 
+sqlite3 *db;
 int online = 0;
-// sqlite3 *users;
-// sqlite3 *online_users;
-// sqlite3 *chats;
 
-void *connection(void *cl_socket) {
+void *connection(void *cl_socket)
+{
     int *temp = cl_socket;
     int client_socket = *temp;
+    printf("User %d connected\n", client_socket);
     char request[1000];
-    char response[1000];
-    while(1) {
-        if(read(client_socket , request , sizeof(request)) == -1 ) { 
+    while (1) {
+        int res = read(client_socket, request, sizeof(request));
+        if (res == 0) {
+            printf("User %d disconnected\n", client_socket);
+            close(client_socket);
+            break;
+        }
+        else if (res == -1) {
             write(2, "Resieve failed\n", 16);
         }
         write(2, request, strlen(request));
-        strcpy(response, request);
-        *response = *type_of_request(request);
-        write(client_socket, response, strlen(response));
-        memset( &request, 0, sizeof(request));
-        memset( &response, 0, sizeof(response));
+        type_of_request(request, client_socket);
+        memset(&request, 0, sizeof(request));
     }
-    // Make exit of cycle
-    //printf("User lefted!");
-    //pthread_exit(NULL);
+    write(2, "Close thread\n", 14);
+    online--;
+    pthread_exit(NULL);   
 }
+
 
 int main()
 {
     
-    // sqlite3_open("../databases/users.db", &users);
-    // sqlite3_open("../databases/online_users.db", &online_users);
-    // sqlite3_open("../databases/chats.db", &chats);
-    //Create socket
-      
+    if (db_init("Server/db/database.db") == -1) {
+        perror("Саnnot init db\n");
+        exit(EXIT_FAILURE);
+    }
+    create_db("CREATE TABLE users("\
+           "ID             INTEGER PRIMARY KEY AUTOINCREMENT,"\
+           "LOGIN          TEXT                NOT NULL,"\
+           "PASSWORD       TEXT                NOT NULL,"\
+           "KEY            INTEGER             NOT NULL);", db);
+           
     int server_socket, client_socket;
     server_socket = socket(AF_INET , SOCK_STREAM , 0);
     if (server_socket == -1) {
@@ -51,27 +59,28 @@ int main()
     }
     printf("Bind done\n");
     if (listen(server_socket, 5) != 0) {
-        printf("Listen failed\n");
+        perror("Listen failed\n");
         return 1;
     }
     printf("Listening...\n");
     
     pthread_t pthreads[1]; 
     int lenth = sizeof(client);
-    // Cycle of acception users
     while(1)
     {
         client_socket = accept(server_socket, (struct sockaddr *)&client, &lenth);
         if (client_socket < 0) {
-            printf("Accept failed\n");
+            perror("Accept failed\n");
         }
         write(2, "Connection accepted\n", 21);   
         online++; 
         printf("Online: %i\n", online);        
         if ((pthread_create(&pthreads[0], NULL, connection, &client_socket)) == 1) {
-            write(2, "Failed thread\n", 15);
+            perror("Failed thread\n");
         }
     }
+    sqlite3_close(db);
     close(server_socket);
-    return 0;  
+
+    return 0;
 }

@@ -1,6 +1,6 @@
 #include "../inc/header.h"
 
-int Socket() {
+void Socket() {
     int client_socket = socket(AF_INET, SOCK_STREAM, 0);
     struct sockaddr_in adr = {0};
     adr.sin_family = AF_INET;
@@ -8,7 +8,8 @@ int Socket() {
     inet_pton(AF_INET, ADDR, &adr.sin_addr);
     if (connect(client_socket, (struct sockaddr *) &adr, sizeof adr) == -1) {
         printf("DISCONNECT\n");
-        client_socket = -1;     
+        client_socket = -1;
+        write(client_socket, "STOP", 5);  
+        close(client_socket);   
     }
-    return client_socket;
 }

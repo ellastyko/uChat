@@ -1,75 +1,23 @@
 #include "../inc/header.h"
 
-// universal structure for all types of send
-struct info {
-    char action[10]; //
-    char login[20]; // user or sender of message
-    char password[20]; 
-    char message[500];
-    char time[50]; // time when message was sended
-    char receiver[20]; // receiver of message
-};
-
-char *stringify(struct info *req)
-{
-    char *string = NULL;
-
-    cJSON *json_msg = cJSON_CreateObject();
-    cJSON_AddStringToObject(json_msg, "action", req->action);
-    cJSON_AddStringToObject(json_msg, "login", req->login);
-    cJSON_AddStringToObject(json_msg, "password", req->password);
-    cJSON_AddStringToObject(json_msg, "message", req->message);
-    cJSON_AddStringToObject(json_msg, "time", req->time);
-
-    string = cJSON_Print(json_msg);
-
-    cJSON_Delete(json_msg);
-    return string;
-}
-
-struct info *parse(const char *const msg)
-{
-    struct info *res = malloc(sizeof(struct info));
-    const cJSON *action = NULL;
-    const cJSON *login = NULL;
-    const cJSON *password = NULL;
-    const cJSON *message = NULL;
-    const cJSON *time = NULL;
-
-    cJSON *msg_json = cJSON_Parse(msg);
-
-    action = cJSON_GetObjectItemCaseSensitive(msg_json, "action");
-    if (action == NULL || action->valuestring == NULL)
-        return NULL;
-
-    login = cJSON_GetObjectItemCaseSensitive(msg_json, "login");
-    if (login == NULL || login->valuestring == NULL)
-        return NULL;
-
-    password = cJSON_GetObjectItemCaseSensitive(msg_json, "password");
-    if (password == NULL || password->valuestring == NULL)
-        return NULL;
-
-    message = cJSON_GetObjectItemCaseSensitive(msg_json, "message");
-    if (message == NULL || message->valuestring == NULL)
-        return NULL;
-
-    time = cJSON_GetObjectItemCaseSensitive(msg_json, "time");
-    if (time == NULL || time->valuestring == NULL)
-        return NULL;
-
-    strcpy(res->action, action->valuestring);
-    strcpy(res->login, login->valuestring);
-    strcpy(res->password, password->valuestring);
-    strcpy(res->message, message->valuestring);
-    strcpy(res->time, time->valuestring);
-    cJSON_Delete(msg_json);
-
-    return res;
+void send_to_server(char *buf) {
+    int result;
+    if ((result = write(3, buf, strlen(buf))) == -1) {
+        write(2, "Fail send\n", 11);
+        //return false;
+    }
+    if ( (result = read(3, buf, strlen(buf))) == -1) { 
+        write(2, "Fail recieve\n", 14);
+    }
+    else {
+        write(STDOUT_FILENO, buf, strlen(buf));
+        //struct info *res = parse(buf);
+        //printf("%s, %s, %s\n", res->status, res->response, res->time);      
+    }
 }
 
 //  Функция регистрации
-void sign_up(int client_socket) {
+void sign_up() {
 
     struct info req; char repeat_password[20];
 
@@ -80,32 +28,19 @@ void sign_up(int client_socket) {
     strcpy(req.message, "");
     strcpy(req.time, "");
     strcpy(req.receiver, "");
-
-    if(strcmp(req.login, repeat_password) != 0) {
+    strcpy(req.key, "");
+    if(strcmp(req.password, repeat_password) != 0) {
         write(2, "Parols are different\n", 22);
     }
     if((validation(req.login, req.password)) == 0) {
         write(2, "Successful validation\n", 23);
     }
     char *buf = stringify(&req); // To JSON
-
-    int result;
-    if ((result = write(client_socket, buf, strlen(buf))) == -1) {
-        write(2, "Fail send\n", 11);
-        //return false;
-    }
-    if ( (result = read(client_socket, buf, strlen(buf))) == -1) { 
-        write(2, "Fail recieve\n", 14);
-    }
-    else {
-        write(STDOUT_FILENO, buf, strlen(buf));
-        // struct info *res = parse(buf);
-        // printf("%s, %s\n", res->login, res->password);
-    }
+    send_to_server(buf);
 }
 
 //  Функция входа
-void sign_in(int client_socket) {
+void sign_in() {
     struct info req;
     strcpy(req.action, "sign_in");
     printf("Enter username: "); scanf("%s", req.login);
@@ -113,94 +48,91 @@ void sign_in(int client_socket) {
     strcpy(req.message, "");
     strcpy(req.time, "");
     strcpy(req.receiver, "");
-
+    strcpy(req.key, "");
     char *buf = stringify(&req);
-
-    int result;
-    if ((result = write(client_socket, buf, strlen(buf))) == -1) {
-        write(2, "Fail send\n", 11);
-    }
-    if ( (result = read(client_socket, buf, strlen(buf))) == -1) { 
-        write(2, "Fail recieve\n", 14);
-    }
-    else {
-        write(STDOUT_FILENO, buf, strlen(buf));
-        //struct info *res = parse(buf);
-        //printf("%s, %s\n", res->login, res->password);      
-    }
+    send_to_server(buf);
 }
 
 //  Функция отправки сообщения
-/*bool send_message(int client_socket) {
+bool send_message() {
     struct info req;
     strcpy(req.action, "send_message");
-    strcpy(req.login, _user_);
-    strcpy(req.password, "")  
+    strcpy(req.login, _id_);
+    strcpy(req.password, "");  
     printf("Enter message: "); scanf("%s", req.message);
-    strcpy(req.time, ""); //TODO
+    strcpy(req.time, ""); 
     printf("Send to: "); scanf("%s", req.receiver);
-    
+    strcpy(req.key, _key_);
     char *buf = stringify(&req);
-
-    int result;
-    if ((result = write(client_socket, buf, strlen(buf))) == -1) {
-        write(2, "Fail send\n", 11);
-    }
-    if ( (result = read(client_socket, buf, strlen(buf))) == -1) { 
-        write(2, "Fail recieve\n", 14);
-    }
-    else {
-        write(STDOUT_FILENO, buf, strlen(buf));
-    }
+    send_to_server(buf);
 }
 
 //  Функция удаления пользователя
-bool delete_user(int client_socket) {
+bool delete_user() {
     struct info req;
     strcpy(req.action, "delete_user");
-    strcpy(req.login, _user_);
-    strcpy(req.password, "")  
+    strcpy(req.login, _id_);
+    strcpy(req.password, "");  
     strcpy(req.message, "");
     strcpy(req.time, ""); 
     strcpy(req.receiver, "");
-
+    strcpy(req.key, _key_);
     char *buf = stringify(&req);
-
-    int result;
-    if ((result = write(client_socket, buf, strlen(buf))) == -1) {
-        write(2, "Fail send\n", 11);
-    }
-    if ( (result = read(client_socket, buf, strlen(buf))) == -1) { 
-        write(2, "Fail recieve\n", 14);
-    }
-    else {
-        write(STDOUT_FILENO, buf, strlen(buf));
-    }
+    send_to_server(buf);
 }
 
-
 //  Функция изменения пароля
-bool change_password(int client_socket) {
+bool change_password() {
     struct info req;
     strcpy(req.action, "change_password");
-    strcpy(req.login, _user_);
-    strcpy(req.password, "")  
+    strcpy(req.login, _id_);
+    strcpy(req.password, "new password"); 
     strcpy(req.message, "");
     strcpy(req.time, ""); 
     strcpy(req.receiver, "");
-
+    strcpy(req.key, _key_);
     char *buf = stringify(&req);
+    send_to_server(buf);
+}
 
-    int result;
-    if ((result = write(client_socket, buf, strlen(buf))) == -1) {
-        write(2, "Fail send\n", 11);
+/*char *checking_local_storage(int act) {
+    char*line; 
+    if (act == 0) { // READ BEFORE SIGN IN
+        // cache
+        FILE *file = fopen("data.txt", "r");
+        fgets(line, 255, file);
+        printf("%s", line);
+        fclose(file);
+        if (strcmp(line, "") == 0) {
+            write(2, "There is nothing!\n", 19);
+            return 1;
+        }
+        else {
+            struct info *req;
+            strcpy(req->action, "signin");
+            strcpy(req.login, _id_);
+            strcpy(req.password, _password_);  
+            strcpy(req.message, "");
+            strcpy(req.time, ""); 
+            strcpy(req.receiver, "");
+            char *buf = stringify(&req);
+            send_to_server(buf);
+        }
+
     }
-    if ( (result = read(client_socket, buf, strlen(buf))) == -1) { 
-        write(2, "Fail recieve\n", 14);
+    else if (act == 0) { // WRITE AFTER SIGN UP
+        FILE *file = fopen("data.txt", "r");
+        fgets(line, 255, file);
+        printf("%s", line);
+        fclose(file);
+        if (strcmp(line, "") == 0) {
+            write(2, "There is nothing!\n", 19);
+            return 1;
+        }
     }
-    else {
-        write(STDOUT_FILENO, buf, strlen(buf));
+    else if { // LOGOUT
+        write(2, "Error", 6)
     }
 }*/
+//bool delete_message();
 
-/* Блок нуждается в сокращении объема кода*/
