@@ -1,17 +1,6 @@
 #include "../inc/header.h"
 
-char* concat(char* s1, char* s2) {
-   int len1 = strlen(s1);
-   int len2 = strlen(s2);                      
-   char *result = malloc(len1 + len2 + 1);
-   if (!result) {
-      fprintf(stderr, "malloc() failed: insufficient memory!\n");
-      return NULL;
-   }
-   memcpy(result, s1, len1);
-   memcpy(result + len1, s2, len2 + 1);    
-   return result;
-}
+
 // Из числа в строку itoa()
 // Из строки в число atoi()
 
@@ -41,20 +30,19 @@ void create_db(char* statement, sqlite3* db) {
 } 
 
 
-
-int db_add_user(db_user_t user)
+bool db_add_user(char *login, char *password, int key)
 {
     sqlite3_stmt *res = NULL;
     int rc;
     char *query_f = sqlite3_mprintf("INSERT INTO users VALUES(NULL,'%s','%s','%i')",
-                                    user.login,
-                                    user.password,
-                                    user.auth_key);
+                                    login,
+                                    password,
+                                    key);
 
     rc = sqlite3_prepare_v2(db, query_f, -1, &res, 0);
     rc = sqlite3_step(res);
     if (rc == SQLITE_DONE) {
-        printf("Inserter!\n");
+        printf("Login and password inserted\n");
     }
     else {
         printf("Not inserter!\n");
@@ -63,9 +51,92 @@ int db_add_user(db_user_t user)
     return 1;
 }
 
-// int db_print_all() { //db_user_t user
+bool check_login(char *login) {
+    sqlite3_stmt *stmt;
+    sqlite3_prepare_v2(db, "SELECT LOGIN FROM users", -1, &stmt, NULL);
+    while (sqlite3_step(stmt) != SQLITE_DONE) {
+        const char*login2 = sqlite3_column_text(stmt, 0);
+        if (strcmp(login, login2) == 0) {
+            write(2, "LOGIN ALREADY EXISTS!\n", 23);
+            sqlite3_finalize(stmt);
+            return false;
+        }
+	}	
+    sqlite3_finalize(stmt);
+    return true;
+}
 
-// }
+bool verification(char *login, char *password) {
+    sqlite3_stmt *stmt;
+    int state = 0; // Need to equel 2
+    sqlite3_prepare_v2(db, "SELECT LOGIN FROM users", -1, &stmt, NULL);
+    while (sqlite3_step(stmt) != SQLITE_DONE) {
+        const char*login2 = sqlite3_column_text(stmt, 0);
+        if (strcmp(login, login2) == 0) {   
+            state += 1;    // +1 if login correct
+        }
+	}
+    stmt = NULL;
+    sqlite3_prepare_v2(db, "SELECT PASSWORD FROM users", -1, &stmt, NULL);
+    while (sqlite3_step(stmt) != SQLITE_DONE) {
+        const char*password2 = sqlite3_column_text(stmt, 0);
+        if (strcmp(password, password2) == 0) {
+            state += 1; //+1 if password correct
+        }
+	}
+    if (state == 2) {
+        write(2, "WELCOME IN YOUR ACC\n", 23);
+        sqlite3_finalize(stmt);
+        return true;
+    }
+    else {
+        sqlite3_finalize(stmt);
+        return false;
+    }  
+}
+
+
+void get_id_and_key(int client_socket, char *login) {
+
+    sqlite3_stmt *stmt; int r;
+    //  !!!!!!!!!!!!!FUNCTION  THAT SEND ID AND KEY TO USER BY LOGIN
+}
+
+/*void db_print_all() { //db_user_t user
+    sqlite3_stmt *stmt;
+    sqlite3_prepare_v2(db, "SELECT * FROM users", -1, &stmt, NULL);
+    while (sqlite3_step(stmt) != SQLITE_DONE) {
+		int i;
+		int num_cols = sqlite3_column_count(stmt);
+		
+		for (i = 0; i < num_cols; i++)
+		{
+			switch (sqlite3_column_type(stmt, i))
+			{
+			case (SQLITE3_TEXT):
+				printf("%s, ", sqlite3_column_text(stmt, i));
+				break;
+			case (SQLITE_INTEGER):
+				printf("%d, ", sqlite3_column_int(stmt, i));
+				break;
+			case (SQLITE_FLOAT):
+				printf("%g, ", sqlite3_column_double(stmt, i));
+				break;
+                
+			default:
+				break;
+			}
+		}
+		printf("\n");
+
+	}
+
+	sqlite3_finalize(stmt);
+
+	sqlite3_close(db);
+
+
+}*/
 
 /*int db_add_chat(db_chats_t chat)
 {
@@ -129,55 +200,3 @@ int db_add_user_chat(db_users_chats_t user_chat)
     return 1;
 }*/
 
-/*int update_user()
-{
-}
-
-bool sign_up(char *login, char *password)
-{
-    //Sign up
-    return true;
-}
-
-bool sign_in(char *login, char *password)
-{
-    // Sign in
-    return true;
-}
-
-bool delete_user(char *login)
-{
-    // Delete user
-    return true;
-}
-
-bool send_message(char *login, char *time, char *receiver)
-{
-    // Send message from login1 to login2
-    return true;
-}
-
-// Делать в последнюю очередь
-bool change_password(char *login, char *password)
-{
-    // Change of password for login(пользователь с таким логином)
-}
-bool delete_message(char *login)
-{
-    // Delete message
-}*/
-
-/* 
-CREATE TABLE `users`
-(
- `user_id`           integer,
- `username`          varchar(50) NOT NULL ,
- `password`          varchar(50) NOT NULL ,
- `registration_time` datetime NOT NULL ,
- `auth_key`          varchar(50) NOT NULL ,
- `auth_key_exp`      datetime NOT NULL ,
-
-PRIMARY KEY (`user_id`)
-);
-
- */

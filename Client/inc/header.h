@@ -12,7 +12,7 @@
 #include <pthread.h>
 #include <gtk/gtk.h>
 #include<stdlib.h>
-#define PORT 8025
+#define PORT 8028
 #define ADDR "localhost"
 #include "../../lib/cJSON.h"
 #include <malloc.h>

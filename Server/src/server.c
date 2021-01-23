@@ -42,6 +42,18 @@ int main()
            "LOGIN          TEXT                NOT NULL,"\
            "PASSWORD       TEXT                NOT NULL,"\
            "KEY            INTEGER             NOT NULL);", db);
+
+    create_db("CREATE TABLE chats("\
+           "CHAT_ID             INTEGER PRIMARY KEY AUTOINCREMENT,"\
+           "USER1          INTEGER                NOT NULL,"\
+           "USER2          INTEGER                NOT NULL);", db);
+
+    create_db("CREATE TABLE messages("\
+           "MESSAGE_ID             INTEGER PRIMARY KEY AUTOINCREMENT,"\
+           "SENDER          INTEGER                NOT NULL,"\
+           "MESSAGE         TEXT                   NOT NULL,"\
+           "TIME            INTEGER                NOT NULL, "\
+           "CHAT_ID         INTEGER                NOT NULL);", db);
            
     int server_socket, client_socket;
     server_socket = socket(AF_INET , SOCK_STREAM , 0);

@@ -15,7 +15,7 @@
 #include <malloc.h>
 #include <time.h>
 
-#define PORT 8025
+#define PORT 8028
 #define ADDR "localhost"
 
 struct info
@@ -36,54 +36,20 @@ struct info
 
 extern sqlite3 *db;
 
-#pragma region db_entyties
-typedef struct db_user_s
-{
-    int user_id; 
-    char *login;
-    char *password;
-    int auth_key;
-} db_user_t;
-
-/*typedef struct db_messages_s
-{
-    uint64_t message_id; // PK
-
-    uint64_t chat_id; // FK
-    uint64_t user_id; // FK
-
-    char message[BUFSIZ];
-    time_t time;
-
-} db_messages_t;
-
-typedef struct db_chats_s
-{
-    uint64_t chat_id; // PK
-
-    char *name;
-    char *type;
-} db_chats_t;
-
-typedef struct db_users_chats_s
-{
-    uint64_t user_id; // PK FK
-    uint64_t chat_id; // PK FK
-} db_users_chats_t;*/
-#pragma endregion
-
-
-
 //parsing
 char *stringify(struct info *req);
 struct info *parse(const char *const msg);
 void type_of_request(char *str, int client_socket);
 int key();
-int lenth_of_string(const char *s);
 
 // database
 int db_init(char *db_name);
 void create_db(char* statement, sqlite3* db);
-int db_add_user(db_user_t user);
-int db_print_all();
-char* concat(char* s1, char* s2);
+
+bool check_login(char *login);
+bool db_add_user(char *login, char *password, int key);
+
+bool verification(char *login, char *password);
+void get_id_and_key(int client_socket, char *login);
+
+void db_print_all();

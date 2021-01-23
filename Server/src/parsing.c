@@ -1,105 +1,39 @@
 #include "../inc/header.h"
 
 
-// Сделать ответы сервера в формате JSON
-char *stringify(struct info *req)
-{
-    char *string = NULL;
-
-    cJSON *json_msg = cJSON_CreateObject();
-    cJSON_AddStringToObject(json_msg, "status", req->status);
-    cJSON_AddStringToObject(json_msg, "response", req->response);
-    cJSON_AddStringToObject(json_msg, "time", req->time);
-
-    string = cJSON_Print(json_msg);
-
-    cJSON_Delete(json_msg);
-    return string;
-}
-
-// Передает запрос из JSON в структуру
-struct info *parse(const char *const msg)
-{
-    struct info *res = malloc(sizeof(struct info));
-    const cJSON *action = NULL;
-    const cJSON *login = NULL;
-    const cJSON *password = NULL;
-    const cJSON *message = NULL;
-    const cJSON *time = NULL;
-    const cJSON *receiver = NULL;
-    const cJSON *key = NULL;
-
-    cJSON *msg_json = cJSON_Parse(msg);
-
-    action = cJSON_GetObjectItemCaseSensitive(msg_json, "action");
-    if (action == NULL || action->valuestring == NULL)
-        return NULL;
-
-    login = cJSON_GetObjectItemCaseSensitive(msg_json, "login");
-    if (login == NULL || login->valuestring == NULL)
-        return NULL;
-
-    password = cJSON_GetObjectItemCaseSensitive(msg_json, "password");
-    if (password == NULL || password->valuestring == NULL)
-        return NULL;
-
-    message = cJSON_GetObjectItemCaseSensitive(msg_json, "message");
-    if (message == NULL || message->valuestring == NULL)
-        return NULL;
-
-    time = cJSON_GetObjectItemCaseSensitive(msg_json, "time");
-    if (time == NULL || time->valuestring == NULL)
-        return NULL;
-
-    receiver = cJSON_GetObjectItemCaseSensitive(msg_json, "receiver");
-    if (receiver == NULL || receiver->valuestring == NULL)
-        return NULL;
-
-    key = cJSON_GetObjectItemCaseSensitive(msg_json, "key");
-    if (key == NULL || key->valuestring == NULL)
-        return NULL;
-
-    strcpy(res->action, action->valuestring);
-    strcpy(res->login, login->valuestring);
-    strcpy(res->password, password->valuestring);
-    strcpy(res->message, message->valuestring);
-    strcpy(res->time, time->valuestring);
-    strcpy(res->receiver, receiver->valuestring);
-    strcpy(res->key, key->valuestring);
-    cJSON_Delete(msg_json);
-
-    return res;
-}
-
 // Главная функция обработки запросов //
 void type_of_request(char *str, int client_socket)
 {
-    //char *response;
+    ssize_t result;
+    char response[250];
     struct info *req = parse(str);
     if (strcmp(req->action, "sign_up") == 0)
     {
-        write(2, "You want to sign up!\n", 22);       
-        if (true) { // Функция наличия позователя стаким же именем
-            db_user_t user;
-            user.login = req->login;
-            user.password = req->password;          
-            user.auth_key = key(); // Здесь сгенерируется ключ
-            db_add_user(user); 
+        if (check_login(req->login) == false) {      
+            strcpy(response, "Login already exists!\n");
+            if ((result = send(client_socket, response, sizeof(response), 0)) == -1) {
+                write(2, "Fail send\n", 11);
+            }
+            
         }
-        //char *response = stringify();
-        //db_print_all();
-        int result;
-        char response[250] = "no answer";
-        int lenth = lenth_of_string(response);
-        if ((result = send(client_socket, response, sizeof(response), 0)) == -1) {
-            write(2, "Fail send\n", 11);
+        else  { 
+            write(2, "Login valid!\n", 14);  
+            db_add_user(req->login, req->password, key()); 
         }
-
+        
     }
     else if (strcmp(req->action, "sign_in") == 0)
     {
         write(2, "You want to sign in!\n", 22);
-        // Функция сравнения введенных данных при входе
+        if(verification(req->login, req->password) == true) {
+            get_id_and_key(client_socket, req->login);
+        }
+        else {
+            strcpy(response, "Login or parol error!\n");
+            if ((result = send(client_socket, response, sizeof(response), 0)) == -1) {
+                write(2, "Fail send\n", 11);
+            }
+        }
     }
     else if (strcmp(req->action, "add_chat") == 0) {
         
@@ -127,21 +61,17 @@ void type_of_request(char *str, int client_socket)
     else if (strcmp(req->action, "delete_bd")) {
 
     }
-    else {
+    else {       
         write(2, "Unknown command!\n", 18);
         write(2, req->action, sizeof(req->action));
     }
+    memset(&response, 0, sizeof(result));
+    memset(&req->action, 0, sizeof(req->action)); 
+    memset(&req->login, 0, sizeof(req->login)); 
+    memset(&req->password, 0, sizeof(req->password)); 
+    memset(&req->key, 0, sizeof(req->key)); 
+    memset(&req->message, 0, sizeof(req->message)); 
+    memset(&req->time, 0, sizeof(req->time)); 
+    memset(&req->receiver, 0, sizeof(req->receiver)); 
 }
 
-int key() {
-    srand(time(NULL));
-    return rand() % 10000;
-}
-
-int lenth_of_string(const char *s) {
-    int i = 0;
-    while(s[i]) {
-        i++;
-    }
-    return i;			
-}
