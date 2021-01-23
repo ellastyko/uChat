@@ -74,7 +74,7 @@ struct info *parse(const char *const msg)
 // Главная функция обработки запросов //
 void type_of_request(char *str, int client_socket)
 {
-    char response[1000];
+    //char *response;
     struct info *req = parse(str);
     if (strcmp(req->action, "sign_up") == 0)
     {
@@ -88,8 +88,13 @@ void type_of_request(char *str, int client_socket)
         }
         //char *response = stringify();
         //db_print_all();
-        strcpy(response, "no answer");
-        write(client_socket, response, strlen(response));
+        int result;
+        char response[250] = "no answer";
+        int lenth = lenth_of_string(response);
+        if ((result = send(client_socket, response, sizeof(response), 0)) == -1) {
+            write(2, "Fail send\n", 11);
+        }
+
     }
     else if (strcmp(req->action, "sign_in") == 0)
     {
@@ -131,4 +136,12 @@ void type_of_request(char *str, int client_socket)
 int key() {
     srand(time(NULL));
     return rand() % 10000;
+}
+
+int lenth_of_string(const char *s) {
+    int i = 0;
+    while(s[i]) {
+        i++;
+    }
+    return i;			
 }

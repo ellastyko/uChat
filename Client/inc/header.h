@@ -12,7 +12,7 @@
 #include <pthread.h>
 #include <gtk/gtk.h>
 #include<stdlib.h>
-#define PORT 8001
+#define PORT 8025
 #define ADDR "localhost"
 #include "../../lib/cJSON.h"
 #include <malloc.h>
@@ -43,6 +43,7 @@ struct info {
 
 
 //actions
+void send_to_server(char *buf);
 void sign_up();
 void sign_in();
 bool delete_user();
@@ -62,4 +63,4 @@ struct info *parse(const char *const msg);
 char *stringify(struct info *info);
 int time_converter(int time);
 
-void rendering();
+void *reading();

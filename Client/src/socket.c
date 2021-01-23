@@ -8,8 +8,6 @@ void Socket() {
     inet_pton(AF_INET, ADDR, &adr.sin_addr);
     if (connect(client_socket, (struct sockaddr *) &adr, sizeof adr) == -1) {
         printf("DISCONNECT\n");
-        client_socket = -1;
-        write(client_socket, "STOP", 5);  
         close(client_socket);   
     }
 }

@@ -9,6 +9,9 @@ int main(int argc, char *argv[])
     Socket(); // Socket initialization
 
     //checking_local_storage(); //TODO Проверка локального хранилища на сохранненый пароль с именем
+    pthread_t reads[1];
+    pthread_create(&reads[0], NULL, reading, NULL);
+    sleep(1);
     int action;
     while(1) {
         printf("\nWhat do you want:\n 1 - Sign up\n 2 - Sign in\n 3 - Send message\n 4 - Change Password\n 5 - Delete account\n");
@@ -18,22 +21,9 @@ int main(int argc, char *argv[])
             case 2: sign_in(); break;
             case 3: send_message(); break;
             case 4: change_password(); break;
-            default: close(3); break;
-                
-                //close(client_socket); break;
+            default: break;
+
         }
-        // access == true После входа в аккаунт
-        // Если access == true Открывается доступ к всем функциям аккаунта идущие после входа
-        /*if (access == true) {
-                printf("\nWhat do you want:\n 1 - Sign up\n 2 - Sign in\n 3 - Delete account\n");
-                scanf("%d",&action);
-                switch(action) {
-                    case 1: send_message(client_socket); break;
-                    case 2: delete_user(client_socket); break;
-                    case 3: change_password(client_socket); break;
-                    default: close(client_socket); break;
-            }   
-        }*/
     }
     return 0;
 }

@@ -8,11 +8,12 @@ void *connection(void *cl_socket)
     int *temp = cl_socket;
     int client_socket = *temp;
     printf("User %d connected\n", client_socket);
-    char request[1000];
+    char request[250];
     while (1) {
-        int res = read(client_socket, request, sizeof(request));
+
+        ssize_t res = recv(client_socket, request, 250, 0);
         if (res == 0) {
-            printf("User %d disconnected\n", client_socket);
+            write(2, "User disconnected\n", 19);
             close(client_socket);
             break;
         }

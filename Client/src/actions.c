@@ -1,18 +1,9 @@
 #include "../inc/header.h"
 
 void send_to_server(char *buf) {
-    int result;
-    if ((result = write(3, buf, strlen(buf))) == -1) {
+    ssize_t result;
+    if ((result = send(3, buf, strlen(buf), 0)) == -1) {
         write(2, "Fail send\n", 11);
-        //return false;
-    }
-    if ( (result = read(3, buf, strlen(buf))) == -1) { 
-        write(2, "Fail recieve\n", 14);
-    }
-    else {
-        write(STDOUT_FILENO, buf, strlen(buf));
-        //struct info *res = parse(buf);
-        //printf("%s, %s, %s\n", res->status, res->response, res->time);      
     }
 }
 

@@ -15,7 +15,7 @@
 #include <malloc.h>
 #include <time.h>
 
-#define PORT 8001
+#define PORT 8025
 #define ADDR "localhost"
 
 struct info
@@ -79,6 +79,7 @@ char *stringify(struct info *req);
 struct info *parse(const char *const msg);
 void type_of_request(char *str, int client_socket);
 int key();
+int lenth_of_string(const char *s);
 
 // database
 int db_init(char *db_name);
