@@ -12,20 +12,24 @@ void sign_up() {
 
     struct info req; char repeat_password[20];
 
-    strcpy(req.action, "sign_up");    
+    strcpy(req.action, "sign_up");  
+    req.id = 0;
     printf("Enter username: "); scanf("%s", req.login);
     printf("Enter password: "); scanf("%s", req.password);
     printf("Repeat password: "); scanf("%s", repeat_password);
-    strcpy(req.message, "");
-    strcpy(req.time, "");
-    strcpy(req.receiver, "");
     strcpy(req.key, "");
+
+    req.chat_id = 0;
+    strcpy(req.message, "");
+    req.time = 123123;
+    
+    
     if(strcmp(req.password, repeat_password) != 0) {
         write(2, "Parols are different\n", 22);
     }
-    if((validation(req.login, req.password)) == 0) {
+    if((validation(req.login, req.password)) == true) {
         write(2, "Successful validation\n", 23);
-    }
+    } 
     char *buf = stringify(&req); // To JSON
     send_to_server(buf);
 }
@@ -33,13 +37,16 @@ void sign_up() {
 //  Функция входа
 void sign_in() {
     struct info req;
+
     strcpy(req.action, "sign_in");
+    req.id = 0;
     printf("Enter username: "); scanf("%s", req.login);
     printf("Enter password: "); scanf("%s", req.password);
+
+    req.chat_id = 0;
     strcpy(req.message, "");
-    strcpy(req.time, "");
-    strcpy(req.receiver, "");
-    strcpy(req.key, "");
+    req.time = 123123;
+    
     char *buf = stringify(&req);
     send_to_server(buf);
 }
@@ -47,13 +54,20 @@ void sign_in() {
 //  Функция отправки сообщения
 bool send_message() {
     struct info req;
+
     strcpy(req.action, "send_message");
-    strcpy(req.login, _id_);
+
+    req.id = cl_info.id;
+    strcpy(req.login, "");
     strcpy(req.password, "");  
+    strcpy(req.key, cl_info.key);
+
+    printf("Send to: "); scanf("%d", &req.chat_id);
     printf("Enter message: "); scanf("%s", req.message);
-    strcpy(req.time, ""); 
-    printf("Send to: "); scanf("%s", req.receiver);
-    strcpy(req.key, _key_);
+    req.time = 123123; 
+    
+    
+
     char *buf = stringify(&req);
     send_to_server(buf);
 }
@@ -61,13 +75,20 @@ bool send_message() {
 //  Функция удаления пользователя
 bool delete_user() {
     struct info req;
+    
     strcpy(req.action, "delete_user");
-    strcpy(req.login, _id_);
+
+    req.id = cl_info.id;
+    strcpy(req.login, "");
     strcpy(req.password, "");  
+    strcpy(req.key, "");
+
+    req.chat_id = 0;
     strcpy(req.message, "");
-    strcpy(req.time, ""); 
-    strcpy(req.receiver, "");
-    strcpy(req.key, _key_);
+    req.time = 0; 
+    
+    
+
     char *buf = stringify(&req);
     send_to_server(buf);
 }
@@ -75,13 +96,19 @@ bool delete_user() {
 //  Функция изменения пароля
 bool change_password() {
     struct info req;
+
     strcpy(req.action, "change_password");
-    strcpy(req.login, _id_);
+
+    req.id = cl_info.id;
+    strcpy(req.login, "");
     strcpy(req.password, "new password"); 
+    strcpy(req.key, cl_info.key);
+
+    req.chat_id = 0;
     strcpy(req.message, "");
-    strcpy(req.time, ""); 
-    strcpy(req.receiver, "");
-    strcpy(req.key, _key_);
+    req.time = 123123; 
+    
+
     char *buf = stringify(&req);
     send_to_server(buf);
 }

@@ -40,15 +40,12 @@ bool db_add_user(char *login, char *password, int key)
                                     key);
 
     rc = sqlite3_prepare_v2(db, query_f, -1, &res, 0);
-    rc = sqlite3_step(res);
-    if (rc == SQLITE_DONE) {
-        printf("Login and password inserted\n");
+    if (sqlite3_step(res) == SQLITE_DONE) {
+        return true;
     }
     else {
-        printf("Not inserter!\n");
-        return 0;
-    }
-    return 1;
+        return false;
+    }   
 }
 
 bool check_login(char *login) {
@@ -57,7 +54,6 @@ bool check_login(char *login) {
     while (sqlite3_step(stmt) != SQLITE_DONE) {
         const char*login2 = sqlite3_column_text(stmt, 0);
         if (strcmp(login, login2) == 0) {
-            write(2, "LOGIN ALREADY EXISTS!\n", 23);
             sqlite3_finalize(stmt);
             return false;
         }
@@ -85,7 +81,7 @@ bool verification(char *login, char *password) {
         }
 	}
     if (state == 2) {
-        write(2, "WELCOME IN YOUR ACC\n", 23);
+        write(2, "WELCOME IN YOUR ACC\n", 21);
         sqlite3_finalize(stmt);
         return true;
     }
@@ -96,11 +92,56 @@ bool verification(char *login, char *password) {
 }
 
 
-void get_id_and_key(int client_socket, char *login) {
+void get_id_and_key(int client_socket, struct info *res) {
+    ssize_t result;
+    char response[BUFSIZ];
+    char *temp;
+    sqlite3_stmt *stmt;
+    int c = 0;
+    char *query_f = sqlite3_mprintf("SELECT ID, KEY FROM users WHERE LOGIN = '%s';", res->login);
+    sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
+    while (sqlite3_step(stmt) == SQLITE_ROW)
+    {
+        int cols = sqlite3_column_count(stmt); 
+        for (int i = 0; i < cols; i++) {
+            if (strcmp(sqlite3_column_name(stmt, i), "ID") == 0) {
+                res->id = sqlite3_column_int(stmt, i);
+            }
+            else if (strcmp(sqlite3_column_name(stmt, i), "LOGIN") == 0) {
+                strcpy(res->login, (char *)sqlite3_column_text(stmt, i));
+            }
+            else if (strcmp(sqlite3_column_name(stmt, i), "PASSWORD") == 0) {
+                strcpy(res->password, (char *)sqlite3_column_text(stmt, i));
+            }
+            else if (strcmp(sqlite3_column_name(stmt, i), "KEY") == 0) {
+                strcpy(res->key, (char *)sqlite3_column_text(stmt, i));
+            }
+        }
+        c++;
+        res->status = 1; // Successful
+        strcpy(res->message, "Successful sign in");
+        /////////////////   
+        temp = stringify(res);
+        strcpy(response, temp);
 
-    sqlite3_stmt *stmt; int r;
-    //  !!!!!!!!!!!!!FUNCTION  THAT SEND ID AND KEY TO USER BY LOGIN
+        if ((result = send(client_socket, response, sizeof(response), 0)) == -1) {
+            write(2, "Fail send\n", 11);
+        }
+    }
 }
+
+void get_login_by_id(int client_socket, int id) {
+
+    struct info user;
+    sqlite3_stmt *stmt = NULL;
+    char *query_f = sqlite3_mprintf("SELECT LOGIN FROM users WHERE ID = '%d';", id);
+    sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
+    if (sqlite3_step(stmt) == SQLITE_ROW) {
+        strcpy(user.login, (char *)sqlite3_column_text(stmt, 0));
+        printf("%s", user.login); printf("\n");
+    }
+}
+
 
 /*void db_print_all() { //db_user_t user
     sqlite3_stmt *stmt;

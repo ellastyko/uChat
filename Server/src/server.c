@@ -8,10 +8,10 @@ void *connection(void *cl_socket)
     int *temp = cl_socket;
     int client_socket = *temp;
     printf("User %d connected\n", client_socket);
-    char request[250];
+    char request[BUFSIZ];
     while (1) {
 
-        ssize_t res = recv(client_socket, request, 250, 0);
+        ssize_t res = recv(client_socket, request, sizeof(request), 0);
         if (res == 0) {
             write(2, "User disconnected\n", 19);
             close(client_socket);
@@ -77,7 +77,7 @@ int main()
     }
     printf("Listening...\n");
     
-    pthread_t pthreads[1]; 
+    pthread_t pthread; 
     int lenth = sizeof(client);
     while(1)
     {
@@ -88,7 +88,7 @@ int main()
         write(2, "Connection accepted\n", 21);   
         online++; 
         printf("Online: %i\n", online);        
-        if ((pthread_create(&pthreads[0], NULL, connection, &client_socket)) == 1) {
+        if ((pthread_create(&pthread, NULL, connection, &client_socket)) == 1) {
             perror("Failed thread\n");
         }
     }
