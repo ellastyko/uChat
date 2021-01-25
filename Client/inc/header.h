@@ -12,7 +12,7 @@
 #include <pthread.h>
 #include <gtk/gtk.h>
 #include<stdlib.h>
-#define PORT 8035
+#define PORT 8039
 #define ADDR "localhost"
 #include "../../lib/cJSON.h"
 #include <malloc.h>
@@ -39,6 +39,7 @@ struct info {
     char key[20];
 
     int chat_id; 
+    int friend_id;
     char message[500];
     int message_id; 
     int time; // time when message was sended
@@ -49,10 +50,13 @@ struct info {
 void send_to_server(char *buf);
 void sign_up();
 void sign_in();
-bool delete_user();
-bool change_password();
-bool send_message();
-//bool delete_message();
+
+void add_chat();
+void open_chat();
+void delete_user();
+void change_password();
+void send_message();
+void delete_message();
 
 
 // socket

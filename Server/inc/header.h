@@ -15,7 +15,7 @@
 #include <malloc.h>
 #include <time.h>
 
-#define PORT 8035
+#define PORT 8039
 #define ADDR "localhost"
 
 struct info
@@ -29,6 +29,7 @@ struct info
     char key[20];
 
     int chat_id;
+    int friend_id;
     char message[500];
     int message_id;
     int time; 
@@ -49,11 +50,23 @@ int key();
 int db_init(char *db_name);
 void create_db(char* statement, sqlite3* db);
 
+// sign up
 bool check_login(char *login);
-bool db_add_user(char *login, char *password, int key);
+bool add_user(char *login, char *password, int key);
 
+// Sign in
 bool verification(char *login, char *password);
 void get_id_and_key(int client_socket, struct info *res);
+
 void get_login_by_id(int client_socket, int id);
+
+// Add chat
+int get_id_by_login(char*login);
+bool add_chat(struct info *res);
+int get_chat_id_by_users(struct info *res);
+
+
+void get_chats_id_by_users_id(struct info *res);
+
 
 void db_print_all();

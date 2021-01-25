@@ -10,15 +10,15 @@ FLAGS = -std=c11
 
 server: 
 	cd Server/src/
-	$(COMPILER) $(FLAGS) $(LIBS) -o server $(SERVER_FILES) -pthread -lsqlite3
+	$(COMPILER) $(FLAGS) $(LIBS) -o server.o $(SERVER_FILES) -pthread -lsqlite3
 
 client: 
 	cd Client/src/
-	$(COMPILER) -o client $(LIBS) $(CLIENT_FILES) $(GTK)
+	$(COMPILER) -o client.o $(LIBS) $(CLIENT_FILES) $(GTK)
 
 clear: 
-	rm -rf server
-	rm -rf client
+	rm -rf server.o
+	rm -rf client.o
 	rm -rf obj
 
 

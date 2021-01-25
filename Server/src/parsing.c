@@ -7,7 +7,9 @@ int type_of_request(char *str, int client_socket)
     ssize_t result;
     char *temp;
     char response[BUFSIZ];
+    
     struct info *req = parse(str);
+
     if (strcmp(req->action, "sign_up") == 0)
     {
         if (check_login(req->login) == false) {      
@@ -22,10 +24,9 @@ int type_of_request(char *str, int client_socket)
             }        
         }
         else  { 
-            if (db_add_user(req->login, req->password, key()) == true) {
+            if (add_user(req->login, req->password, key()) == true) {
                 
                 req->status = 1;
-                strcpy(req->message, "Successful registration"); 
                 temp = stringify(req);
                 strcpy(response, temp);
                 write(2, response, strlen(response));
@@ -65,11 +66,69 @@ int type_of_request(char *str, int client_socket)
         get_login_by_id(client_socket, req->id);
     }
     else if (strcmp(req->action, "add_chat") == 0) {
-        
+        if (check_login(req->login) == false) {    // Если такой пользователь существует
+
+            req->friend_id = get_id_by_login(req->login); // Записываем id пользователя по имени
+            req->chat_id = get_chat_id_by_users(req);    // Возвращает id чата 
+            if (req->chat_id == -1) { // Если чата нет то ...
+                write(2, "There is no such chat", 22);
+                if (add_chat(req) == true) { // Добавляем чат
+            
+                    req->status = 1; // Успешно
+                    req->chat_id = get_chat_id_by_users(req);
+                    temp = stringify(req);
+                    strcpy(response, temp);
+
+                    if ((result = send(client_socket, response, sizeof(response), 0)) == -1) {
+                        write(2, "Fail send\n", 11);
+                    }     
+                }
+                else {
+                    req->status = 0; // error status
+                    strcpy(req->message, "User hasn`t added to your frinds");
+                    temp = stringify(req);
+                    strcpy(response, temp);
+
+                    if ((result = send(client_socket, response, sizeof(response), 0)) == -1) {
+                        write(2, "Fail send\n", 11);
+                    }     
+                }
+            }  
+            else {
+                req->status = 0; // error status
+                strcpy(req->message, "Chat already exists");
+                temp = stringify(req);
+                strcpy(response, temp);
+
+                if ((result = send(client_socket, response, sizeof(response), 0)) == -1) {
+                    write(2, "Fail send\n", 11);
+                }    
+            }    
+        }
+        else {
+            req->status = 0; // error status
+            strcpy(req->message, "User isn`t exists");
+            temp = stringify(req);
+            strcpy(response, temp);
+
+            if ((result = send(client_socket, response, sizeof(response), 0)) == -1) {
+                write(2, "Fail send\n", 11);
+            }     
+        }
     }
-    else if (strcmp(req->action, "send_message") == 0)
-    {
-        write(2, "You want to end message\n", 25);
+    else if (strcmp(req->action, "get_chats_info") == 0) {
+        //get_chats_info(req->login);
+    }
+    else if (strcmp(req->action, "send_message") == 0)  {
+        write(2, "You want to send message\n", 26);
+        if (1) { // Если 2 пользователь онлайн то
+             // мы обратимся отошлем ему сообщение
+             // 
+        }
+        // само сообщение сохранится в бд
+    }
+    else if (strcmp(req->action, "delete_message") == 0) {
+        write(2, "You want to delete message\n", 28);
         if (1) { // Если 2 пользователь онлайн то
              // мы обратимся отошлем ему сообщение
              // 
@@ -84,7 +143,8 @@ int type_of_request(char *str, int client_socket)
     {
         write(2, "You want to change settings!\n", 30);
     }
-    else if (strcmp(req->action, "load_messages")) {
+    // Loading of messages
+    else if (strcmp(req->action, "open_chat")) {
 
     }
     else {       
@@ -94,3 +154,4 @@ int type_of_request(char *str, int client_socket)
     return 0;
 }
 
+//send_error_message()

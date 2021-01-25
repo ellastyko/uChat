@@ -16,7 +16,7 @@ void *reading() {
 
 
 void type_of_response(struct info *res) {
-    write(2, "i am here", 10);
+    
     if (res->status != 1) {
         write(2, "Request isn`t executed\n", 24);
         write(2, res->message, strlen(res->message));
@@ -41,7 +41,7 @@ void type_of_response(struct info *res) {
         }
         else if (strcmp(res->action, "get_login_by_id") == 0) {
             // Получаем имя собеседника
-            write(2, res->message, strlen(res->message));
+            write(2, res->login, strlen(res->login));
         }
         else if (strcmp(res->action, "add_chat") == 0) {
             printf("Chat %d added\n", res->chat_id);

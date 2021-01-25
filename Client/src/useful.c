@@ -8,12 +8,26 @@ bool validation(char *login, char *password) {
     for (int i = 0; i < strlen(login); i++) {
         for (int j = 0; j < strlen(banned_symbols); j++) { 
             if (login[i] == banned_symbols[j]) {
-                write(2, "Banned symbol used\n", 9);
+                write(2, "Banned symbol used in login\n", 9);
                 return false;
             } 
         }
     }
-    return true;
+    // for (int i = 0; i < strlen(password); i++) {
+    //     for (int j = 0; j < strlen(banned_symbols); j++) { 
+    //         if (password[i] == banned_symbols[j]) {
+    //             write(2, "Banned symbol used in password\n", 9);
+    //             return false;
+    //         } 
+    //     }
+    // }
+    // if (strlen(login) < 6) {
+    //     return false;
+    // }
+    // if (strlen(password) < 6) {
+    //     return false;
+    // }
+    // return true;
 }  
 
 char *stringify(struct info *req)
@@ -29,6 +43,7 @@ char *stringify(struct info *req)
     cJSON_AddStringToObject(json_msg, "key", req->key);
 
     cJSON_AddNumberToObject(json_msg, "chat_id", req->chat_id);
+    cJSON_AddNumberToObject(json_msg, "friend_id", req->friend_id);
     cJSON_AddStringToObject(json_msg, "message", req->message);
     cJSON_AddNumberToObject(json_msg, "message_id", req->message_id);
     cJSON_AddNumberToObject(json_msg, "time", req->time);  
@@ -53,6 +68,7 @@ struct info *parse(const char *const msg)
     const cJSON *key = NULL;
 
     const cJSON *chat_id = NULL;
+    const cJSON *friend_id = NULL;
     const cJSON *message = NULL;
     const cJSON *message_id = NULL;
     const cJSON *time = NULL;
@@ -69,25 +85,18 @@ struct info *parse(const char *const msg)
         return NULL;
     res->status = status->valueint;
 
-    if (res->status != 1) {
+    if (res->status != 1) { // Message in case of error
         message = cJSON_GetObjectItemCaseSensitive(msg_json, "message");
         if (message == NULL || message->valuestring == NULL)
             return NULL;
         strcpy(res->message, message->valuestring);
     }
-    else {
+    else { // If everything ok
         if (strcmp(res->action, "sign_up") == 0) {          
-            message = cJSON_GetObjectItemCaseSensitive(msg_json, "message");
-            if (message == NULL || message->valuestring == NULL)
-                return NULL;
-            strcpy(res->message, message->valuestring);
+           // Nothing
         }
         else if (strcmp(res->action, "sign_in") == 0) {
             
-            message = cJSON_GetObjectItemCaseSensitive(msg_json, "message");
-            if (message == NULL || message->valuestring == NULL)
-                return NULL;
-            strcpy(res->message, message->valuestring);
             id = cJSON_GetObjectItemCaseSensitive(msg_json, "id");
             if (id == NULL || !cJSON_IsNumber(id))
                 return NULL;
@@ -97,7 +106,7 @@ struct info *parse(const char *const msg)
                 return NULL;
             strcpy(res->login, login->valuestring);
             password = cJSON_GetObjectItemCaseSensitive(msg_json, "password");
-            if (password == NULL || message->valuestring == NULL)
+            if (password == NULL || password->valuestring == NULL)
                 return NULL;
             strcpy(res->password, password->valuestring);
             key = cJSON_GetObjectItemCaseSensitive(msg_json, "key");
@@ -106,48 +115,43 @@ struct info *parse(const char *const msg)
             strcpy(res->key, key->valuestring);
         }
         else if (strcmp(res->action, "send_message") == 0) {
-
-            message = cJSON_GetObjectItemCaseSensitive(msg_json, "message");
-            if (message == NULL || message->valuestring == NULL)
-                return NULL;
-            strcpy(res->message, message->valuestring);
+            // Nothing
         }
         else if (strcmp(res->action, "get_login_by_id") == 0) {
 
-            message = cJSON_GetObjectItemCaseSensitive(msg_json, "message");
-            if (message == NULL || message->valuestring == NULL)
-                return NULL;
-            strcpy(res->message, message->valuestring);
             login = cJSON_GetObjectItemCaseSensitive(msg_json, "login");
             if (login == NULL || login->valuestring == NULL)
                 return NULL;
             strcpy(res->login, login->valuestring);
         }
-        else if (strcmp(res->action, "get_chats_id") == 0) {
-
-            message = cJSON_GetObjectItemCaseSensitive(msg_json, "message");
-            if (message == NULL || message->valuestring == NULL)
+        else if (strcmp(res->action, "get_chats_info") == 0) {
+            chat_id = cJSON_GetObjectItemCaseSensitive(msg_json, "chat_id");
+            if (chat_id == NULL || !cJSON_IsNumber(chat_id))
+                return NULL;             
+            res->chat_id = chat_id->valueint;
+            login = cJSON_GetObjectItemCaseSensitive(msg_json, "login");
+            if (login == NULL || login->valuestring == NULL)
                 return NULL;
-            strcpy(res->message, message->valuestring);
+            strcpy(res->login, login->valuestring);
+            friend_id = cJSON_GetObjectItemCaseSensitive(msg_json, "friend_id");
+            if (friend_id == NULL || !cJSON_IsNumber(friend_id))
+                return NULL;    
+            res->friend_id = friend_id->valueint;
         }
         else if (strcmp(res->action, "add_chat") == 0) {
 
-            message = cJSON_GetObjectItemCaseSensitive(msg_json, "message");
-            if (message == NULL || message->valuestring == NULL)
-                return NULL;
-            strcpy(res->message, message->valuestring);
             chat_id = cJSON_GetObjectItemCaseSensitive(msg_json, "chat_id");
             if (chat_id == NULL || !cJSON_IsNumber(chat_id))
                 return NULL;    
             res->chat_id = chat_id->valueint;
         }
-        else if (strcmp(res->action, "delete_message") == 0) {
-            message = cJSON_GetObjectItemCaseSensitive(msg_json, "message");
-            if (message == NULL || message->valuestring == NULL)
-                return NULL;
-            strcpy(res->message, message->valuestring);
+        else if (strcmp(res->action, "delete_user") == 0) {
+            // Nothing
         }
-        else if (strcmp(res->action, "load_messages") == 0) {
+        else if (strcmp(res->action, "delete_message") == 0) {
+            // Nothing
+        }
+        else if (strcmp(res->action, "open_chat") == 0) {
 
             id = cJSON_GetObjectItemCaseSensitive(msg_json, "id");
             if (id == NULL || !cJSON_IsNumber(id))
@@ -170,14 +174,9 @@ struct info *parse(const char *const msg)
                 return NULL;
             res->time = time->valueint;
         }
-        // OK
         else if (strcmp(res->action, "change_password") == 0) {
-            message = cJSON_GetObjectItemCaseSensitive(msg_json, "message");
-            if (message == NULL || message->valuestring == NULL)
-                return NULL;
-            strcpy(res->message, message->valuestring);
             password = cJSON_GetObjectItemCaseSensitive(msg_json, "password");
-            if (password == NULL || message->valuestring == NULL)
+            if (password == NULL || password->valuestring == NULL)
                 return NULL;
             strcpy(res->password, password->valuestring);
         }

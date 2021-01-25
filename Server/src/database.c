@@ -30,17 +30,17 @@ void create_db(char* statement, sqlite3* db) {
 } 
 
 
-bool db_add_user(char *login, char *password, int key)
+bool add_user(char *login, char *password, int key)
 {
-    sqlite3_stmt *res = NULL;
+    sqlite3_stmt *stmt = NULL;
     int rc;
     char *query_f = sqlite3_mprintf("INSERT INTO users VALUES(NULL,'%s','%s','%i')",
                                     login,
                                     password,
                                     key);
 
-    rc = sqlite3_prepare_v2(db, query_f, -1, &res, 0);
-    if (sqlite3_step(res) == SQLITE_DONE) {
+    rc = sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
+    if (sqlite3_step(stmt) == SQLITE_DONE) {
         return true;
     }
     else {
@@ -119,8 +119,6 @@ void get_id_and_key(int client_socket, struct info *res) {
         }
         c++;
         res->status = 1; // Successful
-        strcpy(res->message, "Successful sign in");
-        /////////////////   
         temp = stringify(res);
         strcpy(response, temp);
 
@@ -136,11 +134,65 @@ void get_login_by_id(int client_socket, int id) {
     sqlite3_stmt *stmt = NULL;
     char *query_f = sqlite3_mprintf("SELECT LOGIN FROM users WHERE ID = '%d';", id);
     sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
-    if (sqlite3_step(stmt) == SQLITE_ROW) {
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
         strcpy(user.login, (char *)sqlite3_column_text(stmt, 0));
         printf("%s", user.login); printf("\n");
     }
 }
+
+int get_id_by_login(char*login) {
+    int id;
+    sqlite3_stmt *stmt;
+    char *query_f = sqlite3_mprintf("SELECT ID FROM users WHERE LOGIN = '%s';", login);
+    sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        id = sqlite3_column_int(stmt, 0);   
+    }
+    sqlite3_finalize(stmt);
+    return id;
+}
+
+bool add_chat(struct info *res) {
+
+    sqlite3_stmt *stmt = NULL;
+    int rc;
+    char *query_f = sqlite3_mprintf("INSERT INTO chats VALUES(NULL,'%i','%i')",
+                                    res->id,
+                                    res->friend_id); // id of your friend 
+
+    rc = sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
+    if (sqlite3_step(stmt) == SQLITE_DONE) {
+        sqlite3_finalize(stmt);
+        return true;
+    }
+    else {
+        sqlite3_finalize(stmt);
+        return false;
+    }   
+}
+
+int get_chat_id_by_users(struct info *res) {
+
+    sqlite3_stmt *stmt;
+    char *query_1 = sqlite3_mprintf("SELECT CHAT_ID FROM chats WHERE USER1 = '%d' AND USER2 = '%d';", res->id, res->friend_id);
+    sqlite3_prepare_v2(db, query_1, -1, &stmt, 0);
+    if (sqlite3_step(stmt) != SQLITE_DONE) {
+		res->chat_id = sqlite3_column_int(stmt, 0);         
+	}
+    stmt = NULL;
+    if (res->chat_id == -1) { 
+        char *query_2 = sqlite3_mprintf("SELECT CHAT_ID FROM chats WHERE USER2 = '%d' AND USER1 = '%d';", res->id, res->friend_id);
+        sqlite3_prepare_v2(db, query_2, -1, &stmt, 0);
+        if (sqlite3_step(stmt) != SQLITE_DONE) {
+            res->chat_id = sqlite3_column_int(stmt, 0);   
+        }
+    }
+	sqlite3_finalize(stmt);
+    return res->chat_id;
+}
+
+
+
 
 
 /*void db_print_all() { //db_user_t user

@@ -14,38 +14,43 @@ char *stringify(struct info *res)
     }
     else {
         if (strcmp(res->action, "sign_up") == 0) {          
-            cJSON_AddStringToObject(json_msg, "message", res->message);
+            // Nothing
         }
         else if (strcmp(res->action, "sign_in") == 0) {
-            cJSON_AddStringToObject(json_msg, "message", res->message);
+    
             cJSON_AddNumberToObject(json_msg, "id", res->id);  
             cJSON_AddStringToObject(json_msg, "login", res->login); 
             cJSON_AddStringToObject(json_msg, "password", res->password);
             cJSON_AddStringToObject(json_msg, "key", res->key);
         }
         else if (strcmp(res->action, "send_message") == 0) {
-            cJSON_AddStringToObject(json_msg, "message", res->message);
+            // Nothing
         }
         else if (strcmp(res->action, "get_login_by_id") == 0) {
             cJSON_AddStringToObject(json_msg, "login", res->login); 
         }
-        else if (strcmp(res->action, "get_chats_id") == 0) {
-            cJSON_AddStringToObject(json_msg, "message", res->message); 
+        else if (strcmp(res->action, "get_chats_info") == 0) {
+            cJSON_AddNumberToObject(json_msg, "chat_id", res->chat_id); 
         }
         else if (strcmp(res->action, "add_chat") == 0) {
-            cJSON_AddStringToObject(json_msg, "message", res->message); 
+            cJSON_AddNumberToObject(json_msg, "chat_id", res->chat_id); 
+            cJSON_AddStringToObject(json_msg, "login", res->login); 
+            cJSON_AddNumberToObject(json_msg, "friend_id", res->friend_id); 
         }
         else if (strcmp(res->action, "delete_user") == 0) {
-            cJSON_AddStringToObject(json_msg, "message", res->message); 
+            // Nothing
         }
-        else if (strcmp(res->action, "load_messages") == 0) {
+        else if (strcmp(res->action, "delete_message") == 0) {
+            // Nothing
+        }
+        else if (strcmp(res->action, "open_chat") == 0) {
             cJSON_AddNumberToObject(json_msg, "id", res->id);  
             cJSON_AddNumberToObject(json_msg, "message_id", res->message_id); 
             cJSON_AddStringToObject(json_msg, "message", res->message);
             cJSON_AddNumberToObject(json_msg, "time", res->time);
         }
         else if (strcmp(res->action, "change_password") == 0) {
-            cJSON_AddStringToObject(json_msg, "message", res->message); 
+            cJSON_AddStringToObject(json_msg, "password", res->password);
         }
     }
    
@@ -67,6 +72,7 @@ struct info *parse(const char *const msg)
     const cJSON *key = NULL;
 
     const cJSON *chat_id = NULL;
+    const cJSON *friend_id = NULL;
     const cJSON *message = NULL;
     const cJSON *message_id = NULL;
     const cJSON *time = NULL;
@@ -99,6 +105,10 @@ struct info *parse(const char *const msg)
     if (chat_id == NULL || !cJSON_IsNumber(chat_id))
         return NULL;
 
+    friend_id = cJSON_GetObjectItemCaseSensitive(msg_json, "friend_id");
+    if (friend_id == NULL || !cJSON_IsNumber(friend_id))
+        return NULL;
+
     message = cJSON_GetObjectItemCaseSensitive(msg_json, "message");
     if (message == NULL || message->valuestring == NULL)
         return NULL;
@@ -123,6 +133,7 @@ struct info *parse(const char *const msg)
     strcpy(res->key, key->valuestring);
 
     res->chat_id = chat_id->valueint;
+    res->friend_id = friend_id->valueint;
     strcpy(res->message, message->valuestring);
     res->message_id = message_id->valueint;
     res->time = time->valueint;
@@ -135,5 +146,5 @@ struct info *parse(const char *const msg)
 
 int key() {
     srand(time(NULL));
-    return rand() % 10000;
+    return rand() % 100000;
 }
