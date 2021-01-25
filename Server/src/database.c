@@ -128,15 +128,13 @@ void get_id_and_key(int client_socket, struct info *res) {
     }
 }
 
-void get_login_by_id(int client_socket, int id) {
+void get_login_by_id(int client_socket, struct info *res) {
 
-    struct info user;
     sqlite3_stmt *stmt = NULL;
-    char *query_f = sqlite3_mprintf("SELECT LOGIN FROM users WHERE ID = '%d';", id);
+    char *query_f = sqlite3_mprintf("SELECT LOGIN FROM users WHERE ID = '%d';", res->id);
     sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
     while (sqlite3_step(stmt) == SQLITE_ROW) {
-        strcpy(user.login, (char *)sqlite3_column_text(stmt, 0));
-        printf("%s", user.login); printf("\n");
+        strcpy(res->login, (char *)sqlite3_column_text(stmt, 0));
     }
 }
 
@@ -145,7 +143,7 @@ int get_id_by_login(char*login) {
     sqlite3_stmt *stmt;
     char *query_f = sqlite3_mprintf("SELECT ID FROM users WHERE LOGIN = '%s';", login);
     sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
-    while (sqlite3_step(stmt) == SQLITE_ROW) {
+    if (sqlite3_step(stmt) == SQLITE_ROW) {
         id = sqlite3_column_int(stmt, 0);   
     }
     sqlite3_finalize(stmt);
@@ -171,7 +169,7 @@ bool add_chat(struct info *res) {
     }   
 }
 
-int get_chat_id_by_users(struct info *res) {
+void get_chat_id_by_users(struct info *res) {
 
     sqlite3_stmt *stmt;
     char *query_1 = sqlite3_mprintf("SELECT CHAT_ID FROM chats WHERE USER1 = '%d' AND USER2 = '%d';", res->id, res->friend_id);
@@ -188,7 +186,6 @@ int get_chat_id_by_users(struct info *res) {
         }
     }
 	sqlite3_finalize(stmt);
-    return res->chat_id;
 }
 
 

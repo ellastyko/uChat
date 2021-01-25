@@ -41,9 +41,8 @@ struct info
 extern sqlite3 *db;
 
 //parsing
-char *stringify(struct info *req);
-struct info *parse(const char *const msg);
 int type_of_request(char *str, int client_socket);
+void send_response(int client_socket, struct info *res);
 int key();
 
 // database
@@ -58,15 +57,20 @@ bool add_user(char *login, char *password, int key);
 bool verification(char *login, char *password);
 void get_id_and_key(int client_socket, struct info *res);
 
-void get_login_by_id(int client_socket, int id);
+void get_login_by_id(int client_socket, struct info *res);
 
 // Add chat
 int get_id_by_login(char*login);
 bool add_chat(struct info *res);
-int get_chat_id_by_users(struct info *res);
+void get_chat_id_by_users(struct info *res);
 
 
 void get_chats_id_by_users_id(struct info *res);
 
 
 void db_print_all();
+
+
+// useful
+char *stringify(struct info *req);
+struct info *parse(const char *const msg);

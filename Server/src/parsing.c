@@ -16,33 +16,18 @@ int type_of_request(char *str, int client_socket)
 
             req->status = 0; // error status
             strcpy(req->message, "This login isn`t available");
-            temp = stringify(req);
-            strcpy(response, temp);
-
-            if ((result = send(client_socket, response, sizeof(response), 0)) == -1) {
-                write(2, "Fail send\n", 11);
-            }        
+            send_response(client_socket, req);       
         }
         else  { 
             if (add_user(req->login, req->password, key()) == true) {
                 
                 req->status = 1;
-                temp = stringify(req);
-                strcpy(response, temp);
-                write(2, response, strlen(response));
-                if ((result = send(client_socket, response, sizeof(response), 0)) == -1) {
-                    write(2, "Fail send\n", 11);
-                }   
+                send_response(client_socket, req);  
             }
             else {
                 req->status = 0; // error status
                 strcpy(req->message, "Data aren`t inserted");
-                temp = stringify(req);
-                strcpy(response, temp);
-
-                if ((result = send(client_socket, response, sizeof(response), 0)) == -1) {
-                    write(2, "Fail send\n", 11);
-                }   
+                send_response(client_socket, req);  
             }
         }     
     }
@@ -55,65 +40,41 @@ int type_of_request(char *str, int client_socket)
         else {
             req->status = 0; // error status
             strcpy(req->message, "Login or parol isn`t correct!");
-            temp = stringify(req);
-            strcpy(response, temp);
-            if ((result = send(client_socket, response, sizeof(response), 0)) == -1) {
-                write(2, "Fail send\n", 11);
-            }
+            send_response(client_socket, req);  
         }
     }
     else if (strcmp(req->action, "get_login_by_id") == 0) {
-        get_login_by_id(client_socket, req->id);
+        get_login_by_id(client_socket, req);
     }
     else if (strcmp(req->action, "add_chat") == 0) {
         if (check_login(req->login) == false) {    // Если такой пользователь существует
 
             req->friend_id = get_id_by_login(req->login); // Записываем id пользователя по имени
-            req->chat_id = get_chat_id_by_users(req);    // Возвращает id чата 
+            get_chat_id_by_users(req);    // Возвращает id чата 
             if (req->chat_id == -1) { // Если чата нет то ...
                 write(2, "There is no such chat", 22);
                 if (add_chat(req) == true) { // Добавляем чат
             
                     req->status = 1; // Успешно
-                    req->chat_id = get_chat_id_by_users(req);
-                    temp = stringify(req);
-                    strcpy(response, temp);
-
-                    if ((result = send(client_socket, response, sizeof(response), 0)) == -1) {
-                        write(2, "Fail send\n", 11);
-                    }     
+                    get_chat_id_by_users(req);
+                    send_response(client_socket, req);     
                 }
                 else {
                     req->status = 0; // error status
-                    strcpy(req->message, "User hasn`t added to your frinds");
-                    temp = stringify(req);
-                    strcpy(response, temp);
-
-                    if ((result = send(client_socket, response, sizeof(response), 0)) == -1) {
-                        write(2, "Fail send\n", 11);
-                    }     
+                    strcpy(req->message, "User hasn`t added to your frinds");  
+                    send_response(client_socket, req);   
                 }
             }  
-            else {
+            else {   
                 req->status = 0; // error status
                 strcpy(req->message, "Chat already exists");
-                temp = stringify(req);
-                strcpy(response, temp);
-
-                if ((result = send(client_socket, response, sizeof(response), 0)) == -1) {
-                    write(2, "Fail send\n", 11);
-                }    
+                send_response(client_socket, req);  
             }    
         }
         else {
             req->status = 0; // error status
             strcpy(req->message, "User isn`t exists");
-            temp = stringify(req);
-            strcpy(response, temp);
-
-            if ((result = send(client_socket, response, sizeof(response), 0)) == -1) {
-                write(2, "Fail send\n", 11);
-            }     
+            send_response(client_socket, req);          
         }
     }
     else if (strcmp(req->action, "get_chats_info") == 0) {
@@ -154,4 +115,15 @@ int type_of_request(char *str, int client_socket)
     return 0;
 }
 
-//send_error_message()
+void send_response(int client_socket, struct info *res) {
+    ssize_t result;
+    char *temp;
+    char response[BUFSIZ];
+
+    temp = stringify(res);
+    strcpy(response, temp);
+
+    if ((result = send(client_socket, response, sizeof(response), 0)) == -1) {
+        write(2, "Fail send\n", 11);
+    }     
+}
