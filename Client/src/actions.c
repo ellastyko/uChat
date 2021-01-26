@@ -70,7 +70,7 @@ void send_message() {
     req.friend_id = -1;
     printf("Enter message: "); scanf("%s", req.message);
     req.message_id = -1;
-    req.time = -1; // time.h
+    req.time = time(NULL); 
        
 
     char *buf = stringify(&req);
@@ -123,8 +123,8 @@ void change_password() {
 }
 
 void add_chat() {
+
     struct info req;
-    //there will be structure that contains *login *id *chat_id  of your friend
     strcpy(req.action, "add_chat");
 
     req.id = cl_info.id;
@@ -136,7 +136,7 @@ void add_chat() {
     req.friend_id = -1;
     strcpy(req.message, "");
     req.message_id = -1;
-    req.time = -1; // time.h   
+    req.time = -1;  
     
 
     char *buf = stringify(&req);
@@ -157,15 +157,17 @@ void open_chat() {
     req.friend_id = -1;
     strcpy(req.message, "");
     req.message_id = -1;
-    req.time = -1; // time.h   
+    req.time = -1;  
     
 
     char *buf = stringify(&req);
     send_to_server(buf);
 }
+
+
 void delete_message() {
     struct info req;
-    //there will be structure that contains *login *id *chat_id  of your friend
+
     strcpy(req.action, "delete_message");
 
     req.id = cl_info.id;
@@ -173,11 +175,11 @@ void delete_message() {
     strcpy(req.password, "");  
     strcpy(req.key, cl_info.key);
 
-    req.chat_id = -1; // 
+    req.chat_id = -1; 
     req.friend_id = -1;
     strcpy(req.message, "");
     req.message_id = -1;
-    req.time = -1; // time.h   
+    req.time = -1; 
     
 
     char *buf = stringify(&req);
@@ -204,6 +206,7 @@ void get_chats_info() {
     char *buf = stringify(&req);
     send_to_server(buf);
 }
+
 /*char *checking_local_storage(int act) {
     char*line; 
     if (act == 0) { // READ BEFORE SIGN IN

@@ -45,6 +45,15 @@ struct info {
     int time; // time when message was sended
 };
 
+struct chats {
+    int chat_id;
+    int friend_id;
+    char login[20];
+};
+struct chats chat[100];
+
+// Prepare to work
+void prepare();
 
 //actions
 void send_to_server(char *buf);
@@ -69,6 +78,10 @@ bool validation(char *login, char *password);
 struct info *parse(const char *const msg);
 char *stringify(struct info *info);
 int time_converter(int time);
+void push_chat(int chat_id, int friend_id, char*login);
+void print_all();
+int get_free();
 
+// reading
 void *reading();
 void type_of_response(struct info *res);

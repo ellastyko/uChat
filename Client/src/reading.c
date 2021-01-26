@@ -31,10 +31,6 @@ void type_of_response(struct info *res) {
             strcpy(cl_info.login, res->login);
             strcpy(cl_info.password, res->password);
             strcpy(cl_info.key, res->key);
-            printf("%d\n", cl_info.id);
-            printf("%s\n", cl_info.login);
-            printf("%s\n", cl_info.password);
-            printf("%s\n", cl_info.key);
             // saving(res.login, res.password) save login and parol in local storage
             get_chats_info();           
         }
@@ -43,12 +39,17 @@ void type_of_response(struct info *res) {
             write(2, res->login, strlen(res->login));
         }
         else if (strcmp(res->action, "add_chat") == 0) {
+
             printf("\nChat %d added\n", res->chat_id);
             printf("Friend id%d\n", res->friend_id);
             printf("Login %s\n", res->login);
+            push_chat(res->chat_id, res->friend_id, res->login);
+            //print_all();
         }
         else if (strcmp(res->action, "get_chats_info") == 0) {
             // Запись полученных данных в структуру
+            push_chat(res->chat_id, res->friend_id, res->login);
+            //print_all();
         }
         else if (strcmp(res->action, "send_message") == 0) {
             write(2, "Message sended\n", 12);
@@ -56,3 +57,4 @@ void type_of_response(struct info *res) {
 
     }
 }
+

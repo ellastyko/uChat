@@ -30,6 +30,22 @@ bool validation(char *login, char *password) {
     // return true;
 }  
 
+void prepare() {
+
+    // Вносим стандартные значения в главную структуру
+    cl_info.id = -1; 
+    strcpy(cl_info.login, "-1");
+    strcpy(cl_info.password, "-1");
+    strcpy(cl_info.key, "-1");
+    // Вносим стандартные значения в структуру с чатами
+    for (int i = 0; i < 20; i++) {
+
+        chat[i].chat_id = -1;
+        chat[i].friend_id = -1;
+        strcpy(chat[i].login, "-1");
+    }
+}
+
 char *stringify(struct info *req)
 {
     char *string = NULL;
@@ -197,10 +213,43 @@ struct info *parse(const char *const msg)
 }
 
 
-//TODO
 int time_converter(int time) {
-
+    
+    time %= 86400;
+    int hours = time / 3600;
+    int minutes = (time % 3600) / 60;
+    printf("%d\n", time);
+    printf("Hour %d Min %d\n", hours, minutes);
     return 0;
 }
 
 
+void push_chat(int chat_id, int friend_id, char*login) {
+
+    int i = get_free();
+    chat[i].chat_id = chat_id;
+    chat[i].friend_id = friend_id;
+    strcpy(chat[i].login, login);
+}
+
+int get_free() {
+
+    int size = 0;
+    for (int i = 0; i < 100; i++) {
+
+        if (chat[i].chat_id == -1 || chat[i].friend_id == -1 || strcmp(chat[i].login, "-1") == 0) {
+            size = i;
+            break;
+        }
+    }
+    return size;
+}
+
+void print_all() {
+    write(2, "My struct", 10);
+    for (int i = 0; i < get_free(); i++) {
+        printf("\n- %d -", chat[i].chat_id);
+        printf(" %d -", chat[i].friend_id);
+        printf(" %s -", chat[i].login);
+    }
+}
