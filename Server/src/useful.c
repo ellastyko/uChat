@@ -31,6 +31,8 @@ char *stringify(struct info *res)
         }
         else if (strcmp(res->action, "get_chats_info") == 0) {
             cJSON_AddNumberToObject(json_msg, "chat_id", res->chat_id); 
+            cJSON_AddStringToObject(json_msg, "login", res->login); 
+            cJSON_AddNumberToObject(json_msg, "friend_id", res->friend_id); 
         }
         else if (strcmp(res->action, "add_chat") == 0) {
             cJSON_AddNumberToObject(json_msg, "chat_id", res->chat_id); 

@@ -44,7 +44,7 @@ int type_of_request(char *str, int client_socket)
         }
     }
     else if (strcmp(req->action, "get_login_by_id") == 0) {
-        get_login_by_id(client_socket, req);
+        get_login_by_id(req);
     }
     else if (strcmp(req->action, "add_chat") == 0) {
         if (check_login(req->login) == false) {    // Если такой пользователь существует
@@ -78,7 +78,8 @@ int type_of_request(char *str, int client_socket)
         }
     }
     else if (strcmp(req->action, "get_chats_info") == 0) {
-        //get_chats_info(req->login);
+
+        get_chats_info(client_socket, req);
     }
     else if (strcmp(req->action, "send_message") == 0)  {
         write(2, "You want to send message\n", 26);

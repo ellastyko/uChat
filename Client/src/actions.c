@@ -183,6 +183,27 @@ void delete_message() {
     char *buf = stringify(&req);
     send_to_server(buf);
 }
+
+void get_chats_info() {
+
+    struct info req;
+    strcpy(req.action, "get_chats_info");
+
+    req.id = cl_info.id;
+    strcpy(req.login, "");
+    strcpy(req.password, "");  
+    strcpy(req.key, cl_info.key);
+
+    req.chat_id = -1;  
+    req.friend_id = -1;
+    strcpy(req.message, "");
+    req.message_id = -1;
+    req.time = -1; // time.h   
+    
+
+    char *buf = stringify(&req);
+    send_to_server(buf);
+}
 /*char *checking_local_storage(int act) {
     char*line; 
     if (act == 0) { // READ BEFORE SIGN IN

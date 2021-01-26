@@ -125,6 +125,7 @@ struct info *parse(const char *const msg)
             strcpy(res->login, login->valuestring);
         }
         else if (strcmp(res->action, "get_chats_info") == 0) {
+            
             chat_id = cJSON_GetObjectItemCaseSensitive(msg_json, "chat_id");
             if (chat_id == NULL || !cJSON_IsNumber(chat_id))
                 return NULL;             
@@ -144,6 +145,14 @@ struct info *parse(const char *const msg)
             if (chat_id == NULL || !cJSON_IsNumber(chat_id))
                 return NULL;    
             res->chat_id = chat_id->valueint;
+            login = cJSON_GetObjectItemCaseSensitive(msg_json, "login");
+            if (login == NULL || login->valuestring == NULL)
+                return NULL;
+            strcpy(res->login, login->valuestring);
+            friend_id = cJSON_GetObjectItemCaseSensitive(msg_json, "friend_id");
+            if (friend_id == NULL || !cJSON_IsNumber(friend_id))
+                return NULL;    
+            res->friend_id = friend_id->valueint;
         }
         else if (strcmp(res->action, "delete_user") == 0) {
             // Nothing

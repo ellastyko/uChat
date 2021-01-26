@@ -1,6 +1,5 @@
 #include "../inc/header.h"
 
-
 // Из числа в строку itoa()
 // Из строки в число atoi()
 
@@ -48,6 +47,7 @@ bool add_user(char *login, char *password, int key)
     }   
 }
 
+
 bool check_login(char *login) {
     sqlite3_stmt *stmt;
     sqlite3_prepare_v2(db, "SELECT LOGIN FROM users", -1, &stmt, NULL);
@@ -61,6 +61,7 @@ bool check_login(char *login) {
     sqlite3_finalize(stmt);
     return true;
 }
+
 
 bool verification(char *login, char *password) {
     sqlite3_stmt *stmt;
@@ -128,15 +129,17 @@ void get_id_and_key(int client_socket, struct info *res) {
     }
 }
 
-void get_login_by_id(int client_socket, struct info *res) {
+
+void get_login_by_id(struct info *res) {
 
     sqlite3_stmt *stmt = NULL;
-    char *query_f = sqlite3_mprintf("SELECT LOGIN FROM users WHERE ID = '%d';", res->id);
+    char *query_f = sqlite3_mprintf("SELECT LOGIN FROM users WHERE ID = '%d';", res->friend_id);
     sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
-    while (sqlite3_step(stmt) == SQLITE_ROW) {
+    if (sqlite3_step(stmt) == SQLITE_ROW) {
         strcpy(res->login, (char *)sqlite3_column_text(stmt, 0));
     }
 }
+
 
 int get_id_by_login(char*login) {
     int id;
@@ -149,6 +152,7 @@ int get_id_by_login(char*login) {
     sqlite3_finalize(stmt);
     return id;
 }
+
 
 bool add_chat(struct info *res) {
 
@@ -168,6 +172,7 @@ bool add_chat(struct info *res) {
         return false;
     }   
 }
+
 
 void get_chat_id_by_users(struct info *res) {
 
@@ -189,6 +194,38 @@ void get_chat_id_by_users(struct info *res) {
 }
 
 
+void get_chats_info(int client_socket, struct info *res) {
+    sqlite3_stmt *stmt;
+    char *query_1 = sqlite3_mprintf("SELECT CHAT_ID, USER1 FROM chats WHERE USER2 = '%d';", res->id);
+    sqlite3_prepare_v2(db, query_1, -1, &stmt, 0);
+    while (sqlite3_step(stmt) != SQLITE_DONE) {
+        
+		res->chat_id = sqlite3_column_int(stmt, 0);      
+		res->friend_id = sqlite3_column_int(stmt, 1);
+        get_login_by_id(res); // Login
+        if (res->chat_id != -1 && res->friend_id != -1 && strcmp(res->login, "") != 0)	{
+            
+            res->status = 1; 
+            send_response(client_socket, res);
+        }
+    }
+    stmt = NULL;
+    char *query_2 = sqlite3_mprintf("SELECT CHAT_ID, USER2 FROM chats WHERE USER1 = '%d';", res->id);
+    sqlite3_prepare_v2(db, query_2, -1, &stmt, 0);
+    while (sqlite3_step(stmt) != SQLITE_DONE) {
+
+        res->chat_id = sqlite3_column_int(stmt, 0);      
+		res->friend_id = sqlite3_column_int(stmt, 1);
+        get_login_by_id(res); // Login
+        if (res->chat_id != -1 && res->friend_id != -1 && strcmp(res->login, "") != 0)	{
+
+            res->status = 1; 
+            send_response(client_socket, res);
+        }
+    }
+
+	sqlite3_finalize(stmt);
+}
 
 
 

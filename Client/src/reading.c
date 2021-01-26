@@ -35,19 +35,20 @@ void type_of_response(struct info *res) {
             printf("%s\n", cl_info.login);
             printf("%s\n", cl_info.password);
             printf("%s\n", cl_info.key);
-
-            //saving(res.login, res.password) save login and parol in local storage
-            // Запрос на загрузку интерфейса
+            // saving(res.login, res.password) save login and parol in local storage
+            get_chats_info();           
         }
         else if (strcmp(res->action, "get_login_by_id") == 0) {
             // Получаем имя собеседника
             write(2, res->login, strlen(res->login));
         }
         else if (strcmp(res->action, "add_chat") == 0) {
-            printf("Chat %d added\n", res->chat_id);
+            printf("\nChat %d added\n", res->chat_id);
+            printf("Friend id%d\n", res->friend_id);
+            printf("Login %s\n", res->login);
         }
-        else if (strcmp(res->action, "get_chats_id") == 0) {
-            printf("%d", res->chat_id);
+        else if (strcmp(res->action, "get_chats_info") == 0) {
+            // Запись полученных данных в структуру
         }
         else if (strcmp(res->action, "send_message") == 0) {
             write(2, "Message sended\n", 12);

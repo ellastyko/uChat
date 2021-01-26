@@ -57,7 +57,7 @@ void delete_user();
 void change_password();
 void send_message();
 void delete_message();
-
+void get_chats_info();
 
 // socket
 void Socket();
