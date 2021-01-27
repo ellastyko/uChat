@@ -57,8 +57,9 @@ void sign_in() {
 
 //  Функция отправки сообщения
 void send_message() {
-    struct info req;
 
+    struct info req;
+    char name[20];
     strcpy(req.action, "send_message");
 
     req.id = cl_info.id;
@@ -66,8 +67,14 @@ void send_message() {
     strcpy(req.password, "");  
     strcpy(req.key, cl_info.key);
 
-    printf("Send to: "); scanf("%d", &req.chat_id);
-    req.friend_id = -1;
+    printf("Send to: "); scanf("%s", name);
+    int i = search(name);
+    if (i == -1) {
+        write(2, "\nUser is not in your contacts\n", 30);
+        add_chat();
+    }
+    req.chat_id = chat[i].chat_id;
+    req.friend_id = chat[i].friend_id;
     printf("Enter message: "); scanf("%s", req.message);
     req.message_id = -1;
     req.time = time(NULL); 
@@ -102,6 +109,7 @@ void delete_user() {
 
 //  Функция изменения пароля
 void change_password() {
+
     struct info req;
 
     strcpy(req.action, "change_password");
@@ -128,6 +136,7 @@ void add_chat() {
     strcpy(req.action, "add_chat");
 
     req.id = cl_info.id;
+    
     printf("Enter user to add "); scanf("%s", req.login);
     strcpy(req.password, "");  
     strcpy(req.key, cl_info.key);
@@ -145,6 +154,7 @@ void add_chat() {
 
 
 void open_chat() {
+    
     struct info req;
     strcpy(req.action, "open_chat");
 
@@ -200,7 +210,7 @@ void get_chats_info() {
     req.friend_id = -1;
     strcpy(req.message, "");
     req.message_id = -1;
-    req.time = -1; // time.h   
+    req.time = -1; 
     
 
     char *buf = stringify(&req);

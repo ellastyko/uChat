@@ -26,6 +26,13 @@ char *stringify(struct info *res)
         else if (strcmp(res->action, "send_message") == 0) {
             // Nothing
         }
+        else if (strcmp(res->action, "get_message") == 0) {
+            cJSON_AddNumberToObject(json_msg, "id", res->id);  
+            cJSON_AddNumberToObject(json_msg, "chat_id", res->chat_id); 
+            cJSON_AddNumberToObject(json_msg, "message_id", res->message_id); 
+            cJSON_AddStringToObject(json_msg, "message", res->message);
+            cJSON_AddNumberToObject(json_msg, "time", res->time);
+        }
         else if (strcmp(res->action, "get_login_by_id") == 0) {
             cJSON_AddStringToObject(json_msg, "login", res->login); 
         }

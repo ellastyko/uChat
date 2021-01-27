@@ -12,7 +12,7 @@
 #include <pthread.h>
 #include <gtk/gtk.h>
 #include<stdlib.h>
-#define PORT 8039
+#define PORT 8032
 #define ADDR "localhost"
 #include "../../lib/cJSON.h"
 #include <malloc.h>
@@ -81,6 +81,7 @@ int time_converter(int time);
 void push_chat(int chat_id, int friend_id, char*login);
 void print_all();
 int get_free();
+int search(char *name);
 
 // reading
 void *reading();

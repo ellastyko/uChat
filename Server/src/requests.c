@@ -35,7 +35,12 @@ int type_of_request(char *str, int client_socket)
     {
         write(2, "You want to sign in!\n", 22);
         if(verification(req->login, req->password) == true) {
+
             get_id_and_key(client_socket, req);
+            req->status = 1; // Successful
+            send_response(client_socket, req);
+            to_be_online(client_socket, req);
+            //print_all();   
         }
         else {
             req->status = 0; // error status
@@ -77,17 +82,17 @@ int type_of_request(char *str, int client_socket)
             send_response(client_socket, req);          
         }
     }
-    else if (strcmp(req->action, "get_chats_info") == 0) {
-
-        get_chats_info(client_socket, req);
-    }
     else if (strcmp(req->action, "send_message") == 0)  {
         write(2, "You want to send message\n", 26);
-        if (1) { // Если 2 пользователь онлайн то
-             // мы обратимся отошлем ему сообщение
-             // 
+        save_message(req);
+        get_message(req);
+        int new_socket = check_online(req->friend_id);
+        if (new_socket != -1) { 
+            strcpy(req->action, "get_message");
+            req->status = 1;
+            send_response(new_socket, req);
         }
-        // само сообщение сохранится в бд
+        // само сообщение сохранится в бд       
     }
     else if (strcmp(req->action, "delete_message") == 0) {
         write(2, "You want to delete message\n", 28);
@@ -105,9 +110,14 @@ int type_of_request(char *str, int client_socket)
     {
         write(2, "You want to change settings!\n", 30);
     }
-    // Loading of messages
-    else if (strcmp(req->action, "open_chat")) {
+    // Updating local db after sign in
+    else if (strcmp(req->action, "get_chats_info") == 0) {
 
+        get_chats_info(client_socket, req);
+    }
+    else if (strcmp(req->action, "update_chats")) {
+
+        
     }
     else {       
         write(2, "Unknown command!\n", 18);

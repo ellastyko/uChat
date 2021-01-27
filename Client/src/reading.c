@@ -51,10 +51,13 @@ void type_of_response(struct info *res) {
             push_chat(res->chat_id, res->friend_id, res->login);
             //print_all();
         }
+        else if (strcmp(res->action, "get_message") == 0) {
+            write(2, "Your message: ", 15);
+            write(2, res->message, strlen(res->message));
+        }
         else if (strcmp(res->action, "send_message") == 0) {
             write(2, "Message sended\n", 12);
         }
-
     }
 }
 

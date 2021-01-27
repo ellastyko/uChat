@@ -2,6 +2,7 @@
 
 
 bool validation(char *login, char *password) { 
+
     char banned_symbols[35] = {'!', '@', '#', '$', '^', '&', '*', '(', ')', '-', '+',
                              '=', '[', '{', '}', ']', '`', '`', '|', '/','1', '2', '3',
                              '4', '5', '6', '7', '8', '9', '0'};
@@ -38,7 +39,7 @@ void prepare() {
     strcpy(cl_info.password, "-1");
     strcpy(cl_info.key, "-1");
     // Вносим стандартные значения в структуру с чатами
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < 100; i++) {
 
         chat[i].chat_id = -1;
         chat[i].friend_id = -1;
@@ -176,16 +177,12 @@ struct info *parse(const char *const msg)
         else if (strcmp(res->action, "delete_message") == 0) {
             // Nothing
         }
-        else if (strcmp(res->action, "open_chat") == 0) {
-
+        else if (strcmp(res->action, "get_message") == 0) {
+            
             id = cJSON_GetObjectItemCaseSensitive(msg_json, "id");
             if (id == NULL || !cJSON_IsNumber(id))
                 return NULL;
             res->id = id->valueint;
-            chat_id = cJSON_GetObjectItemCaseSensitive(msg_json, "chat_id");
-            if (chat_id == NULL || !cJSON_IsNumber(chat_id))
-                return NULL;
-            res->chat_id = chat_id->valueint;   
             message = cJSON_GetObjectItemCaseSensitive(msg_json, "message");
             if (message == NULL || message->valuestring == NULL)
                 return NULL;
@@ -198,6 +195,33 @@ struct info *parse(const char *const msg)
             if (time == NULL || !cJSON_IsNumber(time))
                 return NULL;
             res->time = time->valueint;
+            chat_id = cJSON_GetObjectItemCaseSensitive(msg_json, "chat_id");
+            if (chat_id == NULL || !cJSON_IsNumber(chat_id))
+                return NULL;
+            res->chat_id = chat_id->valueint;   
+        }
+        else if (strcmp(res->action, "open_chat") == 0) {
+
+            id = cJSON_GetObjectItemCaseSensitive(msg_json, "id");
+            if (id == NULL || !cJSON_IsNumber(id))
+                return NULL;
+            res->id = id->valueint;
+            message = cJSON_GetObjectItemCaseSensitive(msg_json, "message");
+            if (message == NULL || message->valuestring == NULL)
+                return NULL;
+            strcpy(res->message, message->valuestring); 
+            message_id = cJSON_GetObjectItemCaseSensitive(msg_json, "message_id");
+            if (message_id == NULL || !cJSON_IsNumber(message_id))
+                return NULL;
+            res->message_id = message_id->valueint;
+            time = cJSON_GetObjectItemCaseSensitive(msg_json, "time");
+            if (time == NULL || !cJSON_IsNumber(time))
+                return NULL;
+            res->time = time->valueint;
+            chat_id = cJSON_GetObjectItemCaseSensitive(msg_json, "chat_id");
+            if (chat_id == NULL || !cJSON_IsNumber(chat_id))
+                return NULL;
+            res->chat_id = chat_id->valueint;   
         }
         else if (strcmp(res->action, "change_password") == 0) {
             password = cJSON_GetObjectItemCaseSensitive(msg_json, "password");
@@ -232,24 +256,35 @@ void push_chat(int chat_id, int friend_id, char*login) {
     strcpy(chat[i].login, login);
 }
 
+
 int get_free() {
 
-    int size = 0;
     for (int i = 0; i < 100; i++) {
 
         if (chat[i].chat_id == -1 || chat[i].friend_id == -1 || strcmp(chat[i].login, "-1") == 0) {
-            size = i;
-            break;
+            return i;
         }
     }
-    return size;
 }
 
 void print_all() {
-    write(2, "My struct", 10);
+
     for (int i = 0; i < get_free(); i++) {
+        
         printf("\n- %d -", chat[i].chat_id);
         printf(" %d -", chat[i].friend_id);
         printf(" %s -", chat[i].login);
     }
+}
+
+int search(char *name) {
+
+    for (int i = 1; i < get_free(); i++) {
+
+        if (strcmp(name, chat[i].login) == 0) {
+
+            return i;
+        }
+    }
+    return -1;
 }

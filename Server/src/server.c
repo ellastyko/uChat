@@ -13,7 +13,8 @@ void *connection(void *cl_socket)
 
         ssize_t res = recv(client_socket, request, sizeof(request), 0);
         if (res == 0) {
-            write(2, "User disconnected\n", 19);
+            delete_online(client_socket);
+            write(2, "User disconnected\n", 19);          
             close(client_socket);
             break;
         }
@@ -54,7 +55,7 @@ int main()
            "MESSAGE         TEXT                   NOT NULL,"\
            "TIME            INTEGER                NOT NULL, "\
            "CHAT_ID         INTEGER                NOT NULL);", db);
-           
+    to_empty_online();     
     int server_socket, client_socket;
     server_socket = socket(AF_INET , SOCK_STREAM , 0);
     if (server_socket == -1) {

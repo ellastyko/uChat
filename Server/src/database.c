@@ -64,6 +64,7 @@ bool check_login(char *login) {
 
 
 bool verification(char *login, char *password) {
+
     sqlite3_stmt *stmt;
     int state = 0; // Need to equel 2
     sqlite3_prepare_v2(db, "SELECT LOGIN FROM users", -1, &stmt, NULL);
@@ -94,11 +95,11 @@ bool verification(char *login, char *password) {
 
 
 void get_id_and_key(int client_socket, struct info *res) {
+
     ssize_t result;
     char response[BUFSIZ];
     char *temp;
     sqlite3_stmt *stmt;
-    int c = 0;
     char *query_f = sqlite3_mprintf("SELECT ID, KEY FROM users WHERE LOGIN = '%s';", res->login);
     sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
     while (sqlite3_step(stmt) == SQLITE_ROW)
@@ -108,24 +109,11 @@ void get_id_and_key(int client_socket, struct info *res) {
             if (strcmp(sqlite3_column_name(stmt, i), "ID") == 0) {
                 res->id = sqlite3_column_int(stmt, i);
             }
-            else if (strcmp(sqlite3_column_name(stmt, i), "LOGIN") == 0) {
-                strcpy(res->login, (char *)sqlite3_column_text(stmt, i));
-            }
-            else if (strcmp(sqlite3_column_name(stmt, i), "PASSWORD") == 0) {
-                strcpy(res->password, (char *)sqlite3_column_text(stmt, i));
-            }
             else if (strcmp(sqlite3_column_name(stmt, i), "KEY") == 0) {
                 strcpy(res->key, (char *)sqlite3_column_text(stmt, i));
             }
         }
-        c++;
-        res->status = 1; // Successful
-        temp = stringify(res);
-        strcpy(response, temp);
 
-        if ((result = send(client_socket, response, sizeof(response), 0)) == -1) {
-            write(2, "Fail send\n", 11);
-        }
     }
 }
 
@@ -139,7 +127,6 @@ void get_login_by_id(struct info *res) {
         strcpy(res->login, (char *)sqlite3_column_text(stmt, 0));
     }
 }
-
 
 int get_id_by_login(char*login) {
     int id;
@@ -195,6 +182,7 @@ void get_chat_id_by_users(struct info *res) {
 
 
 void get_chats_info(int client_socket, struct info *res) {
+
     sqlite3_stmt *stmt;
     char *query_1 = sqlite3_mprintf("SELECT CHAT_ID, USER1 FROM chats WHERE USER2 = '%d';", res->id);
     sqlite3_prepare_v2(db, query_1, -1, &stmt, 0);
@@ -228,8 +216,72 @@ void get_chats_info(int client_socket, struct info *res) {
 }
 
 
+bool save_message(struct info *res)
+{
+    sqlite3_stmt *stmt = NULL;
 
-/*void db_print_all() { //db_user_t user
+    char *query_f = sqlite3_mprintf("INSERT INTO messages VALUES(NULL, '%d','%s', '%d' , '%d')",
+                                    res->id,
+                                    res->message,
+                                    res->time,
+                                    res->chat_id);
+
+    sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
+
+    if (sqlite3_step(stmt) == SQLITE_DONE) {
+        printf("Message added!\n");
+        stmt = NULL;
+        char *query_2 = sqlite3_mprintf("SELECT max(MESSAGE_ID) FROM messages WHERE SENDER = '%d';", res->id);
+        sqlite3_prepare_v2(db, query_2, -1, &stmt, 0);
+        while (sqlite3_step(stmt) != SQLITE_DONE) {
+            res->message_id = sqlite3_column_int(stmt, 0);
+        }
+        return true;
+    }
+    else {
+        printf("Message hasn`t added!\n");
+        return false;
+    }
+
+    sqlite3_finalize(stmt);
+}
+
+/*void get_message(struct info *res) {
+
+    sqlite3_stmt *stmt = NULL;
+
+    char *query_f = sqlite3_mprintf("SELECT * FROM messages;");
+
+    sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
+
+    while (sqlite3_step(stmt) != SQLITE_DONE) {
+
+        int i;
+		int num_cols = sqlite3_column_count(stmt);
+
+        for (i = 0; i < num_cols; i++)
+		{
+			switch (sqlite3_column_type(stmt, i))
+			{
+			case (SQLITE3_TEXT):
+				printf("%s, ", sqlite3_column_text(stmt, i));
+				break;
+			case (SQLITE_INTEGER):
+				printf("%d, ", sqlite3_column_int(stmt, i));
+				break;
+			case (SQLITE_FLOAT):
+				printf("%g, ", sqlite3_column_double(stmt, i));
+				break;
+                
+			default:
+				break;
+			}
+		}
+		printf("\n");
+     }
+}
+
+void db_print_all() { //db_user_t user
     sqlite3_stmt *stmt;
     sqlite3_prepare_v2(db, "SELECT * FROM users", -1, &stmt, NULL);
     while (sqlite3_step(stmt) != SQLITE_DONE) {
@@ -290,40 +342,4 @@ void get_chats_info(int client_socket, struct info *res) {
 
     rc = sqlite3_finalize(res);
     return 1;
-}
-
-int db_add_message(db_messages_t message)
-{
-    sqlite3_stmt *res = NULL;
-    int rc;
-
-    char *query_f = sqlite3_mprintf("INSERT INTO messages VALUES(NULL, %d,%d,'%s',%d)",
-                                    message.chat_id,
-                                    message.user_id,
-                                    message.message,
-                                    message.time);
-
-    rc = sqlite3_prepare_v2(db, query_f, -1, &res, 0);
-
-    rc = sqlite3_step(res);
-
-    if (rc == SQLITE_DONE)
-    {
-        printf("Inserter!\n");
-    }
-    else
-    {
-        printf("Not inserter!\n");
-        return 0;
-    }
-
-    rc = sqlite3_finalize(res);
-
-    return 1;
-}
-
-int db_add_user_chat(db_users_chats_t user_chat)
-{
-    return 1;
 }*/
-
