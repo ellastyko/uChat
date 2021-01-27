@@ -179,7 +179,8 @@ void delete_message() {
     struct info req;
 
     strcpy(req.action, "delete_message");
-
+    int to_delete;
+    printf("Enter message id: "); scanf("%d", &to_delete);
     req.id = cl_info.id;
     strcpy(req.login, "");
     strcpy(req.password, "");  
@@ -188,7 +189,7 @@ void delete_message() {
     req.chat_id = -1; 
     req.friend_id = -1;
     strcpy(req.message, "");
-    req.message_id = -1;
+    req.message_id = to_delete;
     req.time = -1; 
     
 

@@ -7,7 +7,7 @@ void Socket() {
     adr.sin_port = htons(PORT);
     inet_pton(AF_INET, ADDR, &adr.sin_addr);
     if (connect(client_socket, (struct sockaddr *) &adr, sizeof adr) == -1) {
-        printf("DISCONNECT\n");
+        printf("Disconnect!\n");
         close(client_socket);   
     }
 }

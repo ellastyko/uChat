@@ -26,7 +26,7 @@ void type_of_response(struct info *res) {
             write(2, "Successful registration\n", 25);
         }
         else if (strcmp(res->action, "sign_in") == 0) {
-            write(2, "Successful sign in\n", 20);
+
             cl_info.id = res->id;
             strcpy(cl_info.login, res->login);
             strcpy(cl_info.password, res->password);
@@ -58,6 +58,10 @@ void type_of_response(struct info *res) {
         else if (strcmp(res->action, "send_message") == 0) {
             write(2, "Message sended\n", 12);
         }
+        else if (strcmp(res->action, "delete_message") == 0) {
+            write(2, "Message deleted\n", 17);
+        }
+
     }
 }
 

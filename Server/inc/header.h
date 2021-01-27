@@ -57,7 +57,7 @@ int check_online(int friend_id);
 // requests
 int type_of_request(char *str, int client_socket);
 void send_response(int client_socket, struct info *res);
-
+bool key_checking(struct info *res);
 
 // database
 int db_init(char *db_name);
@@ -86,6 +86,12 @@ void get_chats_info(int client_socket, struct info *res);
 // Send message
 bool save_message(struct info *res);
 void get_message(struct info *res);
+
+// Delete message
+bool delete_message(struct info *res);
+
+// Delete user
+bool delete_user(struct info *res);
 
 // useful
 char *stringify(struct info *req);

@@ -40,7 +40,7 @@ int type_of_request(char *str, int client_socket)
             req->status = 1; // Successful
             send_response(client_socket, req);
             to_be_online(client_socket, req);
-            //print_all();   
+            print_all();   
         }
         else {
             req->status = 0; // error status
@@ -83,24 +83,32 @@ int type_of_request(char *str, int client_socket)
         }
     }
     else if (strcmp(req->action, "send_message") == 0)  {
-        write(2, "You want to send message\n", 26);
-        save_message(req);
-        get_message(req);
-        int new_socket = check_online(req->friend_id);
-        if (new_socket != -1) { 
-            strcpy(req->action, "get_message");
-            req->status = 1;
-            send_response(new_socket, req);
+
+        if (save_message(req) == true) { 
+            //get_message(req);
+            int new_socket = check_online(req->friend_id);
+            if (new_socket != -1) { 
+                strcpy(req->action, "get_message");
+                req->status = 1;
+                send_response(new_socket, req);
+            } 
         }
-        // само сообщение сохранится в бд       
+        else {
+            req->status = 0; // error status
+            send_response(client_socket, req);
+        }    
     }
     else if (strcmp(req->action, "delete_message") == 0) {
-        write(2, "You want to delete message\n", 28);
-        if (1) { // Если 2 пользователь онлайн то
-             // мы обратимся отошлем ему сообщение
-             // 
+        
+        if (delete_message(req) == true) {
+            //get_message(req);
+            req->status = 1;
+            send_response(client_socket, req);
         }
-        // само сообщение сохранится в бд
+        else {
+            req->status = 0;
+            send_response(client_socket, req);
+        }
     }
     else if (strcmp(req->action, "delete_user") == 0)
     {
@@ -117,7 +125,7 @@ int type_of_request(char *str, int client_socket)
     }
     else if (strcmp(req->action, "update_chats")) {
 
-        
+
     }
     else {       
         write(2, "Unknown command!\n", 18);

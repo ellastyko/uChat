@@ -239,14 +239,27 @@ bool save_message(struct info *res)
         return true;
     }
     else {
-        printf("Message hasn`t added!\n");
+        strcpy(res->message, "Message hasn`t added!");
         return false;
     }
-
     sqlite3_finalize(stmt);
 }
 
-/*void get_message(struct info *res) {
+bool delete_message(struct info *res) {
+
+    sqlite3_stmt *stmt;
+    char *query_f = sqlite3_mprintf("DELETE FROM messages WHERE MESSAGE_ID = '%d' AND SENDER = '%d';", res->message_id, res->id);
+    sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
+    if (sqlite3_step(stmt) == SQLITE_DONE) {
+        return true;
+    }
+    else {
+        strcpy(res->message, "Message hasn`t deleted");
+        return false;
+    }
+}
+
+void get_message(struct info *res) {
 
     sqlite3_stmt *stmt = NULL;
 
@@ -281,6 +294,31 @@ bool save_message(struct info *res)
      }
 }
 
+bool key_checking(struct info *res) {
+
+    sqlite3_stmt *stmt;
+    char *query_f = sqlite3_mprintf("SELECT KEY WHERE ID = '%d';", res->id);
+    sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
+    while (sqlite3_step(stmt) != SQLITE_DONE) {
+        if (strcmp(res->key, sqlite3_column_text(stmt, 0)) == 0) 
+            return true;
+    }
+    return false;
+}
+
+bool delete_user(struct info *res) {
+    sqlite3_stmt *stmt;
+    char *query_f = sqlite3_mprintf("DELETE FROM users WHERE ID = '%d';", res->id);
+    sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
+    if (sqlite3_step(stmt) == SQLITE_DONE) {
+        return true;
+    }
+    else {
+        strcpy(res->message, "User isn`t deleted");
+        return false;
+    }
+}
+/*
 void db_print_all() { //db_user_t user
     sqlite3_stmt *stmt;
     sqlite3_prepare_v2(db, "SELECT * FROM users", -1, &stmt, NULL);
