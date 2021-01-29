@@ -12,12 +12,11 @@
 #include <pthread.h>
 #include <gtk/gtk.h>
 #include<stdlib.h>
-#define PORT 8032
+#define PORT 8030
 #define ADDR "localhost"
 #include "../../lib/cJSON.h"
 #include <malloc.h>
 #include <pthread.h>
-
 
 typedef struct client_info
 {
@@ -69,7 +68,7 @@ void delete_message();
 void get_chats_info();
 
 // socket
-void Socket();
+int Socket();
 
 
 // useful

@@ -83,7 +83,6 @@ bool verification(char *login, char *password) {
         }
 	}
     if (state == 2) {
-        write(2, "WELCOME IN YOUR ACC\n", 21);
         sqlite3_finalize(stmt);
         return true;
     }
@@ -294,19 +293,20 @@ void get_message(struct info *res) {
      }
 }
 
-bool key_checking(struct info *res) {
+// bool key_checking(struct info *res) {
 
-    sqlite3_stmt *stmt;
-    char *query_f = sqlite3_mprintf("SELECT KEY WHERE ID = '%d';", res->id);
-    sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
-    while (sqlite3_step(stmt) != SQLITE_DONE) {
-        if (strcmp(res->key, sqlite3_column_text(stmt, 0)) == 0) 
-            return true;
-    }
-    return false;
-}
+//     sqlite3_stmt *stmt;
+//     char *query_f = sqlite3_mprintf("SELECT KEY WHERE ID = '%d';", res->id);
+//     sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
+//     while (sqlite3_step(stmt) != SQLITE_DONE) {
+//         if (strcmp(res->key, sqlite3_column_text(stmt, 0)) == 0) 
+//             return true;
+//     }
+//     return false;
+// }
 
 bool delete_user(struct info *res) {
+
     sqlite3_stmt *stmt;
     char *query_f = sqlite3_mprintf("DELETE FROM users WHERE ID = '%d';", res->id);
     sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
@@ -318,6 +318,42 @@ bool delete_user(struct info *res) {
         return false;
     }
 }
+
+bool change_password(struct info *res) {
+
+    sqlite3_stmt *stmt;
+    char *query_f = sqlite3_mprintf("UPDATE users SET PASSWORD = '%s' WHERE ID = '%d';", res->password, res->id);
+    sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
+    if (sqlite3_step(stmt) == SQLITE_DONE) {
+
+        return true;
+    }
+    else {
+        strcpy(res->message, "Password hasn`t changed");
+        return false;
+    }
+}
+
+void load_messages(int client_socket, struct info *res) {
+
+    sqlite3_stmt *stmt;
+    char *query_1 = sqlite3_mprintf("SELECT MESSAGE_ID, SENDER, MESSAGE, TIME FROM messages WHERE CHAT_ID = '%d' ORDER BY TIME ASC;", res->chat_id);
+    sqlite3_prepare_v2(db, query_1, -1, &stmt, 0);
+    while (sqlite3_step(stmt) != SQLITE_DONE) {
+
+        res->message_id = sqlite3_column_int(stmt, 0);
+        res->id = sqlite3_column_int(stmt, 1);
+        strcpy(res->message, sqlite3_column_text(stmt, 2));
+        res->time = sqlite3_column_int(stmt, 3);
+
+        if (res->chat_id != -1 || res->id != -1 || strcmp(res->login, "") != 0)	{
+            
+            res->status = 1; 
+            send_response(client_socket, res);
+        }
+    }
+}
+
 /*
 void db_print_all() { //db_user_t user
     sqlite3_stmt *stmt;

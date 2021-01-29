@@ -200,7 +200,7 @@ struct info *parse(const char *const msg)
                 return NULL;
             res->chat_id = chat_id->valueint;   
         }
-        else if (strcmp(res->action, "open_chat") == 0) {
+        else if (strcmp(res->action, "load_messages") == 0) {
 
             id = cJSON_GetObjectItemCaseSensitive(msg_json, "id");
             if (id == NULL || !cJSON_IsNumber(id))
@@ -224,6 +224,7 @@ struct info *parse(const char *const msg)
             res->chat_id = chat_id->valueint;   
         }
         else if (strcmp(res->action, "change_password") == 0) {
+            
             password = cJSON_GetObjectItemCaseSensitive(msg_json, "password");
             if (password == NULL || password->valuestring == NULL)
                 return NULL;
@@ -238,12 +239,10 @@ struct info *parse(const char *const msg)
 
 
 int time_converter(int time) {
-    
+    char *str;
     time %= 86400;
     int hours = time / 3600;
     int minutes = (time % 3600) / 60;
-    printf("%d\n", time);
-    printf("Hour %d Min %d\n", hours, minutes);
     return 0;
 }
 
@@ -253,7 +252,7 @@ void push_chat(int chat_id, int friend_id, char*login) {
     int i = get_free();
     chat[i].chat_id = chat_id;
     chat[i].friend_id = friend_id;
-    strcpy(chat[i].login, login);
+    strcpy(chat[i].login, login); 
 }
 
 
@@ -279,10 +278,9 @@ void print_all() {
 
 int search(char *name) {
 
-    for (int i = 1; i < get_free(); i++) {
+    for (int i = 0; i < get_free(); i++) {
 
         if (strcmp(name, chat[i].login) == 0) {
-
             return i;
         }
     }

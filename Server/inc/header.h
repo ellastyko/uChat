@@ -15,10 +15,12 @@
 #include <malloc.h>
 #include <time.h>
 
-#define PORT 8032
+#define PORT 8030
 #define ADDR "localhost"
 
+
 extern sqlite3 *db;
+int online;
 
 struct info
 {
@@ -46,6 +48,10 @@ struct online_users {
 };
 struct online_users user[200];
 
+
+void *connection(void *cl_socket);
+
+// useful
 int get_free();
 void to_empty_online();
 void print_all();
@@ -92,6 +98,12 @@ bool delete_message(struct info *res);
 
 // Delete user
 bool delete_user(struct info *res);
+
+// Change password
+bool change_password(struct info *res);
+
+// Load messages
+void load_messages(int client_socket, struct info *res);
 
 // useful
 char *stringify(struct info *req);

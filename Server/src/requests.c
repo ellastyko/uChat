@@ -33,7 +33,6 @@ int type_of_request(char *str, int client_socket)
     }
     else if (strcmp(req->action, "sign_in") == 0)
     {
-        write(2, "You want to sign in!\n", 22);
         if(verification(req->login, req->password) == true) {
 
             get_id_and_key(client_socket, req);
@@ -47,9 +46,6 @@ int type_of_request(char *str, int client_socket)
             strcpy(req->message, "Login or parol isn`t correct!");
             send_response(client_socket, req);  
         }
-    }
-    else if (strcmp(req->action, "get_login_by_id") == 0) {
-        get_login_by_id(req);
     }
     else if (strcmp(req->action, "add_chat") == 0) {
         if (check_login(req->login) == false) {    // Если такой пользователь существует
@@ -85,7 +81,7 @@ int type_of_request(char *str, int client_socket)
     else if (strcmp(req->action, "send_message") == 0)  {
 
         if (save_message(req) == true) { 
-            //get_message(req);
+            get_message(req);
             int new_socket = check_online(req->friend_id);
             if (new_socket != -1) { 
                 strcpy(req->action, "get_message");
@@ -98,10 +94,10 @@ int type_of_request(char *str, int client_socket)
             send_response(client_socket, req);
         }    
     }
-    else if (strcmp(req->action, "delete_message") == 0) {
+    else if (strcmp(req->action, "delete_message") == 0) { // Успешно даже когда сообщение не удалено
         
         if (delete_message(req) == true) {
-            //get_message(req);
+            get_message(req);
             req->status = 1;
             send_response(client_socket, req);
         }
@@ -112,11 +108,31 @@ int type_of_request(char *str, int client_socket)
     }
     else if (strcmp(req->action, "delete_user") == 0)
     {
-        write(2, "You want to delete user!\n", 30);
+        if (delete_user(req) == true) {
+
+            req->status = 1;
+            send_response(client_socket, req);
+        }
+        else {
+            req->status = 0;
+            send_response(client_socket, req);
+        }
     }
-    else if (strcmp(req->action, "change_passpord") == 0)
+    else if (strcmp(req->action, "change_password") == 0)
     {
-        write(2, "You want to change settings!\n", 30);
+        if (change_password(req) == true) {
+
+            req->status = 1;
+            send_response(client_socket, req);
+        }
+        else {
+            req->status = 0;
+            send_response(client_socket, req);
+        }
+    }
+    else if (strcmp(req->action, "load_messages") == 0) {
+
+        load_messages(client_socket, req);
     }
     // Updating local db after sign in
     else if (strcmp(req->action, "get_chats_info") == 0) {
@@ -125,7 +141,7 @@ int type_of_request(char *str, int client_socket)
     }
     else if (strcmp(req->action, "update_chats")) {
 
-
+        // Updating cache after sign in
     }
     else {       
         write(2, "Unknown command!\n", 18);

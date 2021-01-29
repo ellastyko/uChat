@@ -4,6 +4,7 @@ void send_to_server(char *buf) {
     ssize_t result;
     if ((result = send(3, buf, strlen(buf), 0)) == -1) {
         write(2, "Fail send\n", 11);
+        
     }
 }
 
@@ -72,6 +73,7 @@ void send_message() {
     if (i == -1) {
         write(2, "\nUser is not in your contacts\n", 30);
         add_chat();
+        return;
     }
     req.chat_id = chat[i].chat_id;
     req.friend_id = chat[i].friend_id;
@@ -116,7 +118,7 @@ void change_password() {
 
     req.id = cl_info.id;
     strcpy(req.login, "");
-    strcpy(req.password, "new password"); 
+    printf("New password: "); scanf("%s", req.password);
     strcpy(req.key, cl_info.key);
 
     req.chat_id = 0;
@@ -130,6 +132,7 @@ void change_password() {
     send_to_server(buf);
 }
 
+
 void add_chat() {
 
     struct info req;
@@ -142,28 +145,6 @@ void add_chat() {
     strcpy(req.key, cl_info.key);
 
     req.chat_id = -1; 
-    req.friend_id = -1;
-    strcpy(req.message, "");
-    req.message_id = -1;
-    req.time = -1;  
-    
-
-    char *buf = stringify(&req);
-    send_to_server(buf);
-}
-
-
-void open_chat() {
-    
-    struct info req;
-    strcpy(req.action, "open_chat");
-
-    req.id = cl_info.id;
-    strcpy(req.login, "");
-    strcpy(req.password, "");  
-    strcpy(req.key, cl_info.key);
-
-    req.chat_id = -1; // id of chat
     req.friend_id = -1;
     strcpy(req.message, "");
     req.message_id = -1;
@@ -197,6 +178,7 @@ void delete_message() {
     send_to_server(buf);
 }
 
+
 void get_chats_info() {
 
     struct info req;
@@ -218,6 +200,28 @@ void get_chats_info() {
     send_to_server(buf);
 }
 
+// Open chat
+void open_chat() {
+
+    struct info req;
+    strcpy(req.action, "load_messages");
+
+    req.id = cl_info.id;
+    strcpy(req.login, "");
+    strcpy(req.password, "");  
+    strcpy(req.key, cl_info.key);
+
+    
+    printf("Enter chat to open: "); scanf("%d", &req.chat_id);
+    req.friend_id = -1;  
+    strcpy(req.message, "");
+    req.message_id = -1;
+    req.time = -1; 
+    
+
+    char *buf = stringify(&req);
+    send_to_server(buf);
+}
 /*char *checking_local_storage(int act) {
     char*line; 
     if (act == 0) { // READ BEFORE SIGN IN
