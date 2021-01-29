@@ -33,7 +33,7 @@ int get_free() {
 void print_all() {
     int size = get_free();
     for (int i = 0; i < size; i++) {
-        printf("\n- %d -", i);
+
         printf(" %d -", user[i].id);
         printf(" %d -\n", user[i].client_socket);
     }

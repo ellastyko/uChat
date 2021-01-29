@@ -16,8 +16,20 @@ void sign_up() {
     strcpy(req.action, "sign_up");  
     req.id = 0;
     printf("Enter username: "); scanf("%s", req.login);
+     if (strlen(req.login) < 4) {
+        write(2, "Login have to be more than 4 symbols\n", 38);
+        return;
+    }
     printf("Enter password: "); scanf("%s", req.password);
+    if (strlen(req.login) < 6) {
+        write(2, "Login have to be more than 6 symbols\n", 38);
+        return;
+    }
     printf("Repeat password: "); scanf("%s", repeat_password);
+    if(strcmp(req.password, repeat_password) != 0) {
+        write(2, "Parols are different\n", 22);
+        return;
+    }
     strcpy(req.key, "");
 
     req.chat_id = 0;
@@ -25,14 +37,11 @@ void sign_up() {
     strcpy(req.message, "");
     req.message_id = -1;
     req.time = -1;
-    
-    
-    if(strcmp(req.password, repeat_password) != 0) {
-        write(2, "Parols are different\n", 22);
-    }
-    if((validation(req.login, req.password)) == true) {
-        write(2, "Successful validation\n", 23);
+       
+    if((validation(req.login, req.password)) == false) {
+        return;
     } 
+    write(2, "Successful validation\n", 23);
     char *buf = stringify(&req); // To JSON
     send_to_server(buf);
 }
