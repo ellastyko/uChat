@@ -1,38 +1,24 @@
 #include "../inc/header.h"
 
 
-bool validation(char *login, char *password) { 
+bool validation(char *str) { 
 
     int ok = 0;
     char symbols[40] = { '_', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'a', 's', 'd', 
                          'f', 'g', 'h', 'j', 'k', 'l', 'z', 'x', 'c', 'v', 'b', 'n', 'm', '1', 
                          '2', '3', '4', '5', '6', '7', '8', '9', '0'};
                          
-    for (int i = 0; i < strlen(login); i++) {
+    for (int i = 0; i < strlen(str); i++) {
         for (int j = 0; j < strlen(symbols); j++) { 
-            if (login[i] == symbols[j]) {
+            if (str[i] == symbols[j]) {
                 ok++;
             } 
         }
         if (ok != 1) {
-            write(2, "Banned symbol used in password\n", 32);
             return false;
         }
         ok = 0;
     }
-    for (int i = 0; i < strlen(password); i++) {
-        for (int j = 0; j < strlen(symbols); j++) { 
-            if (password[i] == symbols[j]) {
-                ok++;
-            } 
-        }
-        if (ok != 1) {
-            write(2, "Banned symbol used in password\n", 32);
-            return false;
-        }
-        ok = 0;
-    }
-
     return true;
 }  
 
@@ -100,4 +86,30 @@ int search(char *name) {
         }
     }
     return -1;
+}
+
+void code() {
+    char text[500];
+    char *res;
+    printf("Enter text: "); scanf("%s", text);
+    res = encoding(text);
+    write(2, res, strlen(res));
+    res = decoding(text);
+    write(2, res, strlen(res));
+}
+
+char *decoding(char *str) {
+
+    for (int i = 0; i < strlen(str); i++) {
+        str[i] -= 2;
+    }
+    return str;
+}
+
+char *encoding(char *str) {
+
+    for (int i = 0; i < strlen(str); i++) {
+        str[i] += 2;
+    }
+    return str;
 }

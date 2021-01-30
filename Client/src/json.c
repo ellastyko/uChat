@@ -22,13 +22,14 @@ char *stringify(struct info *req)
     string = cJSON_Print(json_msg);
 
     cJSON_Delete(json_msg);
+    string = encoding(string);
     return string;
 }
 
 
-// TODO RESPONSE FROM SERVER
 struct info *parse(const char *const msg)
 {
+
     struct info *res = malloc(sizeof(struct info));
     const cJSON *action = NULL;
     const cJSON *status = NULL;

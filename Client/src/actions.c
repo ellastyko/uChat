@@ -16,31 +16,38 @@ void sign_up() {
     strcpy(req.action, "sign_up");  
     req.id = 0;
     printf("Enter username: "); scanf("%s", req.login);
-     if (strlen(req.login) < 4) {
+    if (strlen(req.login) < 4) {
         write(2, "Login have to be more than 4 symbols\n", 38);
         return;
     }
+    if((validation(req.login)) == false) {
+        write(2, "Banned symbol used in login\n", 29);
+        return;
+    } 
     printf("Enter password: "); scanf("%s", req.password);
-    if (strlen(req.login) < 6) {
-        write(2, "Login have to be more than 6 symbols\n", 38);
+    if (strlen(req.password) < 6) {
+        write(2, "Password have to be more than 6 symbols\n", 38);
         return;
     }
+    if((validation(req.password)) == false) {
+        write(2, "Banned symbol used in password\n", 32);
+        return;
+    } 
     printf("Repeat password: "); scanf("%s", repeat_password);
     if(strcmp(req.password, repeat_password) != 0) {
         write(2, "Parols are different\n", 22);
         return;
     }
-    strcpy(req.key, "");
 
+    strcpy(req.key, "");
+     
     req.chat_id = 0;
     req.friend_id = -1;
     strcpy(req.message, "");
     req.message_id = -1;
     req.time = -1;
        
-    if((validation(req.login, req.password)) == false) {
-        return;
-    } 
+    
     write(2, "Successful validation\n", 23);
     char *buf = stringify(&req); // To JSON
     send_to_server(buf);

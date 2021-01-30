@@ -21,6 +21,7 @@ void *connection(void *cl_socket)
         else if (res == -1) {
             write(2, "Resieve failed\n", 16);
         }
+        strcpy(request, decoding(request));
         write(2, request, strlen(request));
         type_of_request(request, client_socket);
         memset(&request, 0, sizeof(request));
@@ -30,32 +31,8 @@ void *connection(void *cl_socket)
     pthread_exit(NULL);   
 }
 
+int Socket() {
 
-int main()
-{
-    
-    if (db_init("Server/db/database.db") == -1) {
-        perror("Саnnot init db\n");
-        exit(EXIT_FAILURE);
-    }
-    create_db("CREATE TABLE users("\
-           "ID             INTEGER PRIMARY KEY AUTOINCREMENT,"\
-           "LOGIN          TEXT                NOT NULL,"\
-           "PASSWORD       TEXT                NOT NULL,"\
-           "KEY            INTEGER             NOT NULL);", db);
-
-    create_db("CREATE TABLE chats("\
-           "CHAT_ID             INTEGER PRIMARY KEY AUTOINCREMENT,"\
-           "USER1          INTEGER                NOT NULL,"\
-           "USER2          INTEGER                NOT NULL);", db);
-
-    create_db("CREATE TABLE messages("\
-           "MESSAGE_ID             INTEGER PRIMARY KEY AUTOINCREMENT,"\
-           "SENDER          INTEGER                NOT NULL,"\
-           "MESSAGE         TEXT                   NOT NULL,"\
-           "TIME            INTEGER                NOT NULL, "\
-           "CHAT_ID         INTEGER                NOT NULL);", db);
-    to_empty_online();     
     int server_socket, client_socket;
     server_socket = socket(AF_INET , SOCK_STREAM , 0);
     if (server_socket == -1) {
@@ -95,6 +72,33 @@ int main()
     }
     sqlite3_close(db);
     close(server_socket);
+}
 
+int main()
+{
+    
+    if (db_init("Server/db/database.db") == -1) {
+        perror("Саnnot init db\n");
+        exit(EXIT_FAILURE);
+    }
+    create_db("CREATE TABLE users("\
+           "ID             INTEGER PRIMARY KEY AUTOINCREMENT,"\
+           "LOGIN          TEXT                NOT NULL,"\
+           "PASSWORD       TEXT                NOT NULL,"\
+           "KEY            INTEGER             NOT NULL);", db);
+
+    create_db("CREATE TABLE chats("\
+           "CHAT_ID             INTEGER PRIMARY KEY AUTOINCREMENT,"\
+           "USER1          INTEGER                NOT NULL,"\
+           "USER2          INTEGER                NOT NULL);", db);
+
+    create_db("CREATE TABLE messages("\
+           "MESSAGE_ID             INTEGER PRIMARY KEY AUTOINCREMENT,"\
+           "SENDER          INTEGER                NOT NULL,"\
+           "MESSAGE         TEXT                   NOT NULL,"\
+           "TIME            INTEGER                NOT NULL, "\
+           "CHAT_ID         INTEGER                NOT NULL);", db);
+    to_empty_online();     
+    Socket();
     return 0;
 }

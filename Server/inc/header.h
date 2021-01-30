@@ -14,7 +14,6 @@
 #include "../../lib/cJSON.h"
 #include <malloc.h>
 #include <time.h>
-
 #define PORT 8030
 #define ADDR "localhost"
 
@@ -109,3 +108,5 @@ void load_messages(int client_socket, struct info *res);
 char *stringify(struct info *req);
 struct info *parse(const char *const msg);
 int key();
+char *decoding(char *str);
+char *encoding(char *str);

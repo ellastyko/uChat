@@ -67,6 +67,9 @@ char *stringify(struct info *res)
     string = cJSON_Print(json_msg);
 
     cJSON_Delete(json_msg);
+
+    string = encoding(string);
+
     return string;
 }
 

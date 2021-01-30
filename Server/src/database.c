@@ -127,6 +127,7 @@ void get_login_by_id(struct info *res) {
     }
 }
 
+
 int get_id_by_login(char*login) {
     int id;
     sqlite3_stmt *stmt;
@@ -233,8 +234,10 @@ bool save_message(struct info *res)
         char *query_2 = sqlite3_mprintf("SELECT max(MESSAGE_ID) FROM messages WHERE SENDER = '%d';", res->id);
         sqlite3_prepare_v2(db, query_2, -1, &stmt, 0);
         while (sqlite3_step(stmt) != SQLITE_DONE) {
+            
             res->message_id = sqlite3_column_int(stmt, 0);
         }
+        sqlite3_finalize(stmt);
         return true;
     }
     else {
@@ -244,16 +247,19 @@ bool save_message(struct info *res)
     sqlite3_finalize(stmt);
 }
 
+
 bool delete_message(struct info *res) {
 
     sqlite3_stmt *stmt;
     char *query_f = sqlite3_mprintf("DELETE FROM messages WHERE MESSAGE_ID = '%d' AND SENDER = '%d';", res->message_id, res->id);
     sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
     if (sqlite3_step(stmt) == SQLITE_DONE) {
+        sqlite3_finalize(stmt);
         return true;
     }
     else {
         strcpy(res->message, "Message hasn`t deleted");
+        sqlite3_finalize(stmt);
         return false;
     }
 }
@@ -293,17 +299,20 @@ void get_message(struct info *res) {
      }
 }
 
-// bool key_checking(struct info *res) {
+bool key_checking(struct info *res) {
 
-//     sqlite3_stmt *stmt;
-//     char *query_f = sqlite3_mprintf("SELECT KEY WHERE ID = '%d';", res->id);
-//     sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
-//     while (sqlite3_step(stmt) != SQLITE_DONE) {
-//         if (strcmp(res->key, sqlite3_column_text(stmt, 0)) == 0) 
-//             return true;
-//     }
-//     return false;
-// }
+    sqlite3_stmt *stmt;
+    char *query_f = sqlite3_mprintf("SELECT KEY WHERE ID = '%d';", res->id);
+    sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
+    while (sqlite3_step(stmt) != SQLITE_DONE) {
+        if (strcmp(res->key, sqlite3_column_text(stmt, 0)) == 0) { 
+            sqlite3_finalize(stmt);
+            return true;
+        }
+    }
+    sqlite3_finalize(stmt);
+    return false;
+}
 
 bool delete_user(struct info *res) {
 
@@ -311,10 +320,12 @@ bool delete_user(struct info *res) {
     char *query_f = sqlite3_mprintf("DELETE FROM users WHERE ID = '%d';", res->id);
     sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
     if (sqlite3_step(stmt) == SQLITE_DONE) {
+        sqlite3_finalize(stmt);
         return true;
     }
     else {
         strcpy(res->message, "User isn`t deleted");
+        sqlite3_finalize(stmt);
         return false;
     }
 }
@@ -325,11 +336,12 @@ bool change_password(struct info *res) {
     char *query_f = sqlite3_mprintf("UPDATE users SET PASSWORD = '%s' WHERE ID = '%d';", res->password, res->id);
     sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
     if (sqlite3_step(stmt) == SQLITE_DONE) {
-
+        sqlite3_finalize(stmt);
         return true;
     }
     else {
         strcpy(res->message, "Password hasn`t changed");
+        sqlite3_finalize(stmt);
         return false;
     }
 }
@@ -352,6 +364,7 @@ void load_messages(int client_socket, struct info *res) {
             send_response(client_socket, res);
         }
     }
+    sqlite3_finalize(stmt);
 }
 
 /*
@@ -391,29 +404,3 @@ void db_print_all() { //db_user_t user
 
 }*/
 
-/*int db_add_chat(db_chats_t chat)
-{
-    sqlite3_stmt *res = NULL;
-    int rc;
-
-    char *query_f = sqlite3_mprintf("INSERT INTO chats VALUES(NULL,'%s','%s')",
-                                    chat.name,
-                                    chat.type);
-
-    rc = sqlite3_prepare_v2(db, query_f, -1, &res, 0);
-
-    rc = sqlite3_step(res);
-
-    if (rc == SQLITE_DONE)
-    {
-        printf("Inserter!\n");
-    }
-    else
-    {
-        printf("Not inserter!\n");
-        return 0;
-    }
-
-    rc = sqlite3_finalize(res);
-    return 1;
-}*/

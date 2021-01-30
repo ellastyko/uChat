@@ -1,20 +1,22 @@
 #include "../inc/header.h"
 
+
+
 int main(int argc, char *argv[])
 {
     prepare();
-    Socket(); // Socket initialization
-
-    //checking_local_storage(); //TODO Проверка локального хранилища на сохранненый пароль с именем
+    Socket();
     pthread_t reads;
     pthread_create(&reads, NULL, reading, NULL);
+    //checking_local_storage(); //TODO Проверка локального хранилища на сохранненый пароль с именем
+    
     int action;
     while(1) {
         printf("\nWhat do you want:\n 1 - Sign up\n 2 - Sign in\n");
         scanf("%d",&action);
         switch(action) {
             case 1: sign_up(); break;
-            case 2: sign_in(); break;        
+            case 2: sign_in(); break;  
             default: break;
             
 
@@ -30,6 +32,7 @@ int main(int argc, char *argv[])
                 case 4: delete_message(); break;
                 case 5: change_password(); break;
                 case 6: delete_user(); break;
+                
                 default: break;
             }
         }

@@ -73,7 +73,7 @@ int Socket();
 
 // useful
 char *checking_local_storage();
-bool validation(char *login, char *password);
+bool validation(char *str);
 struct info *parse(const char *const msg);
 char *stringify(struct info *info);
 int time_converter(int time);
@@ -81,6 +81,9 @@ void push_chat(int chat_id, int friend_id, char*login);
 void print_all();
 int get_free();
 int search(char *name);
+char *decoding(char *str);
+char *encoding(char *str);
+void code();
 
 // reading
 void *reading();

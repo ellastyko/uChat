@@ -5,17 +5,21 @@ void *reading() {
     while(1) {
         if ( (result = recv(3, buf, sizeof(buf), 0)) == -1) { 
             write(2, "Fail recieve\n", 14);
+            
         }
         if ( result == 0 ) {
             write(2, "\nDisconnect!\n", 14); // Перестаем читать сервер
+            close(3);
             break;
         }
         else {
             //write(STDOUT_FILENO, buf, strlen(buf));
+            strcpy(buf, decoding(buf));
             struct info *res = parse(buf);
             type_of_response(res);    
         }
     }
+    pthread_exit(NULL);
 }
 
 
