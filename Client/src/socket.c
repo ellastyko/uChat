@@ -3,7 +3,7 @@
 
 int Socket() {
     
-    int client_socket = socket(AF_INET, SOCK_STREAM, 0);
+    client_socket = socket(AF_INET, SOCK_STREAM, 0);
     struct sockaddr_in adr = {0};
     adr.sin_family = AF_INET;
     adr.sin_port = htons( PORT );
@@ -13,5 +13,19 @@ int Socket() {
         close(client_socket); 
         return 1;  
     }
+    int error = 0;
+    socklen_t len = sizeof (error);
+    int retval = getsockopt(client_socket, SOL_SOCKET, SO_KEEPALIVE, &error, &len);
+    if (retval != 0) {
+        fprintf(stderr, "error getting socket error code: %s\n", strerror(retval));
+        close(client_socket); 
+        return 1;
+    }
+     if (error != 0) {
+        fprintf(stderr, "socket error: %s\n", strerror(error));
+        close(client_socket); 
+        return 1;
+    }
+    write(2, "\nConnected!\n", 13);
     return 0;
 }

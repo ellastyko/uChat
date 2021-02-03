@@ -12,11 +12,12 @@
 #include <pthread.h>
 #include <gtk/gtk.h>
 #include<stdlib.h>
-#define PORT 8030
+#define PORT 8031
 #define ADDR "localhost"
 #include "../../lib/cJSON.h"
 #include <malloc.h>
 #include <pthread.h>
+int client_socket;
 
 typedef struct client_info
 {

@@ -3,30 +3,86 @@
 // Из числа в строку itoa()
 // Из строки в число atoi()
 
+// int db_init(char *db_name)
+// {
+//     int ret;
+//     if (SQLITE_OK != (ret = sqlite3_initialize())) {
+//         printf("Failed to initialize library: %d\n", ret);
+//         return -1;
+//         sqlite3_close(db);
+//     }
+//     // open connection to a DB
+//     if (SQLITE_OK != (ret = sqlite3_open_v2(db_name, &db, SQLITE_OPEN_READWRITE, NULL))) {
+//         printf("Failed to open conn: %d\n", ret);
+//         return -1;
+//     }
+//     return 1;
+// }
+
+// void create_db(char* statement, sqlite3* db) {
+//    char* error = 0; 
+//    int rc = sqlite3_exec(db, statement, NULL, 0, &error);
+//    if( rc != SQLITE_OK ) {
+//       fprintf(stderr, "SQL error: %s\n", error);
+//       sqlite3_free(error);
+//    } 
+// } 
+
 int db_init(char *db_name)
 {
     int ret;
-    if (SQLITE_OK != (ret = sqlite3_initialize())) {
+
+    if (SQLITE_OK != (ret = sqlite3_initialize()))
+    {
         printf("Failed to initialize library: %d\n", ret);
         return -1;
         sqlite3_close(db);
     }
     // open connection to a DB
-    if (SQLITE_OK != (ret = sqlite3_open_v2(db_name, &db, SQLITE_OPEN_READWRITE, NULL))) {
+    if (SQLITE_OK != (ret = sqlite3_open_v2(db_name, &db, SQLITE_OPEN_READWRITE, NULL)))
+    {
         printf("Failed to open conn: %d\n", ret);
         return -1;
     }
-    return 1;
+
+    return create_db("Server/db/db_up.sql");
 }
 
-void create_db(char* statement, sqlite3* db) {
-   char* error = 0; 
-   int rc = sqlite3_exec(db, statement, NULL, 0, &error);
-   if( rc != SQLITE_OK ) {
-      fprintf(stderr, "SQL error: %s\n", error);
-      sqlite3_free(error);
-   } 
-} 
+//создает таблицы в базе, если они еще не созданы. Вызывается в db_init
+int create_db(const char *up_script_path)
+{
+    FILE *fp;
+    char *error = 0;
+    char buff[BUFSIZ];
+    char ch;
+    int i;
+
+    fp = fopen(up_script_path, "r");
+
+    if (fp == NULL)
+    {
+        fprintf(stderr, "Cannot open script file\n");
+        return -1;
+    }
+
+    for (i = 0; (ch = fgetc(fp)) != EOF; i++)
+    {
+        buff[i] = ch;
+    }
+
+    buff[i + 1] = '\0';
+
+    int rc = sqlite3_exec(db, "PRAGMA foreign_keys = ON;", NULL, 0, &error);
+
+    rc = sqlite3_exec(db, buff, NULL, 0, &error);
+
+    if (rc != SQLITE_OK)
+    {
+        fprintf(stderr, "SQL error: %s\n", error);
+        sqlite3_free(error);
+        return -1;
+    }
+}
 
 
 bool add_user(char *login, char *password, int key)
@@ -99,13 +155,13 @@ void get_id_and_key(int client_socket, struct info *res) {
     char response[BUFSIZ];
     char *temp;
     sqlite3_stmt *stmt;
-    char *query_f = sqlite3_mprintf("SELECT ID, KEY FROM users WHERE LOGIN = '%s';", res->login);
+    char *query_f = sqlite3_mprintf("SELECT USER_ID, KEY FROM users WHERE LOGIN = '%s';", res->login);
     sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
     while (sqlite3_step(stmt) == SQLITE_ROW)
     {
         int cols = sqlite3_column_count(stmt); 
         for (int i = 0; i < cols; i++) {
-            if (strcmp(sqlite3_column_name(stmt, i), "ID") == 0) {
+            if (strcmp(sqlite3_column_name(stmt, i), "USER_ID") == 0) {
                 res->id = sqlite3_column_int(stmt, i);
             }
             else if (strcmp(sqlite3_column_name(stmt, i), "KEY") == 0) {
@@ -120,7 +176,7 @@ void get_id_and_key(int client_socket, struct info *res) {
 void get_login_by_id(struct info *res) {
 
     sqlite3_stmt *stmt = NULL;
-    char *query_f = sqlite3_mprintf("SELECT LOGIN FROM users WHERE ID = '%d';", res->friend_id);
+    char *query_f = sqlite3_mprintf("SELECT LOGIN FROM users WHERE USER_ID = '%d';", res->friend_id);
     sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
     if (sqlite3_step(stmt) == SQLITE_ROW) {
         strcpy(res->login, (char *)sqlite3_column_text(stmt, 0));
@@ -131,7 +187,7 @@ void get_login_by_id(struct info *res) {
 int get_id_by_login(char*login) {
     int id;
     sqlite3_stmt *stmt;
-    char *query_f = sqlite3_mprintf("SELECT ID FROM users WHERE LOGIN = '%s';", login);
+    char *query_f = sqlite3_mprintf("SELECT USER_ID FROM users WHERE LOGIN = '%s';", login);
     sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
     if (sqlite3_step(stmt) == SQLITE_ROW) {
         id = sqlite3_column_int(stmt, 0);   
@@ -231,7 +287,7 @@ bool save_message(struct info *res)
     if (sqlite3_step(stmt) == SQLITE_DONE) {
         printf("Message added!\n");
         stmt = NULL;
-        char *query_2 = sqlite3_mprintf("SELECT max(MESSAGE_ID) FROM messages WHERE SENDER = '%d';", res->id);
+        char *query_2 = sqlite3_mprintf("SELECT max(MESSAGE_ID) FROM messages WHERE USER_ID = '%d';", res->id);
         sqlite3_prepare_v2(db, query_2, -1, &stmt, 0);
         while (sqlite3_step(stmt) != SQLITE_DONE) {
             
@@ -251,7 +307,7 @@ bool save_message(struct info *res)
 bool delete_message(struct info *res) {
 
     sqlite3_stmt *stmt;
-    char *query_f = sqlite3_mprintf("DELETE FROM messages WHERE MESSAGE_ID = '%d' AND SENDER = '%d';", res->message_id, res->id);
+    char *query_f = sqlite3_mprintf("DELETE FROM messages WHERE MESSAGE_ID = '%d' AND USER_ID = '%d';", res->message_id, res->id);
     sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
     if (sqlite3_step(stmt) == SQLITE_DONE) {
         sqlite3_finalize(stmt);
@@ -302,7 +358,7 @@ void get_message(struct info *res) {
 bool key_checking(struct info *res) {
 
     sqlite3_stmt *stmt;
-    char *query_f = sqlite3_mprintf("SELECT KEY WHERE ID = '%d';", res->id);
+    char *query_f = sqlite3_mprintf("SELECT KEY WHERE USER_ID = '%d';", res->id);
     sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
     while (sqlite3_step(stmt) != SQLITE_DONE) {
         if (strcmp(res->key, sqlite3_column_text(stmt, 0)) == 0) { 
@@ -317,7 +373,7 @@ bool key_checking(struct info *res) {
 bool delete_user(struct info *res) {
 
     sqlite3_stmt *stmt;
-    char *query_f = sqlite3_mprintf("DELETE FROM users WHERE ID = '%d';", res->id);
+    char *query_f = sqlite3_mprintf("DELETE FROM users WHERE USER_ID = '%d';", res->id);
     sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
     if (sqlite3_step(stmt) == SQLITE_DONE) {
         sqlite3_finalize(stmt);
@@ -333,7 +389,7 @@ bool delete_user(struct info *res) {
 bool change_password(struct info *res) {
 
     sqlite3_stmt *stmt;
-    char *query_f = sqlite3_mprintf("UPDATE users SET PASSWORD = '%s' WHERE ID = '%d';", res->password, res->id);
+    char *query_f = sqlite3_mprintf("UPDATE users SET PASSWORD = '%s' WHERE USER_ID = '%d';", res->password, res->id);
     sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
     if (sqlite3_step(stmt) == SQLITE_DONE) {
         sqlite3_finalize(stmt);
@@ -349,7 +405,7 @@ bool change_password(struct info *res) {
 void load_messages(int client_socket, struct info *res) {
 
     sqlite3_stmt *stmt;
-    char *query_1 = sqlite3_mprintf("SELECT MESSAGE_ID, SENDER, MESSAGE, TIME FROM messages WHERE CHAT_ID = '%d' ORDER BY TIME ASC;", res->chat_id);
+    char *query_1 = sqlite3_mprintf("SELECT MESSAGE_ID, USER_ID, MESSAGE, TIME FROM messages WHERE CHAT_ID = '%d' ORDER BY TIME ASC;", res->chat_id);
     sqlite3_prepare_v2(db, query_1, -1, &stmt, 0);
     while (sqlite3_step(stmt) != SQLITE_DONE) {
 

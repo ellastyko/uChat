@@ -2,7 +2,7 @@
 
 void send_to_server(char *buf) {
     ssize_t result;
-    if ((result = send(3, buf, strlen(buf), 0)) == -1) {
+    if ((result = send(client_socket, buf, strlen(buf), 0)) == -1) {
         write(2, "Fail send\n", 11);
         
     }

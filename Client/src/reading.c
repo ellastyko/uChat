@@ -3,13 +3,15 @@
 void *reading() {
     char buf[BUFSIZ]; ssize_t result;
     while(1) {
-        if ( (result = recv(3, buf, sizeof(buf), 0)) == -1) { 
+        if ( (result = recv(client_socket, buf, sizeof(buf), 0)) == -1) { 
             write(2, "Fail recieve\n", 14);
+            close(client_socket);
+            break;
             
         }
         if ( result == 0 ) {
             write(2, "\nDisconnect!\n", 14); // Перестаем читать сервер
-            close(3);
+            close(client_socket);
             break;
         }
         else {
@@ -19,7 +21,13 @@ void *reading() {
             type_of_response(res);    
         }
     }
-    pthread_exit(NULL);
+    while(1) {
+        char you[10];
+        printf("Reconnect? "); scanf("%s", you);
+        if (Socket() != 1) {
+            reading();
+        }
+    }   
 }
 
 

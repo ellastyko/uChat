@@ -1,6 +1,6 @@
 #include "../inc/header.h"
 
-
+int client_socket = 0;
 
 int main(int argc, char *argv[])
 {

@@ -44,6 +44,10 @@ int Socket() {
     server.sin_family = AF_INET;  
     server.sin_addr.s_addr = INADDR_ANY; 
     server.sin_port = htons( PORT );
+    int flag = 1;  
+    if (-1 == setsockopt(server_socket, SOL_SOCKET, SO_KEEPALIVE, &flag, sizeof(flag))) {  
+        perror("setsockopt fail");
+    }
     if (bind(server_socket, (struct sockaddr *)&server , sizeof(server)) < 0) {
         perror("Bind failed\n");
         return 1;
@@ -81,7 +85,7 @@ int main()
         perror("Саnnot init db\n");
         exit(EXIT_FAILURE);
     }
-    create_db("CREATE TABLE users("\
+    /*create_db("CREATE TABLE users("\
            "ID             INTEGER PRIMARY KEY AUTOINCREMENT,"\
            "LOGIN          TEXT                NOT NULL,"\
            "PASSWORD       TEXT                NOT NULL,"\
@@ -97,7 +101,7 @@ int main()
            "SENDER          INTEGER                NOT NULL,"\
            "MESSAGE         TEXT                   NOT NULL,"\
            "TIME            INTEGER                NOT NULL, "\
-           "CHAT_ID         INTEGER                NOT NULL);", db);
+           "CHAT_ID         INTEGER                NOT NULL);", db);*/
     to_empty_online();     
     Socket();
     return 0;

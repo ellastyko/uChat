@@ -14,7 +14,7 @@
 #include "../../lib/cJSON.h"
 #include <malloc.h>
 #include <time.h>
-#define PORT 8030
+#define PORT 8031
 #define ADDR "localhost"
 
 
@@ -66,7 +66,8 @@ bool key_checking(struct info *res);
 
 // database
 int db_init(char *db_name);
-void create_db(char* statement, sqlite3* db);
+//void create_db(char* statement, sqlite3* db);
+int create_db(const char *up_script_path);
 
 // sign up
 bool check_login(char *login);
