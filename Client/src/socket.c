@@ -26,6 +26,5 @@ int Socket() {
         close(client_socket); 
         return 1;
     }
-    write(2, "\nConnected!\n", 13);
     return 0;
 }

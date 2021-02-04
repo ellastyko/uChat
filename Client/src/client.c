@@ -8,9 +8,34 @@ int main(int argc, char *argv[])
     Socket();
     pthread_t reads;
     pthread_create(&reads, NULL, reading, NULL);
-    //checking_local_storage(); //TODO Проверка локального хранилища на сохранненый пароль с именем
+    //checking_local_storage(); // Проверка локального хранилища на сохранненый пароль с именем
     
-    int action;
+    GtkCssProvider *cssProvider = gtk_css_provider_new ();
+    gtk_css_provider_load_from_path(cssProvider,"Client/css/style.css", NULL);
+    
+
+    gtk_init(&argc, &argv);
+
+    builder = gtk_builder_new();
+    builder = gtk_builder_new_from_file("Client/glade/new.glade");
+    
+    
+    window = GTK_WIDGET(gtk_builder_get_object(builder, "Window"));
+    entering();    
+
+    gtk_style_context_add_provider_for_screen(gdk_screen_get_default(), GTK_STYLE_PROVIDER(cssProvider), GTK_STYLE_PROVIDER_PRIORITY_USER);
+    gtk_builder_connect_signals(builder, NULL);
+
+    gtk_widget_show_all(window);   
+
+    gtk_main();
+
+    return 0;
+}
+
+
+
+/*int action;
     while(1) {
         printf("\nWhat do you want:\n 1 - Sign up\n 2 - Sign in\n");
         scanf("%d",&action);
@@ -36,6 +61,4 @@ int main(int argc, char *argv[])
                 default: break;
             }
         }
-    }
-    return 0;
-}
+    }*/

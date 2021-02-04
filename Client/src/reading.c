@@ -6,12 +6,14 @@ void *reading() {
         if ( (result = recv(client_socket, buf, sizeof(buf), 0)) == -1) { 
             write(2, "Fail recieve\n", 14);
             close(client_socket);
+            no_connection();
             break;
             
         }
         if ( result == 0 ) {
             write(2, "\nDisconnect!\n", 14); // Перестаем читать сервер
             close(client_socket);
+            no_connection();
             break;
         }
         else {
@@ -48,7 +50,9 @@ void type_of_response(struct info *res) {
             strcpy(cl_info.password, res->password);
             strcpy(cl_info.key, res->key);
             // saving(res.login, res.password) save login and parol in local storage
-            get_chats_info();           
+            get_chats_info();   
+            // gtk_widget_hide( window_log_in );
+            // gtk_widget_show( window_sign_up );      
         }
         else if (strcmp(res->action, "add_chat") == 0) {
 

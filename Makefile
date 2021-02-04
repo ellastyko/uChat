@@ -5,7 +5,7 @@ CLIENT_FILES = Client/src/*.c
 SERVER_FILES = Server/src/*.c
 LIBS = lib/*.c 
 
-GTK = `pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0`
+GTK = `pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0` -export-dynamic
 FLAGS = -std=c11 
 
 server: 

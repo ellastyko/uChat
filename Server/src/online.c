@@ -57,7 +57,7 @@ void delete_online(int client_socket) {
 
 }
 
-int check_online(int friend_id) {
+int find_friend(int friend_id) {
 
     int size = get_free();
     for (int i = 0; i < size; i++) {

@@ -14,7 +14,7 @@
 #include "../../lib/cJSON.h"
 #include <malloc.h>
 #include <time.h>
-#define PORT 8031
+#define PORT 8133
 #define ADDR "localhost"
 
 
@@ -56,7 +56,7 @@ void to_empty_online();
 void print_all();
 void to_be_online(int client_socket, struct info *res);
 void delete_online(int client_socket);
-int check_online(int friend_id);
+int find_friend(int friend_id);
 
 
 // requests

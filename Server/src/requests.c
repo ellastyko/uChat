@@ -34,7 +34,7 @@ int type_of_request(char *str, int client_socket)
     else if (strcmp(req->action, "sign_in") == 0)
     {
         if(verification(req->login, req->password) == true) {
-
+            
             get_id_and_key(client_socket, req);
             req->status = 1; // Successful
             send_response(client_socket, req);
@@ -82,7 +82,7 @@ int type_of_request(char *str, int client_socket)
 
         if (save_message(req) == true) { 
             get_message(req);
-            int new_socket = check_online(req->friend_id);
+            int new_socket = find_friend(req->friend_id);
             if (new_socket != -1) { 
                 strcpy(req->action, "get_message");
                 req->status = 1;

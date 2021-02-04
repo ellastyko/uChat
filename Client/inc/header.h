@@ -12,12 +12,13 @@
 #include <pthread.h>
 #include <gtk/gtk.h>
 #include<stdlib.h>
-#define PORT 8031
+#define PORT 8133
 #define ADDR "localhost"
 #include "../../lib/cJSON.h"
 #include <malloc.h>
 #include <pthread.h>
 int client_socket;
+
 
 typedef struct client_info
 {
@@ -89,3 +90,28 @@ void code();
 // reading
 void *reading();
 void type_of_response(struct info *res);
+
+// GTK
+void destroy();
+void no_connection();
+void entering();
+void to_sign_up();
+void to_log_in();
+
+// Widgets
+GtkBuilder *builder;
+
+GtkWidget *window;
+
+GtkContainer *Box;
+
+GtkEntry      *login;
+GtkEntry      *password;
+GtkEntry      *repeat;
+
+// VHOD
+GtkWidget      *To_Sign;
+GtkButton      *Log_in;
+// REG
+GtkButton      *To_Log;
+GtkButton      *Sign_up;

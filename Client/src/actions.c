@@ -11,11 +11,11 @@ void send_to_server(char *buf) {
 //  Функция регистрации
 void sign_up() {
 
-    struct info req; char repeat_password[20];
-
+    struct info req; 
     strcpy(req.action, "sign_up");  
     req.id = 0;
-    printf("Enter username: "); scanf("%s", req.login);
+
+    strcpy(req.login, gtk_entry_get_text(login)); 
     if (strlen(req.login) < 4) {
         write(2, "Login have to be more than 4 symbols\n", 38);
         return;
@@ -24,7 +24,8 @@ void sign_up() {
         write(2, "Banned symbol used in login\n", 29);
         return;
     } 
-    printf("Enter password: "); scanf("%s", req.password);
+
+    strcpy(req.password, gtk_entry_get_text(password));
     if (strlen(req.password) < 6) {
         write(2, "Password have to be more than 6 symbols\n", 38);
         return;
@@ -33,8 +34,7 @@ void sign_up() {
         write(2, "Banned symbol used in password\n", 32);
         return;
     } 
-    printf("Repeat password: "); scanf("%s", repeat_password);
-    if(strcmp(req.password, repeat_password) != 0) {
+    if(strcmp(req.password, gtk_entry_get_text(repeat)) != 0) {
         write(2, "Parols are different\n", 22);
         return;
     }
@@ -59,8 +59,8 @@ void sign_in() {
 
     strcpy(req.action, "sign_in");
     req.id = 0;
-    printf("Enter username: "); scanf("%s", req.login);
-    printf("Enter password: "); scanf("%s", req.password);
+    strcpy(req.login, gtk_entry_get_text(login));
+    strcpy(req.password, gtk_entry_get_text(password));
 
     req.chat_id = 0;
     req.friend_id = -1;
