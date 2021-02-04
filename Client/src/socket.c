@@ -26,5 +26,7 @@ int Socket() {
         close(client_socket); 
         return 1;
     }
+    pthread_t reads;
+    pthread_create(&reads, NULL, reading, NULL);
     return 0;
 }

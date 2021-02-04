@@ -14,7 +14,7 @@
 #include "../../lib/cJSON.h"
 #include <malloc.h>
 #include <time.h>
-#define PORT 8133
+#define PORT 8237
 #define ADDR "localhost"
 
 
@@ -24,7 +24,7 @@ int online;
 struct info
 {
     /* Request */
-    char action[15];
+    char action[25];
 
     int id;
     char login[20];
@@ -60,7 +60,7 @@ int find_friend(int friend_id);
 
 
 // requests
-int type_of_request(char *str, int client_socket);
+void type_of_request(char *str, int client_socket);
 void send_response(int client_socket, struct info *res);
 bool key_checking(struct info *res);
 

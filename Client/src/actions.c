@@ -14,31 +14,10 @@ void sign_up() {
     struct info req; 
     strcpy(req.action, "sign_up");  
     req.id = 0;
-
+    if (validation() != true) 
+        return;
     strcpy(req.login, gtk_entry_get_text(login)); 
-    if (strlen(req.login) < 4) {
-        write(2, "Login have to be more than 4 symbols\n", 38);
-        return;
-    }
-    if((validation(req.login)) == false) {
-        write(2, "Banned symbol used in login\n", 29);
-        return;
-    } 
-
     strcpy(req.password, gtk_entry_get_text(password));
-    if (strlen(req.password) < 6) {
-        write(2, "Password have to be more than 6 symbols\n", 38);
-        return;
-    }
-    if((validation(req.password)) == false) {
-        write(2, "Banned symbol used in password\n", 32);
-        return;
-    } 
-    if(strcmp(req.password, gtk_entry_get_text(repeat)) != 0) {
-        write(2, "Parols are different\n", 22);
-        return;
-    }
-
     strcpy(req.key, "");
      
     req.chat_id = 0;
@@ -47,27 +26,31 @@ void sign_up() {
     req.message_id = -1;
     req.time = -1;
        
-    
-    write(2, "Successful validation\n", 23);
     char *buf = stringify(&req); // To JSON
     send_to_server(buf);
 }
 
 //  Функция входа
 void sign_in() {
+
     struct info req;
 
     strcpy(req.action, "sign_in");
     req.id = 0;
     strcpy(req.login, gtk_entry_get_text(login));
     strcpy(req.password, gtk_entry_get_text(password));
+    if ((strcmp(req.login, "") == 0) || (strcmp(req.password, "") == 0)) {
+            return;
+    }
+    strcpy(req.key, "");
 
     req.chat_id = 0;
     req.friend_id = -1;
     strcpy(req.message, "");
     req.message_id = -1;
     req.time = -1;
-    
+    gtk_entry_set_text (login, "");
+    gtk_entry_set_text (password, "");
     char *buf = stringify(&req);
     send_to_server(buf);
 }
@@ -210,7 +193,6 @@ void get_chats_info() {
     strcpy(req.message, "");
     req.message_id = -1;
     req.time = -1; 
-    
 
     char *buf = stringify(&req);
     send_to_server(buf);
@@ -279,3 +261,21 @@ void open_chat() {
 }*/
 
 
+void availability_of_login() {
+
+    struct info req;
+
+    strcpy(req.action, "availability_of_login");
+    req.id = 0;
+    strcpy(req.login, gtk_entry_get_text(login));
+    strcpy(req.password, "");
+    strcpy(req.key, "");
+
+    req.chat_id = 0;
+    req.friend_id = -1;
+    strcpy(req.message, "");
+    req.message_id = -1;
+    req.time = -1;
+    char *buf = stringify(&req);
+    send_to_server(buf);
+}

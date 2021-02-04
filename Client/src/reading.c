@@ -19,17 +19,12 @@ void *reading() {
         else {
             //write(STDOUT_FILENO, buf, strlen(buf));
             strcpy(buf, decoding(buf));
+            //write(2, buf, strlen(buf));
             struct info *res = parse(buf);
             type_of_response(res);    
         }
     }
-    while(1) {
-        char you[10];
-        printf("Reconnect? "); scanf("%s", you);
-        if (Socket() != 1) {
-            reading();
-        }
-    }   
+    pthread_exit(NULL);    
 }
 
 
@@ -38,6 +33,18 @@ void type_of_response(struct info *res) {
     if (res->status != 1) {
         write(2, "Request isn`t executed\n", 24);
         write(2, res->message, strlen(res->message));
+        if (strcmp(res->action, "availability_of_login") == 0) {
+            gtk_widget_show (hint);
+            gtk_label_set_text(hint, res->message);
+        }
+        else if (strcmp(res->action, "sign_in") == 0) {
+            gtk_widget_show (hint);
+            gtk_label_set_text(hint, res->message);
+        }
+        else if (strcmp(res->action, "sign_up") == 0) {
+            gtk_widget_show (hint);
+            gtk_label_set_text(hint, res->message);
+        }
     }
     else {
         if (strcmp(res->action, "sign_up") == 0) {
@@ -51,8 +58,8 @@ void type_of_response(struct info *res) {
             strcpy(cl_info.key, res->key);
             // saving(res.login, res.password) save login and parol in local storage
             get_chats_info();   
-            // gtk_widget_hide( window_log_in );
-            // gtk_widget_show( window_sign_up );      
+            gtk_container_remove(Main, GTK_WIDGET(Box) );
+            gtk_style_context_add_provider_for_screen(gdk_screen_get_default(), GTK_STYLE_PROVIDER(sign_style), GTK_STYLE_PROVIDER_PRIORITY_USER);
         }
         else if (strcmp(res->action, "add_chat") == 0) {
 
@@ -71,6 +78,9 @@ void type_of_response(struct info *res) {
         }
         else if (strcmp(res->action, "delete_message") == 0) {
             write(2, "Message deleted\n", 17);
+        }
+        else if (strcmp(res->action, "availability_of_login") == 0) {
+            //gtk_widget_hide (hint);
         }
         else if (strcmp(res->action, "load_messages") == 0) {
 

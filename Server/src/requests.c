@@ -2,7 +2,7 @@
 
 
 // Главная функция обработки запросов //
-int type_of_request(char *str, int client_socket)
+void type_of_request(char *str, int client_socket)
 {
     ssize_t result;
     char *temp;
@@ -33,6 +33,7 @@ int type_of_request(char *str, int client_socket)
     }
     else if (strcmp(req->action, "sign_in") == 0)
     {
+        
         if(verification(req->login, req->password) == true) {
             
             get_id_and_key(client_socket, req);
@@ -139,22 +140,34 @@ int type_of_request(char *str, int client_socket)
 
         get_chats_info(client_socket, req);
     }
-    else if (strcmp(req->action, "update_chats")) {
+    else if (strcmp(req->action, "update_chats") == 0) {
 
         // Updating cache after sign in
     }
+    else if (strcmp(req->action, "availability_of_login") == 0) {
+
+        if (check_login(req->login) == false) {      
+
+            req->status = 0; // error status
+            strcpy(req->message, "This login isn`t available");
+            send_response(client_socket, req);       
+        }
+        else {
+            req->status = 1; 
+            send_response(client_socket, req);    
+        }
+    }   
     else {       
         write(2, "Unknown command!\n", 18);
-        return 0;
+        return;
     }
-    return 0;
+    return;
 }
 
 void send_response(int client_socket, struct info *res) {
     ssize_t result;
     char *temp;
     char response[BUFSIZ];
-
     temp = stringify(res);
     strcpy(response, temp);
 

@@ -2,7 +2,7 @@
 <!-- Generated with glade 3.22.2 -->
 <interface>
   <requires lib="gtk+" version="3.24"/>
-  <object class="GtkWindow" id="ОКНО №1">
+  <object class="GtkWindow" id="S1">
     <property name="can_focus">False</property>
     <property name="window_position">center</property>
     <property name="default_width">800</property>
@@ -141,7 +141,7 @@
       <class name="wrapper"/>
     </style>
   </object>
-  <object class="GtkWindow" id="ОКНО №2">
+  <object class="GtkWindow" id="S2">
     <property name="can_focus">False</property>
     <property name="window_position">center</property>
     <property name="default_width">800</property>
@@ -161,6 +161,7 @@
         <property name="valign">center</property>
         <property name="orientation">vertical</property>
         <property name="spacing">16</property>
+        <property name="homogeneous">True</property>
         <property name="baseline_position">bottom</property>
         <child>
           <object class="GtkLabel" id="Welcome1">

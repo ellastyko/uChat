@@ -43,3 +43,7 @@
   font: 300 12px 'Montserrat';
   color: #362BA9;
 }
+
+#hint {
+  color: red;
+}
