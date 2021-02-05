@@ -80,14 +80,13 @@ bool validation();
 void valid_of_log_in();
 struct info *parse(const char *const msg);
 char *stringify(struct info *info);
-int time_converter(int time);
+char time_converter(int time);
 void push_chat(int chat_id, int friend_id, char*login);
 void print_all();
 int get_free();
 int search(char *name);
 char *decoding(char *str);
 char *encoding(char *str);
-void code();
 
 // reading
 void *reading();

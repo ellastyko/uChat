@@ -16,7 +16,7 @@ sr:
 
 cl: 
 	cd Client/src/
-	$(COMPILER) $(LIBS) $(CLIENT_FILES) $(GTK)
+	$(COMPILER) $(FLAGS) $(LIBS) $(CLIENT_FILES) $(GTK)
 	@mv a.out client.o
 
 clear: 

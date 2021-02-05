@@ -1,6 +1,6 @@
 #include "../inc/header.h"
 
-
+// Validation when you wanna sign up
 bool validation() { 
 
     int ok = 0;
@@ -10,8 +10,8 @@ bool validation() {
     char log[20]; char pass[25];
     strcpy(log, gtk_entry_get_text( GTK_ENTRY(login) ));          
     strcpy(pass, gtk_entry_get_text( GTK_ENTRY(password) ));                      
-    for (int i = 0; i < strlen(log); i++) {
-        for (int j = 0; j < strlen(symbols); j++) { 
+    for (size_t i = 0; i < strlen(log); i++) {
+        for (size_t j = 0; j < strlen(symbols); j++) { 
             if (log[i] == symbols[j]) {
                 ok++;
             } 
@@ -26,8 +26,8 @@ bool validation() {
     if (strcmp(gtk_label_get_text (GTK_LABEL(hint)), "Banned symbol used in login") == 0) {
         gtk_label_set_text(GTK_LABEL(hint), "");
     }
-    for (int i = 0; i < strlen(pass); i++) {
-        for (int j = 0; j < strlen(symbols); j++) { 
+    for (size_t i = 0; i < strlen(pass); i++) {
+        for (size_t j = 0; j < strlen(symbols); j++) { 
             if (pass[i] == symbols[j]) {
                 ok++;
             } 
@@ -51,7 +51,7 @@ bool validation() {
     return true; 
 }  
 
-
+// Function that delete unactual warnings when you wanna log in
 void valid_of_log_in() {
 
     char log[20]; char pass[25];
@@ -101,12 +101,20 @@ void prepare() {
 }
 
 
-int time_converter(int time) {
-    char *str;
+char time_converter(int time) {
+    
+    char str[8];
+    char m[3]; 
     time %= 86400;
     int hours = time / 3600;
     int minutes = (time % 3600) / 60;
-    return 0;
+
+    sprintf(str, "%d", hours);
+    sprintf(m, "%d", minutes);
+    strcat(str, ":"); 
+    strcat(str, m); 
+
+    return *str;
 }
 
 
@@ -121,12 +129,13 @@ void push_chat(int chat_id, int friend_id, char*login) {
 
 int get_free() {
 
-    for (int i = 0; i < 100; i++) {
+    for (size_t i = 0; i < 100; i++) {
 
         if (chat[i].chat_id == -1 || chat[i].friend_id == -1 || strcmp(chat[i].login, "-1") == 0) {
             return i;
         }
     }
+    return -1;
 }
 
 void print_all() {
@@ -150,19 +159,9 @@ int search(char *name) {
     return -1;
 }
 
-void code() {
-    char text[500];
-    char *res;
-    printf("Enter text: "); scanf("%s", text);
-    res = encoding(text);
-    write(2, res, strlen(res));
-    res = decoding(text);
-    write(2, res, strlen(res));
-}
-
 char *decoding(char *str) {
 
-    for (int i = 0; i < strlen(str); i++) {
+    for (size_t i = 0; i < strlen(str); i++) {
         str[i] -= 2;
     }
     return str;
@@ -170,7 +169,7 @@ char *decoding(char *str) {
 
 char *encoding(char *str) {
 
-    for (int i = 0; i < strlen(str); i++) {
+    for (size_t i = 0; i < strlen(str); i++) {
         str[i] += 2;
     }
     return str;
