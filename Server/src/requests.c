@@ -44,7 +44,7 @@ void type_of_request(char *str, int client_socket)
         }
         else {
             req->status = 0; // error status
-            strcpy(req->message, "Login or parol isn`t correct!");
+            strcpy(req->message, "Login or password isn`t correct");
             send_response(client_socket, req);  
         }
     }

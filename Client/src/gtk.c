@@ -22,11 +22,6 @@ void entering() {
     gtk_widget_hide (Sign_up);
     gtk_widget_hide (hint);
 
-    // gtk_container_remove (Box, repeat);
-    // gtk_container_remove (Box, To_Log);
-    // gtk_container_remove (Box, Sign_up);
-    // gtk_container_remove (Box, hint);
-
 }
 
 void no_connection() {
@@ -40,23 +35,23 @@ void valid_login() {
         availability_of_login();
         validation();
     } 
+    else {
+        valid_of_log_in();
+    }
     
 }
 
 void valid_password() {
     if (STATE == 1) {
+        availability_of_login();
         validation();
     } 
-    
+    else {
+        valid_of_log_in();
+    }
 }
 
 void to_sign_up() {
-
-    // gtk_container_remove (Box, To_Sign);
-    // gtk_container_remove (Box, Log_in);
-    // gtk_container_add (Box, repeat);
-    // gtk_container_add (Box, To_Log);
-    // gtk_container_add (Box, Sign_up);  
 
     gtk_widget_hide (To_Sign);
     gtk_widget_hide (Log_in); 

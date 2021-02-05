@@ -112,6 +112,7 @@
                 <property name="invisible_char">●</property>
                 <property name="placeholder_text" translatable="yes">Repeat password</property>
                 <signal name="activate" handler="sign_up" swapped="no"/>
+                <signal name="changed" handler="valid_password" swapped="no"/>
                 <style>
                   <class name="input"/>
                 </style>

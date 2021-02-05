@@ -77,6 +77,7 @@ int Socket();
 // useful
 char *checking_local_storage();
 bool validation();
+void valid_of_log_in();
 struct info *parse(const char *const msg);
 char *stringify(struct info *info);
 int time_converter(int time);

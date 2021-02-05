@@ -56,6 +56,7 @@ void type_of_response(struct info *res) {
             strcpy(cl_info.login, res->login);
             strcpy(cl_info.password, res->password);
             strcpy(cl_info.key, res->key);
+            gtk_label_set_text(hint, "");
             // saving(res.login, res.password) save login and parol in local storage
             get_chats_info();   
             gtk_container_remove(Main, GTK_WIDGET(Box) );
@@ -80,7 +81,10 @@ void type_of_response(struct info *res) {
             write(2, "Message deleted\n", 17);
         }
         else if (strcmp(res->action, "availability_of_login") == 0) {
-            //gtk_widget_hide (hint);
+            //gtk_label_set_text(hint, "");
+             if (strcmp(gtk_label_get_text (hint), "This login isn`t available") == 0) {
+                gtk_widget_hide (hint);
+            }
         }
         else if (strcmp(res->action, "load_messages") == 0) {
 

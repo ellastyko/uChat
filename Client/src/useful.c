@@ -8,7 +8,6 @@ bool validation() {
                          'f', 'g', 'h', 'j', 'k', 'l', 'z', 'x', 'c', 'v', 'b', 'n', 'm', '1', 
                          '2', '3', '4', '5', '6', '7', '8', '9', '0' };
     char log[20]; char pass[25];
-    gtk_widget_hide (hint);
     strcpy(log, gtk_entry_get_text(login));          
     strcpy(pass, gtk_entry_get_text(password));                      
     for (int i = 0; i < strlen(log); i++) {
@@ -24,6 +23,9 @@ bool validation() {
         }
         ok = 0;
     }
+    if (strcmp(gtk_label_get_text (hint), "Banned symbol used in login") == 0) {
+        gtk_label_set_text(hint, "");
+    }
     for (int i = 0; i < strlen(pass); i++) {
         for (int j = 0; j < strlen(symbols); j++) { 
             if (pass[i] == symbols[j]) {
@@ -37,24 +39,51 @@ bool validation() {
         }
         ok = 0;
     }
-    if (strlen(log) < 4) {
-        gtk_widget_show (hint);
-        gtk_label_set_text(hint, "Login have to be more than 4 symbols");
-        return false;
+    if (strcmp(gtk_label_get_text (hint), "Banned symbol used in password") == 0) {
+        gtk_label_set_text(hint, "");
     }
-    if (strlen(pass) < 6) {
-        gtk_widget_show (hint);
-        gtk_label_set_text(hint, "Password have to be more than 6 symbols");
-        return false;
-    }
-    if(strcmp(pass, gtk_entry_get_text(repeat)) != 0) {
-        gtk_widget_show (hint);
-        gtk_label_set_text(hint,  "Parols are different\n");
-        return false;
-    }
-    gtk_widget_hide (hint);
-    return true;
+    if (strcmp(pass, gtk_entry_get_text(repeat)) == 0) {
+                
+        if (strcmp(gtk_label_get_text (hint), "Passwords are different") == 0) {
+            gtk_label_set_text(hint, "");
+        }
+    }       
+    return true; 
 }  
+
+
+void valid_of_log_in() {
+
+    char log[20]; char pass[25];
+        strcpy ( log, gtk_entry_get_text(login));
+        strcpy ( pass, gtk_entry_get_text(password));
+        
+
+        if ((strcmp(log, "") != 0) || (strcmp(pass, "") != 0)) {
+                if (strcmp(gtk_label_get_text (hint), "Input fields are empty") == 0) {
+
+                gtk_widget_hide (hint);
+                gtk_label_set_text(hint, "");
+            }       
+        }
+    
+        if (strcmp(log, "") != 0) {
+            
+            if (strcmp(gtk_label_get_text (hint), "Input login") == 0) {
+                    gtk_widget_hide (hint);
+                    gtk_label_set_text(hint, "");
+            }
+        }
+           
+        if (strcmp(pass, "") != 0) {
+            
+            if (strcmp(gtk_label_get_text (hint), "Input password") == 0) {
+                    gtk_widget_hide (hint);
+                    gtk_label_set_text(hint, "");
+            }                    
+        }
+}
+
 
 void prepare() {
 
