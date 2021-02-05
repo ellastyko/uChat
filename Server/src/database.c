@@ -82,19 +82,19 @@ int create_db(const char *up_script_path)
         sqlite3_free(error);
         return -1;
     }
+    return 0;
 }
 
 
 bool add_user(char *login, char *password, int key)
 {
     sqlite3_stmt *stmt = NULL;
-    int rc;
     char *query_f = sqlite3_mprintf("INSERT INTO users VALUES(NULL,'%s','%s','%i')",
                                     login,
                                     password,
                                     key);
 
-    rc = sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
+    sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
     if (sqlite3_step(stmt) == SQLITE_DONE) {
         return true;
     }
@@ -108,7 +108,7 @@ bool check_login(char *login) {
     sqlite3_stmt *stmt;
     sqlite3_prepare_v2(db, "SELECT LOGIN FROM users", -1, &stmt, NULL);
     while (sqlite3_step(stmt) != SQLITE_DONE) {
-        const char*login2 = sqlite3_column_text(stmt, 0);
+        const char*login2 = (const char *)sqlite3_column_text(stmt, 0);
         if (strcmp(login, login2) == 0) {
             sqlite3_finalize(stmt);
             return false;
@@ -125,7 +125,7 @@ bool verification(char *login, char *password) {
     int state = 0; // Need to equel 2
     sqlite3_prepare_v2(db, "SELECT LOGIN FROM users", -1, &stmt, NULL);
     while (sqlite3_step(stmt) != SQLITE_DONE) {
-        const char*login2 = sqlite3_column_text(stmt, 0);
+        const char*login2 = (const char *)sqlite3_column_text(stmt, 0);
         if (strcmp(login, login2) == 0) {   
             state += 1;    // +1 if login correct
         }
@@ -133,7 +133,7 @@ bool verification(char *login, char *password) {
     stmt = NULL;
     sqlite3_prepare_v2(db, "SELECT PASSWORD FROM users", -1, &stmt, NULL);
     while (sqlite3_step(stmt) != SQLITE_DONE) {
-        const char*password2 = sqlite3_column_text(stmt, 0);
+        const char*password2 = (const char *)sqlite3_column_text(stmt, 0);
         if (strcmp(password, password2) == 0) {
             state += 1; //+1 if password correct
         }
@@ -149,11 +149,9 @@ bool verification(char *login, char *password) {
 }
 
 
-void get_id_and_key(int client_socket, struct info *res) {
+void get_id_and_key(struct info *res) {
 
-    ssize_t result;
-    char response[BUFSIZ];
-    char *temp;
+
     sqlite3_stmt *stmt;
     char *query_f = sqlite3_mprintf("SELECT USER_ID, KEY FROM users WHERE LOGIN = '%s';", res->login);
     sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
@@ -200,12 +198,11 @@ int get_id_by_login(char*login) {
 bool add_chat(struct info *res) {
 
     sqlite3_stmt *stmt = NULL;
-    int rc;
     char *query_f = sqlite3_mprintf("INSERT INTO chats VALUES(NULL,'%i','%i')",
                                     res->id,
                                     res->friend_id); // id of your friend 
 
-    rc = sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
+    sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
     if (sqlite3_step(stmt) == SQLITE_DONE) {
         sqlite3_finalize(stmt);
         return true;
@@ -246,7 +243,7 @@ void get_chats_info(int client_socket, struct info *res) {
         
 		res->chat_id = sqlite3_column_int(stmt, 0);      
 		res->friend_id = sqlite3_column_int(stmt, 1);
-        get_login_by_id(res); // Login
+        get_login_by_id(res); 
         if (res->chat_id != -1 && res->friend_id != -1 && strcmp(res->login, "") != 0)	{
             
             res->status = 1; 
@@ -260,7 +257,7 @@ void get_chats_info(int client_socket, struct info *res) {
 
         res->chat_id = sqlite3_column_int(stmt, 0);      
 		res->friend_id = sqlite3_column_int(stmt, 1);
-        get_login_by_id(res); // Login
+        get_login_by_id(res); 
         if (res->chat_id != -1 && res->friend_id != -1 && strcmp(res->login, "") != 0)	{
 
             res->status = 1; 
@@ -320,7 +317,7 @@ bool delete_message(struct info *res) {
     }
 }
 
-void get_message(struct info *res) {
+void get_message() {
 
     sqlite3_stmt *stmt = NULL;
 
@@ -343,10 +340,6 @@ void get_message(struct info *res) {
 			case (SQLITE_INTEGER):
 				printf("%d, ", sqlite3_column_int(stmt, i));
 				break;
-			case (SQLITE_FLOAT):
-				printf("%g, ", sqlite3_column_double(stmt, i));
-				break;
-                
 			default:
 				break;
 			}
@@ -361,7 +354,7 @@ bool key_checking(struct info *res) {
     char *query_f = sqlite3_mprintf("SELECT KEY WHERE USER_ID = '%d';", res->id);
     sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
     while (sqlite3_step(stmt) != SQLITE_DONE) {
-        if (strcmp(res->key, sqlite3_column_text(stmt, 0)) == 0) { 
+        if (strcmp(res->key, (char *)sqlite3_column_text(stmt, 0)) == 0) { 
             sqlite3_finalize(stmt);
             return true;
         }
@@ -411,7 +404,7 @@ void load_messages(int client_socket, struct info *res) {
 
         res->message_id = sqlite3_column_int(stmt, 0);
         res->id = sqlite3_column_int(stmt, 1);
-        strcpy(res->message, sqlite3_column_text(stmt, 2));
+        strcpy(res->message, (char *)sqlite3_column_text(stmt, 2));
         res->time = sqlite3_column_int(stmt, 3);
 
         if (res->chat_id != -1 || res->id != -1 || strcmp(res->login, "") != 0)	{
@@ -422,41 +415,4 @@ void load_messages(int client_socket, struct info *res) {
     }
     sqlite3_finalize(stmt);
 }
-
-/*
-void db_print_all() { //db_user_t user
-    sqlite3_stmt *stmt;
-    sqlite3_prepare_v2(db, "SELECT * FROM users", -1, &stmt, NULL);
-    while (sqlite3_step(stmt) != SQLITE_DONE) {
-		int i;
-		int num_cols = sqlite3_column_count(stmt);
-		
-		for (i = 0; i < num_cols; i++)
-		{
-			switch (sqlite3_column_type(stmt, i))
-			{
-			case (SQLITE3_TEXT):
-				printf("%s, ", sqlite3_column_text(stmt, i));
-				break;
-			case (SQLITE_INTEGER):
-				printf("%d, ", sqlite3_column_int(stmt, i));
-				break;
-			case (SQLITE_FLOAT):
-				printf("%g, ", sqlite3_column_double(stmt, i));
-				break;
-                
-			default:
-				break;
-			}
-		}
-		printf("\n");
-
-	}
-
-	sqlite3_finalize(stmt);
-
-	sqlite3_close(db);
-
-
-}*/
 

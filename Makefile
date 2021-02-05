@@ -1,4 +1,4 @@
-all: clear server client
+all: clear sr cl
 
 COMPILER = gcc
 CLIENT_FILES = Client/src/*.c
@@ -6,20 +6,23 @@ SERVER_FILES = Server/src/*.c
 LIBS = lib/*.c 
 
 GTK = `pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0` -export-dynamic
-FLAGS = -std=c11 
+FLAGS = -std=c11 -Wall -Wextra -Wpedantic -Werror
 
-server: 
+sr: 
 	cd Server/src/
-	$(COMPILER) $(FLAGS) $(LIBS) -o server.o $(SERVER_FILES) -pthread -lsqlite3
+	$(COMPILER) $(FLAGS) $(LIBS) $(SERVER_FILES) -pthread -lsqlite3 
+	#delete pthread in mac
+	@mv a.out server.o
 
-client: 
+cl: 
 	cd Client/src/
-	$(COMPILER) -o client.o $(LIBS) $(CLIENT_FILES) $(GTK)
+	$(COMPILER) $(LIBS) $(CLIENT_FILES) $(GTK)
+	@mv a.out client.o
 
 clear: 
 	rm -rf server.o
 	rm -rf client.o
-	rm -rf obj
+
 
 
 

@@ -28,6 +28,7 @@ int get_free() {
             return i;
         }
     }
+    return -1;
 }
 
 void print_all() {

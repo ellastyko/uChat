@@ -25,7 +25,6 @@ void *connection(void *cl_socket)
         type_of_request(request, client_socket);
         memset(&request, 0, sizeof(request));
     }
-    write(2, "Close thread\n", 14);
     pthread_exit(NULL);   
 }
 
@@ -58,16 +57,14 @@ int Socket() {
     printf("Listening...\n");
     
     pthread_t pthread; 
-    int lenth = sizeof(client);
+    socklen_t lenth = sizeof(client);
     while(1)
     {
         client_socket = accept(server_socket, (struct sockaddr *)&client, &lenth);
         if (client_socket < 0) {
             perror("Accept failed\n");
         }
-        write(2, "Connection accepted\n", 21);   
-        online++; 
-        printf("Online: %i\n", online);        
+        write(2, "Connection accepted\n", 21);        
         if ((pthread_create(&pthread, NULL, connection, &client_socket)) == 1) {
             perror("Failed thread\n");
         }

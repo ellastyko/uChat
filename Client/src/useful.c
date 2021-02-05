@@ -8,8 +8,8 @@ bool validation() {
                          'f', 'g', 'h', 'j', 'k', 'l', 'z', 'x', 'c', 'v', 'b', 'n', 'm', '1', 
                          '2', '3', '4', '5', '6', '7', '8', '9', '0' };
     char log[20]; char pass[25];
-    strcpy(log, gtk_entry_get_text(login));          
-    strcpy(pass, gtk_entry_get_text(password));                      
+    strcpy(log, gtk_entry_get_text( GTK_ENTRY(login) ));          
+    strcpy(pass, gtk_entry_get_text( GTK_ENTRY(password) ));                      
     for (int i = 0; i < strlen(log); i++) {
         for (int j = 0; j < strlen(symbols); j++) { 
             if (log[i] == symbols[j]) {
@@ -18,13 +18,13 @@ bool validation() {
         }
         if (ok != 1) {
             gtk_widget_show (hint);
-            gtk_label_set_text(hint, "Banned symbol used in login");
+            gtk_label_set_text(GTK_LABEL(hint), "Banned symbol used in login");
             return false;
         }
         ok = 0;
     }
-    if (strcmp(gtk_label_get_text (hint), "Banned symbol used in login") == 0) {
-        gtk_label_set_text(hint, "");
+    if (strcmp(gtk_label_get_text (GTK_LABEL(hint)), "Banned symbol used in login") == 0) {
+        gtk_label_set_text(GTK_LABEL(hint), "");
     }
     for (int i = 0; i < strlen(pass); i++) {
         for (int j = 0; j < strlen(symbols); j++) { 
@@ -34,18 +34,18 @@ bool validation() {
         }
         if (ok != 1) {
             gtk_widget_show (hint);
-            gtk_label_set_text(hint, "Banned symbol used in password");
+            gtk_label_set_text(GTK_LABEL(hint), "Banned symbol used in password");
             return false;
         }
         ok = 0;
     }
-    if (strcmp(gtk_label_get_text (hint), "Banned symbol used in password") == 0) {
-        gtk_label_set_text(hint, "");
+    if (strcmp(gtk_label_get_text (GTK_LABEL(hint)), "Banned symbol used in password") == 0) {
+        gtk_label_set_text(GTK_LABEL (hint), "");
     }
-    if (strcmp(pass, gtk_entry_get_text(repeat)) == 0) {
+    if (strcmp(pass, gtk_entry_get_text( GTK_ENTRY(repeat) )) == 0) {
                 
-        if (strcmp(gtk_label_get_text (hint), "Passwords are different") == 0) {
-            gtk_label_set_text(hint, "");
+        if (strcmp(gtk_label_get_text (GTK_LABEL(hint)), "Passwords are different") == 0) {
+            gtk_label_set_text(GTK_LABEL(hint), "");
         }
     }       
     return true; 
@@ -55,31 +55,30 @@ bool validation() {
 void valid_of_log_in() {
 
     char log[20]; char pass[25];
-        strcpy ( log, gtk_entry_get_text(login));
-        strcpy ( pass, gtk_entry_get_text(password));
-        
+    strcpy(log, gtk_entry_get_text( GTK_ENTRY(login) ));          
+    strcpy(pass, gtk_entry_get_text( GTK_ENTRY(password) ));       
 
-        if ((strcmp(log, "") != 0) || (strcmp(pass, "") != 0)) {
-                if (strcmp(gtk_label_get_text (hint), "Input fields are empty") == 0) {
+    if ((strcmp(log, "") != 0) || (strcmp(pass, "") != 0)) {
+        if (strcmp(gtk_label_get_text (GTK_LABEL(hint)), "Input fields are empty") == 0) {
 
-                gtk_widget_hide (hint);
-                gtk_label_set_text(hint, "");
-            }       
-        }
+            gtk_widget_hide (hint);
+            gtk_label_set_text(GTK_LABEL(hint), "");
+        }       
+    }
     
         if (strcmp(log, "") != 0) {
             
-            if (strcmp(gtk_label_get_text (hint), "Input login") == 0) {
+            if (strcmp(gtk_label_get_text (GTK_LABEL (hint)), "Input login") == 0) {
                     gtk_widget_hide (hint);
-                    gtk_label_set_text(hint, "");
+                    gtk_label_set_text(GTK_LABEL(hint), "");
             }
         }
            
         if (strcmp(pass, "") != 0) {
             
-            if (strcmp(gtk_label_get_text (hint), "Input password") == 0) {
+            if (strcmp(gtk_label_get_text (GTK_LABEL(hint)), "Input password") == 0) {
                     gtk_widget_hide (hint);
-                    gtk_label_set_text(hint, "");
+                    gtk_label_set_text(GTK_LABEL(hint), "");
             }                    
         }
 }

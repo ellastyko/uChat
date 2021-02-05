@@ -3,7 +3,7 @@
 // Сделать ответы сервера в формате JSON
 char *decoding(char *str) {
 
-    for (int i = 0; i < strlen(str); i++) {
+    for (size_t i = 0; i < strlen(str); i++) {
         str[i] -= 2;
     }
     return str;
@@ -11,7 +11,7 @@ char *decoding(char *str) {
 
 char *encoding(char *str) {
 
-    for (int i = 0; i < strlen(str); i++) {
+    for (size_t i = 0; i < strlen(str); i++) {
         str[i] += 2;
     }
     return str;

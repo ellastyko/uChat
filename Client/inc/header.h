@@ -15,7 +15,7 @@
 #define PORT 8237
 #define ADDR "localhost"
 #include "../../lib/cJSON.h"
-#include <malloc.h>
+#include <malloc.h> // #include <malloc/malloc.h>
 #include <pthread.h>
 int client_socket;
 

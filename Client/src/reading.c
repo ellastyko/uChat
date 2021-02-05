@@ -35,15 +35,15 @@ void type_of_response(struct info *res) {
         write(2, res->message, strlen(res->message));
         if (strcmp(res->action, "availability_of_login") == 0) {
             gtk_widget_show (hint);
-            gtk_label_set_text(hint, res->message);
+            gtk_label_set_text(GTK_LABEL(hint), res->message);
         }
         else if (strcmp(res->action, "sign_in") == 0) {
             gtk_widget_show (hint);
-            gtk_label_set_text(hint, res->message);
+            gtk_label_set_text(GTK_LABEL(hint), res->message);
         }
         else if (strcmp(res->action, "sign_up") == 0) {
             gtk_widget_show (hint);
-            gtk_label_set_text(hint, res->message);
+            gtk_label_set_text(GTK_LABEL(hint), res->message);
         }
     }
     else {
@@ -56,7 +56,7 @@ void type_of_response(struct info *res) {
             strcpy(cl_info.login, res->login);
             strcpy(cl_info.password, res->password);
             strcpy(cl_info.key, res->key);
-            gtk_label_set_text(hint, "");
+            gtk_label_set_text(GTK_LABEL(hint), "");
             // saving(res.login, res.password) save login and parol in local storage
             get_chats_info();   
             gtk_container_remove(Main, GTK_WIDGET(Box) );
@@ -82,7 +82,7 @@ void type_of_response(struct info *res) {
         }
         else if (strcmp(res->action, "availability_of_login") == 0) {
             //gtk_label_set_text(hint, "");
-             if (strcmp(gtk_label_get_text (hint), "This login isn`t available") == 0) {
+             if (strcmp(gtk_label_get_text (GTK_LABEL(hint)), "This login isn`t available") == 0) {
                 gtk_widget_hide (hint);
             }
         }

@@ -4,9 +4,6 @@
 // Главная функция обработки запросов //
 void type_of_request(char *str, int client_socket)
 {
-    ssize_t result;
-    char *temp;
-    char response[BUFSIZ];
     
     struct info *req = parse(str);
 
@@ -36,7 +33,7 @@ void type_of_request(char *str, int client_socket)
         
         if(verification(req->login, req->password) == true) {
             
-            get_id_and_key(client_socket, req);
+            get_id_and_key(req);
             req->status = 1; // Successful
             send_response(client_socket, req);
             to_be_online(client_socket, req);
@@ -82,7 +79,7 @@ void type_of_request(char *str, int client_socket)
     else if (strcmp(req->action, "send_message") == 0)  {
 
         if (save_message(req) == true) { 
-            get_message(req);
+            get_message();
             int new_socket = find_friend(req->friend_id);
             if (new_socket != -1) { 
                 strcpy(req->action, "get_message");

@@ -16,38 +16,38 @@ void sign_up() {
     req.id = 0;
     if (validation() != true) 
         return;
-    strcpy(req.login, gtk_entry_get_text(login)); 
-    strcpy(req.password, gtk_entry_get_text(password));
+    strcpy(req.login, gtk_entry_get_text( GTK_ENTRY(login) ));
+    strcpy(req.password, gtk_entry_get_text( GTK_ENTRY(password) ));
 
     if (strlen(req.login) < 4) {
         
-        gtk_label_set_text(hint, "Login have to be more than 4 symbols");
+        gtk_label_set_text(GTK_LABEL(hint), "Login have to be more than 4 symbols");
         gtk_widget_show (hint);
         return;
     }
     else {
-        if (strcmp(gtk_label_get_text (hint), "Login have to be more than 4 symbols") == 0) {
-            gtk_label_set_text(hint, "");
+        if (strcmp(gtk_label_get_text (GTK_LABEL(hint)), "Login have to be more than 4 symbols") == 0) {
+            gtk_label_set_text(GTK_LABEL(hint), "");
         }
         if (strlen(req.password) < 6) {
         
-            gtk_label_set_text(hint, "Password have to be more than 6 symbols");
+            gtk_label_set_text(GTK_LABEL(hint), "Password have to be more than 6 symbols");
             gtk_widget_show (hint);
             return;
         }
         else {
-            if (strcmp(gtk_label_get_text (hint), "Password have to be more than 6 symbols") == 0) {
-                gtk_label_set_text(hint, "");
+            if (strcmp(gtk_label_get_text (GTK_LABEL (hint)), "Password have to be more than 6 symbols") == 0) {
+                gtk_label_set_text(GTK_LABEL (hint), "");
             }
-            if (strcmp(req.password, gtk_entry_get_text(repeat)) != 0) {
+            if (strcmp(req.password, gtk_entry_get_text(GTK_ENTRY(repeat))) != 0) {
                 
-                gtk_label_set_text(hint,  "Passwords are different");
+                gtk_label_set_text(GTK_LABEL (hint),  "Passwords are different");
                 gtk_widget_show (hint);
                 return;
             }
             else {
-                if (strcmp(gtk_label_get_text (hint), "Passwords are different") == 0) {
-                    gtk_label_set_text(hint, "");
+                if (strcmp(gtk_label_get_text (GTK_LABEL (hint)), "Passwords are different") == 0) {
+                    gtk_label_set_text(GTK_LABEL (hint), "");
                 }
             }
         }
@@ -73,40 +73,40 @@ void sign_in() {
 
     strcpy(req.action, "sign_in");
     req.id = 0;
-    strcpy(req.login, gtk_entry_get_text(login));
-    strcpy(req.password, gtk_entry_get_text(password));
+    strcpy(req.login, gtk_entry_get_text( GTK_ENTRY(login) ));
+    strcpy(req.password, gtk_entry_get_text( GTK_ENTRY(password) ));
     if ((strcmp(req.login, "") == 0) && (strcmp(req.password, "") == 0)) {
             
-            gtk_label_set_text(hint,  "Input fields are empty");
+            gtk_label_set_text(GTK_LABEL(hint),  "Input fields are empty");
             gtk_widget_show (hint);
             return;
     }
     else {
-        if (strcmp(gtk_label_get_text (hint), "Input fields are empty") == 0) {
+        if (strcmp(gtk_label_get_text (GTK_LABEL(hint)), "Input fields are empty") == 0) {
             gtk_widget_hide (hint);
-            gtk_label_set_text(hint, "");
+            gtk_label_set_text(GTK_LABEL(hint), "");
         }
         if (strcmp(req.login, "") == 0) {
             
-            gtk_label_set_text(hint,  "Input login");
+            gtk_label_set_text(GTK_LABEL(hint),  "Input login");
             gtk_widget_show (hint);
             return;
         }
         else {
-            if (strcmp(gtk_label_get_text (hint), "Input login") == 0) {
+            if (strcmp(gtk_label_get_text (GTK_LABEL(hint)), "Input login") == 0) {
                 gtk_widget_hide (hint);
-                gtk_label_set_text(hint, "");
+                gtk_label_set_text(GTK_LABEL(hint), "");
             }
             if (strcmp(req.password, "") == 0) {
             
-                gtk_label_set_text(hint,  "Input password");
+                gtk_label_set_text(GTK_LABEL(hint),  "Input password");
                 gtk_widget_show (hint);
                 return;
             }
             else {
-                if (strcmp(gtk_label_get_text (hint), "Input password") == 0) {
+                if (strcmp(gtk_label_get_text (GTK_LABEL(hint)), "Input password") == 0) {
                     gtk_widget_hide (hint);
-                    gtk_label_set_text(hint, "");
+                    gtk_label_set_text(GTK_LABEL(hint), "");
                 }
             }
         }
@@ -120,8 +120,8 @@ void sign_in() {
     strcpy(req.message, "");
     req.message_id = -1;
     req.time = -1;
-    gtk_entry_set_text (login, "");
-    gtk_entry_set_text (password, "");
+    gtk_entry_set_text (GTK_ENTRY(login), "");
+    gtk_entry_set_text (GTK_ENTRY(password), "");
     char *buf = stringify(&req);
     send_to_server(buf);
 }
@@ -338,7 +338,7 @@ void availability_of_login() {
 
     strcpy(req.action, "availability_of_login");
     req.id = 0;
-    strcpy(req.login, gtk_entry_get_text(login));
+    strcpy(req.login, gtk_entry_get_text( GTK_ENTRY(login) ));
     strcpy(req.password, "");
     strcpy(req.key, "");
 

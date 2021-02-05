@@ -12,7 +12,7 @@
 #include <sqlite3.h>
 #include <time.h>
 #include "../../lib/cJSON.h"
-#include <malloc.h>
+#include <malloc.h> // #include <malloc/malloc.h>
 #include <time.h>
 #define PORT 8237
 #define ADDR "localhost"
@@ -75,7 +75,7 @@ bool add_user(char *login, char *password, int key);
 
 // Sign in
 bool verification(char *login, char *password);
-void get_id_and_key(int client_socket, struct info *res);
+void get_id_and_key(struct info *res);
 void get_chat_id_by_users(struct info *res);
 
 // Get login by id
@@ -91,7 +91,7 @@ void get_chats_info(int client_socket, struct info *res);
 
 // Send message
 bool save_message(struct info *res);
-void get_message(struct info *res);
+void get_message();
 
 // Delete message
 bool delete_message(struct info *res);
@@ -106,8 +106,10 @@ bool change_password(struct info *res);
 void load_messages(int client_socket, struct info *res);
 
 // useful
-char *stringify(struct info *req);
-struct info *parse(const char *const msg);
 int key();
 char *decoding(char *str);
 char *encoding(char *str);
+
+// json
+char *stringify(struct info *req);
+struct info *parse(const char *const msg);
