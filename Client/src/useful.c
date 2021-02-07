@@ -190,19 +190,7 @@ char *encoding(char *str) {
     return str;
 }
 
-
-void valid_login() {
-    if (STATE == 1)  {
-        availability_of_login();
-        validation();
-    } 
-    else {
-        valid_of_log_in();
-    }
-    
-}
-
-void valid_password() {
+void valid() {
     if (STATE == 1) {
         availability_of_login();
         validation();

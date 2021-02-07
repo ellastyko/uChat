@@ -1,57 +1,131 @@
 #include "../inc/header.h"
 
+int auto_sign() {
+     
+    client_info_t *ld;
+    ld = get_local_data(LD_PATH);
 
-// 0 - reading
-// 1 - write 
-// 2 - delete
-
-//int local_storage(int act) {
-
-    // char *line; 
-    // if (act == 0) { // READ BEFORE SIGN IN
-    //     // cache
-    //     FILE *file = fopen("Client/storage/data.txt", "r");
-    //     fgets(line, 255, file);
-    //     printf("%s", line);
-    //     fclose(file);
-    //     if (strcmp(line, "") == 0) {
-    //         write(2, "There is nothing!\n", 19);
-    //         return 0;
-    //     }
-    //     else {
+    if (ld) {
+        strcpy(cl_info.login, ld->login);
+        strcpy(cl_info.password, ld->password);
+        //sign_in();
+        return 0;
+    }
+    else { 
+        printf("Cannt read localdata");
+        return EXIT_FAILURE;
+    }
+}
 
 
-    //         struct info *req;
-    //         strcpy(req->action, "signin");
-    //         strcpy(req.login, );
-    //         strcpy(req.password, );  
-    //         strcpy(req.message, "");
-    //         strcpy(req.time, ""); 
-    //         strcpy(req.receiver, "");
-    //         char *buf = stringify(&req);
-    //         send_to_server(buf);
-    //     }
+int update_localdata(client_info_t *data, const char *const ld_path)
+{
+    if (!data) {
+        return 0;
+    }
 
-    // }
-    // // Rewrite after sign in
-    // else if (act == 1) { 
+    char *data_json = localdata_to_json(data);
+    FILE *fp;
 
-    //     FILE *file = fopen("data.txt", "r");
-    //     fgets(line, 255, file);
-    //     printf("%s", line);
-    //     fclose(file);
-    //     if (strcmp(line, "") == 0) {
-    //         write(2, "There is nothing!\n", 19);
-    //         return 0;
-    //     }
-    //     else {
+    fp = fopen(ld_path, "w");
 
-    //     }
-    // }
-    // // Logout or unsuccessful log in
-    // else if (act == 2) { 
-        
-    //     return 0;
-    // }
-    //return 0; // error
-//}
+    if (fp) {
+        fprintf(fp, "%s", data_json);
+        fclose(fp);
+    }
+    else {
+        printf("Error while opening the file\n");
+        return 0;
+    }
+
+    return 1;
+}
+
+client_info_t *get_local_data(char *ld_path)
+{
+    client_info_t *res;
+    char *fcontent = NULL;
+    long fsize = 0;
+    FILE *fp;
+
+    fp = fopen(ld_path, "rb");
+
+    if (fp)
+    {
+        fseek(fp, 0, SEEK_END);
+        fsize = ftell(fp);
+        fseek(fp, 0, SEEK_SET);
+
+        fcontent = malloc(fsize);
+        fread(fcontent, 1, fsize, fp);
+
+        if (fcontent) {
+            res = parse_localdata(fcontent);
+
+            if (!res) {
+                printf("Cann`t parse localdata\n");
+                return NULL;
+            }
+
+            free(fcontent);
+            fclose(fp);
+
+            return res;
+        }
+        else {
+            printf("Data is null\n");
+            return NULL;
+        }
+    }
+    else {
+        printf("File doesn`t exists\n");
+        return NULL;
+    }
+
+    return NULL;
+}
+
+
+client_info_t *parse_localdata(const char *const data)
+{
+    client_info_t *res = malloc(sizeof(client_info_t));
+    const cJSON *login = NULL;
+    const cJSON *password = NULL;
+
+    cJSON *msg_json = cJSON_Parse(data);
+
+    login = cJSON_GetObjectItemCaseSensitive(msg_json, "login");
+
+    if (login == NULL || login->valuestring == NULL)
+        return NULL;
+
+    password = cJSON_GetObjectItemCaseSensitive(msg_json, "password");
+
+    if (password == NULL || login->valuestring == NULL)
+        return NULL;
+
+    strcpy(res->login, login->valuestring);
+    strcpy(res->password, password->valuestring);
+
+    cJSON_Delete(msg_json);
+
+    return res;
+}
+
+
+char *localdata_to_json(client_info_t *data)
+{
+    char *string = NULL;
+
+    cJSON *json_data = cJSON_CreateObject();
+
+    cJSON_AddStringToObject(json_data, "login", data->login);
+
+    cJSON_AddStringToObject(json_data, "password", data->password);
+
+    string = cJSON_Print(json_data);
+
+    cJSON_Delete(json_data);
+
+    return string;
+}

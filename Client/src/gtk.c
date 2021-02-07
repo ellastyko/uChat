@@ -20,7 +20,7 @@ void SIGN_BOXES() {
 }
 
 void MAIN_BOXES() {
-
+    
     Main = GTK_CONTAINER(gtk_builder_get_object(builder, "Main"));
 
     friends = GTK_CONTAINER(gtk_builder_get_object(builder, "friends"));
@@ -98,8 +98,24 @@ void log_out() {
     strcpy(cl_info.login, "");
     strcpy(cl_info.password, "");
     strcpy(cl_info.key, "");
+    STATE = 0;
 }
 
 void theme () {
-    //Change theme
+    if (gtk_switch_get_state ( GTK_SWITCH (Theme) ) == true) {
+        gtk_style_context_add_provider_for_screen(gdk_screen_get_default(), GTK_STYLE_PROVIDER(style), GTK_STYLE_PROVIDER_PRIORITY_USER);
+    }
+    else {
+        gtk_style_context_add_provider_for_screen(gdk_screen_get_default(), GTK_STYLE_PROVIDER(style_dark), GTK_STYLE_PROVIDER_PRIORITY_USER);
+    } 
+}
+
+
+
+void open_main() {
+
+    gtk_widget_hide ( GTK_WIDGET(Connection_lost) );
+    gtk_widget_hide ( GTK_WIDGET(SignLog) );
+    gtk_widget_show ( GTK_WIDGET(friends) );  
+    gtk_widget_show ( GTK_WIDGET(Main) );   
 }

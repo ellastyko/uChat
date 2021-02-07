@@ -1,29 +1,11 @@
 #include "../inc/header.h"
 
 void send_to_server(char *buf) {
-    //char * buff = "";
+ 
     ssize_t result;
     if ((result = send(client_socket, buf, strlen(buf), 0)) == -1) {
         perror("Fail send\n");
-        
     }
-    //buf = NULL;
-    //memset(&buf, 0 , sizeof(buf));
-    // if ( (result = recv(client_socket, buff, sizeof(buf), 0)) == -1) { 
-    //         perror("Fail recieve\n");
-    //         close(client_socket);
-    //         no_connection();
-            
-    //     }
-    //     if ( result == 0 ) {
-    //         perror("\nDisconnect!\n"); // Перестаем читать сервер
-    //         close(client_socket);
-    //         no_connection();
-    //     }
-    //     else {
-    //         strcpy(buff, decoding(buff));
-    //         write(2, buff, strlen(buff));
-    //     }
 }
 
 //  Функция регистрации
@@ -84,6 +66,13 @@ void sign_up() {
     send_to_server(buf);
 }
 
+void pre_sign_in() {
+    
+    strcpy(cl_info.login, gtk_entry_get_text( GTK_ENTRY(login) ));
+    strcpy(cl_info.password, gtk_entry_get_text( GTK_ENTRY(password) ));
+    sign_in();
+}
+
 //  Функция входа
 void sign_in() {
 
@@ -91,8 +80,8 @@ void sign_in() {
 
     strcpy(req.action, "sign_in");
     req.id = 0;
-    strcpy(req.login, gtk_entry_get_text( GTK_ENTRY(login) ));
-    strcpy(req.password, gtk_entry_get_text( GTK_ENTRY(password) ));
+    strcpy(req.login, cl_info.login);
+    strcpy(req.password, cl_info.password);
     if ((strcmp(req.login, "") == 0) && (strcmp(req.password, "") == 0)) {
             
             gtk_label_set_text(GTK_LABEL(hint),  "Input fields are empty");
@@ -147,9 +136,11 @@ void sign_in() {
 //  Функция отправки сообщения
 void send_message() {
 
-    char buf[500];
-    strcpy(buf ,gtk_entry_get_text( GTK_ENTRY(Message_Box) ));
-    write(2, buf, strlen(buf));
+    // char buf[500];
+    // strcpy(buf ,gtk_entry_get_text( GTK_ENTRY(Message_Box) ));
+    // write(2, buf, strlen(buf));
+    gtk_widget_show (notification);
+    
     /*struct info req;
     char name[20];
     strcpy(req.action, "send_message");

@@ -12,18 +12,13 @@ char *stringify(struct info *res)
         cJSON_AddStringToObject(json_msg, "message", res->message);
     }
     else {
-        if (strcmp(res->action, "sign_up") == 0) {          
-            // Nothing
-        }
-        else if (strcmp(res->action, "sign_in") == 0) {
+
+        if (strcmp(res->action, "sign_in") == 0) {
     
             cJSON_AddNumberToObject(json_msg, "id", res->id);  
             cJSON_AddStringToObject(json_msg, "login", res->login); 
             cJSON_AddStringToObject(json_msg, "password", res->password);
             cJSON_AddStringToObject(json_msg, "key", res->key);
-        }
-        else if (strcmp(res->action, "send_message") == 0) {
-            // Nothing
         }
         else if (strcmp(res->action, "get_message") == 0) {
             cJSON_AddNumberToObject(json_msg, "id", res->id);  
@@ -44,12 +39,6 @@ char *stringify(struct info *res)
             cJSON_AddNumberToObject(json_msg, "chat_id", res->chat_id); 
             cJSON_AddStringToObject(json_msg, "login", res->login); 
             cJSON_AddNumberToObject(json_msg, "friend_id", res->friend_id); 
-        }
-        else if (strcmp(res->action, "delete_user") == 0) {
-            // Nothing
-        }
-        else if (strcmp(res->action, "delete_message") == 0) {
-            // Nothing
         }
         else if (strcmp(res->action, "load_messages") == 0) {
 

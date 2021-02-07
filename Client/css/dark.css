@@ -1,5 +1,5 @@
 .wrapper {
-  background: linear-gradient(#eb4b79, #6459d9);
+  background: linear-gradient(#BD00FF 30%, #362BA9 100%);
 }
 
 /*Login stylization*/
@@ -51,14 +51,14 @@
 }
 
 .send-button {
-  /*background: #fff;*/
-  background: url("../img/send-icon.png") center no-repeat;
+  /*background: transparent;*/
+  background: url("../img/send-icon-dark.png") center no-repeat;
   border: none;
 }
 
 .menu-button {
   font: 300 20px 'Montserrat';
-  color: #362ba9;
+  color: #fff;
   background: transparent;
   border: none;
   border-radius: 10px;
@@ -76,14 +76,15 @@
   padding: 5px;
   border-radius: 5px;
   border: none;
-  background: #fff;
+  background: #2F3136;
 }
 
 
 .input-message {
   border: none;
-  outline: none; 
-  background: #fff;
+  outline: none;
+  background: #2F3136;
+  color: #fff;
   font: 300 15px 'Montserrat';
 }
 
@@ -94,12 +95,13 @@
 .header-box {
   margin: 5px;
   border-radius: 5px;
-  background: #fff;
+  color: #d4d4d4;
+  background: #36393F;
   padding: 15px;
 }
 
 .chat-label {
-  color:#362ba9;
+  color:#fff;
   font: 300 16px 'Montserrat';
 }
 
@@ -109,35 +111,35 @@
 }
 
 .menu-wrapper {
-  /* margin: 0px 5px; */
+  /* margin: 5px 0px;  */
   border-radius: 0px 5px 5px 0px;
   padding: 5px;
-  background: #fff;
+  background: #202225;
 }
 
 /*Connection-lost stylization*/
 
 .connection-lost {
   border: none;
-  background: #fff;
+  background: #36393F;
 }
 
 .connection-lost-label {
-  color: #362ba9;
+  color: #fff;
   font: 700 32px 'Montserrat';
 }
 
 
 .reconnect {
-  color: #362ba9;
+  color: #d4d4d4;
   font: 300 24px 'Montserrat';
 }
 
 .reconnect-button {
+  /* background: transparent; */
   border: none;
   border-radius: 20px;
-  background: url("../img/reload.png") center no-repeat;
-
+  background: url("../img/reload-dark.png") center no-repeat;
 }
 
 #hint {
@@ -145,24 +147,22 @@
 }
 
 
-
-
 /*Buttons images*/
 
 #settings-button {
 
-  background: url("../img/settings.png") center no-repeat;
+  background: url("../img/settings-dark.png") center no-repeat;
 }
 
 #moon{
 
-  background: url("../img/dark-theme.png") center no-repeat;
+  background: url("../img/dark-theme-dark.png") center no-repeat;
 }
 
 #to-friends {
-  background: url("../img/return.png") center no-repeat;
+  background: url("../img/return-dark.png") center no-repeat;
 }
 
 #attach-button {
-  background: url("../img/attach-file.png") center no-repeat;
+  background: url("../img/attach-file-dark.png") center no-repeat;
 }

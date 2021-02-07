@@ -1,6 +1,7 @@
 #include "../inc/header.h"
 
 void *reading() {
+
     char buf[BUFSIZ]; ssize_t result;
     while(1) {
         if ( (result = recv(client_socket, buf, sizeof(buf), 0)) == -1) { 
@@ -22,6 +23,7 @@ void *reading() {
             struct info *res = parse(buf);
             type_of_response(res);    
         }
+        memset(&buf, 0, sizeof(buf));
     }
     pthread_exit(NULL);    
 }
@@ -38,7 +40,13 @@ void type_of_response(struct info *res) {
         }
         else if (strcmp(res->action, "sign_in") == 0) {
 
-            //local_storage(2);
+            if (!update_localdata(&cl_info, LD_PATH)) {
+                printf("Cant save localdata\n");
+            }
+            else {
+                printf("Localdata is saved\n");
+            }
+
             gtk_widget_show (hint);
             gtk_label_set_text(GTK_LABEL(hint), res->message);
 
@@ -62,16 +70,17 @@ void type_of_response(struct info *res) {
             strcpy(cl_info.login, res->login);
             strcpy(cl_info.password, res->password);
             strcpy(cl_info.key, res->key);
-            
-            //local_storage(1); // save login and parol in local storage
+            if (!update_localdata(&cl_info, LD_PATH)) {
+                printf("Cant save localdata\n");
+            }
+            else {
+                printf("Localdata is saved\n");
+            }
 
             gtk_label_set_text(GTK_LABEL(hint), "");
 
-            get_chats_info(); 
-            gtk_widget_hide ( GTK_WIDGET(SignLog) );
-            gtk_widget_hide ( GTK_WIDGET(settings) );
-            gtk_widget_show ( GTK_WIDGET(friends) );  
-            gtk_widget_show ( GTK_WIDGET(Main) );   
+            get_chats_info();
+            open_main();      
         }
         else if (strcmp(res->action, "add_chat") == 0) {
 

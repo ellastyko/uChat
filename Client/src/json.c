@@ -64,10 +64,8 @@ struct info *parse(const char *const msg)
         strcpy(res->message, message->valuestring);
     }
     else { // If everything ok
-        if (strcmp(res->action, "sign_up") == 0) {          
-           // Nothing
-        }
-        else if (strcmp(res->action, "sign_in") == 0) {
+
+        if (strcmp(res->action, "sign_in") == 0) {
             
             id = cJSON_GetObjectItemCaseSensitive(msg_json, "id");
             if (id == NULL || !cJSON_IsNumber(id))
@@ -85,9 +83,6 @@ struct info *parse(const char *const msg)
             if (key == NULL || key->valuestring == NULL)
                 return NULL;            
             strcpy(res->key, key->valuestring);
-        }
-        else if (strcmp(res->action, "send_message") == 0) {
-            // Nothing
         }
         else if (strcmp(res->action, "get_login_by_id") == 0) {
 
@@ -125,12 +120,6 @@ struct info *parse(const char *const msg)
             if (friend_id == NULL || !cJSON_IsNumber(friend_id))
                 return NULL;    
             res->friend_id = friend_id->valueint;
-        }
-        else if (strcmp(res->action, "delete_user") == 0) {
-            // Nothing
-        }
-        else if (strcmp(res->action, "delete_message") == 0) {
-            // Nothing
         }
         else if (strcmp(res->action, "get_message") == 0) {
             

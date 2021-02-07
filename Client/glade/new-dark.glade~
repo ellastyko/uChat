@@ -2,12 +2,17 @@
 <!-- Generated with glade 3.22.2 -->
 <interface>
   <requires lib="gtk+" version="3.24"/>
-  <object class="GtkImage" id="reconnect-icon1">
+  <object class="GtkImage" id="attach-image">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="pixbuf">../img/reload.png</property>
+    <property name="pixbuf">../img/attach-file.png</property>
   </object>
-  <object class="GtkImage" id="reconnect-icon2">
+  <object class="GtkImage" id="back-to-friends">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">../img/return.png</property>
+  </object>
+  <object class="GtkImage" id="reload-img">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="pixbuf">../img/reload.png</property>
@@ -15,17 +20,12 @@
   <object class="GtkImage" id="send-icon">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="pixbuf">../img/pl.png</property>
+    <property name="pixbuf">../img/send-icon.png</property>
   </object>
-  <object class="GtkImage" id="settings-icon1">
+  <object class="GtkImage" id="settings-icon">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="pixbuf">../img/burger-menu1.png</property>
-  </object>
-  <object class="GtkImage" id="settings-icon2">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="pixbuf">../img/burger-menu1.png</property>
+    <property name="pixbuf">../img/settings.png</property>
   </object>
   <object class="GtkWindow" id="Window">
     <property name="can_focus">False</property>
@@ -89,7 +89,7 @@
                     <property name="max_length">16</property>
                     <property name="has_frame">False</property>
                     <property name="placeholder_text" translatable="yes">Login</property>
-                    <signal name="changed" handler="valid_login" swapped="no"/>
+                    <signal name="changed" handler="valid" swapped="no"/>
                     <style>
                       <class name="input"/>
                     </style>
@@ -115,7 +115,7 @@
                     <property name="invisible_char">●</property>
                     <property name="placeholder_text" translatable="yes">Password</property>
                     <property name="input_purpose">password</property>
-                    <signal name="changed" handler="valid_password" swapped="no"/>
+                    <signal name="changed" handler="valid" swapped="no"/>
                     <style>
                       <class name="input"/>
                     </style>
@@ -140,7 +140,7 @@
                     <property name="invisible_char">●</property>
                     <property name="placeholder_text" translatable="yes">Repeat password</property>
                     <signal name="activate" handler="sign_up" swapped="no"/>
-                    <signal name="changed" handler="valid_password" swapped="no"/>
+                    <signal name="changed" handler="valid" swapped="no"/>
                     <style>
                       <class name="input"/>
                     </style>
@@ -232,12 +232,15 @@
                 <child>
                   <object class="GtkButton" id="Log_in">
                     <property name="label" translatable="yes">Log in</property>
+                    <property name="width_request">96</property>
+                    <property name="height_request">36</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="halign">center</property>
                     <property name="valign">center</property>
                     <property name="margin_bottom">16</property>
+                    <property name="relief">none</property>
                     <signal name="clicked" handler="sign_in" swapped="no"/>
                     <style>
                       <class name="button"/>
@@ -301,6 +304,7 @@
                 <property name="halign">center</property>
                 <property name="valign">start</property>
                 <property name="vexpand">True</property>
+                <property name="spacing">4</property>
                 <child>
                   <object class="GtkLabel" id="reconnect">
                     <property name="visible">True</property>
@@ -327,8 +331,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <property name="halign">start</property>
-                    <property name="valign">start</property>
+                    <property name="image">reload-img</property>
                     <property name="relief">none</property>
                     <style>
                       <class name="reconnect-button"/>
@@ -372,20 +375,22 @@
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
                     <property name="orientation">vertical</property>
-                    <property name="spacing">16</property>
+                    <property name="spacing">12</property>
                     <child>
                       <object class="GtkBox">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="valign">start</property>
+                        <property name="margin_start">4</property>
+                        <property name="margin_end">4</property>
+                        <property name="margin_top">4</property>
+                        <property name="spacing">4</property>
                         <child>
                           <object class="GtkButton" id="Open_settings">
-                            <property name="width_request">48</property>
-                            <property name="height_request">36</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
-                            <property name="image">settings-icon1</property>
+                            <property name="image">settings-icon</property>
                             <property name="relief">none</property>
                             <signal name="clicked" handler="open_settings" swapped="no"/>
                             <style>
@@ -465,24 +470,81 @@
                 <child type="overlay">
                   <object class="GtkBox" id="settings">
                     <property name="width_request">240</property>
-                    <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
                     <property name="orientation">vertical</property>
                     <property name="spacing">8</property>
                     <child>
-                      <object class="GtkButton" id="Open_friends">
-                        <property name="label" translatable="yes">Friends</property>
+                      <object class="GtkBox">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
-                        <property name="halign">center</property>
-                        <property name="image">reconnect-icon1</property>
-                        <property name="relief">none</property>
-                        <signal name="clicked" handler="open_friends" swapped="no"/>
-                        <style>
-                          <class name="menu-button"/>
-                        </style>
+                        <property name="can_focus">False</property>
+                        <property name="valign">center</property>
+                        <property name="margin_start">4</property>
+                        <property name="margin_end">4</property>
+                        <property name="margin_top">4</property>
+                        <property name="homogeneous">True</property>
+                        <child>
+                          <object class="GtkButton" id="Open_friends">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="halign">start</property>
+                            <property name="valign">center</property>
+                            <property name="image">back-to-friends</property>
+                            <property name="relief">none</property>
+                            <signal name="clicked" handler="open_friends" swapped="no"/>
+                            <style>
+                              <class name="menu-button"/>
+                            </style>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkBox">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="halign">end</property>
+                            <property name="valign">center</property>
+                            <property name="spacing">8</property>
+                            <child>
+                              <object class="GtkSwitch" id="Theme">
+                                <property name="name">theme</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="halign">end</property>
+                                <property name="valign">center</property>
+                                <signal name="state-set" handler="theme" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkImage">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="halign">end</property>
+                                <property name="pixbuf">../img/dark-theme.png</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -529,19 +591,6 @@
                         <property name="position">3</property>
                       </packing>
                     </child>
-                    <child>
-                      <object class="GtkSwitch" id="Theme">
-                        <property name="name">theme</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <signal name="activate" handler="theme" swapped="no"/>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">4</property>
-                      </packing>
-                    </child>
                     <style>
                       <class name="menu-wrapper"/>
                     </style>
@@ -564,12 +613,11 @@
               <object class="GtkOverlay" id="chat-overlay">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="halign">end</property>
+                <property name="hexpand">True</property>
                 <child>
                   <object class="GtkBox" id="your_chat">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="halign">start</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkGrid" id="header-box">
@@ -584,6 +632,7 @@
                             <property name="height_request">-1</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="halign">start</property>
                             <property name="valign">start</property>
                             <property name="label" translatable="yes">Friend</property>
                             <property name="xalign">0.029999999329447746</property>
@@ -600,6 +649,7 @@
                           <object class="GtkLabel" id="status1">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="halign">end</property>
                             <property name="label" translatable="yes">online</property>
                           </object>
                           <packing>
@@ -674,15 +724,14 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkFileChooserButton" id="Select_file_button">
+                          <object class="GtkButton" id="Attach_button">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="create_folders">False</property>
-                            <property name="preview_widget">settings-icon2</property>
-                            <property name="title" translatable="yes"/>
-                            <property name="width_chars">0</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="image">attach-image</property>
+                            <property name="relief">none</property>
                             <style>
-                              <class name="send-button"/>
+                              <class name="menu-button"/>
                             </style>
                           </object>
                           <packing>
@@ -696,7 +745,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
-                            <property name="image">reconnect-icon2</property>
+                            <property name="image">send-icon</property>
                             <property name="relief">none</property>
                             <property name="always_show_image">True</property>
                             <signal name="clicked" handler="send_message" swapped="no"/>
@@ -734,7 +783,7 @@
               </object>
               <packing>
                 <property name="expand">False</property>
-                <property name="fill">False</property>
+                <property name="fill">True</property>
                 <property name="pack_type">end</property>
                 <property name="position">1</property>
               </packing>

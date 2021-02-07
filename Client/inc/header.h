@@ -1,5 +1,6 @@
 #define _GNU_SOURCE
-#define PORT 8238
+#define PORT 8235
+#define LD_PATH "Client/storage/data.txt"
 #define ADDR "localhost"
 
 #include <stdio.h>
@@ -31,6 +32,13 @@ typedef struct client_info
     char password[30];
 } client_info_t;
 struct client_info cl_info;
+
+
+client_info_t *parse_localdata(const char *const data);
+client_info_t *get_local_data(char *ld_path);
+int update_localdata(client_info_t *data, const char *const ld_path);
+char *localdata_to_json(client_info_t *data);
+
 
 // universal structure for all types of send and receive
 struct info {
@@ -80,7 +88,7 @@ int Socket();
 
 
 // useful
-int local_storage();
+int auto_sign();
 bool validation();
 void valid_of_log_in();
 struct info *parse(const char *const msg);
@@ -105,10 +113,12 @@ void NO_CONNECTION_BOX();
 void no_connection();
 void to_sign_up();
 void to_log_in();
-void valid_login();
-void valid_password();
+void valid();
 void open_settings();
 void search_friend();
+void open_main();
+void theme ();
+
 
 
 int STATE; // 0 - sign in  / 1 - sign up / 2 - main
@@ -116,9 +126,11 @@ int STATE; // 0 - sign in  / 1 - sign up / 2 - main
 GtkBuilder *builder;
 
 GtkWidget *window;
+GtkWidget *notification;
 
 // Style
 GtkCssProvider *style;
+GtkCssProvider *style_dark;
 
 // Log in and sign up
 GtkContainer *SignLog;

@@ -6,29 +6,34 @@ int STATE = 0;
 int main(int argc, char *argv[])
 {
     
-    Socket();
-    //if (local_storage(0) == 0) {// Проверка локального хранилища на сохранненый пароль с именем 
-    //}
+    Socket(); 
     prepare();
+    auto_sign();
 
     style = gtk_css_provider_new ();
+    style_dark = gtk_css_provider_new ();
     gtk_css_provider_load_from_path(style,"Client/css/style.css", NULL);
+    gtk_css_provider_load_from_path(style_dark,"Client/css/dark.css", NULL);
 
     gtk_init(&argc, &argv);
 
     builder = gtk_builder_new();
-    builder = gtk_builder_new_from_file("Client/glade/new.glade");
+    builder = gtk_builder_new_from_file("Client/glade/main.glade");
     
     window = GTK_WIDGET(gtk_builder_get_object(builder, "Window"));
+    notification = GTK_WIDGET(gtk_builder_get_object(builder, "notification"));
     
     SIGN_BOXES();
     MAIN_BOXES();
     NO_CONNECTION_BOX();   
-
-
+    
+    
     gtk_widget_hide ( GTK_WIDGET(Connection_lost) );
-    //gtk_widget_hide ( GTK_WIDGET(SignLog) );
-    gtk_widget_hide ( GTK_WIDGET(Main) );
+    //gtk_widget_hide ( GTK_WIDGET(Main) );
+    
+
+    gtk_widget_hide ( GTK_WIDGET(SignLog) );
+    
 
 
 

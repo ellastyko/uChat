@@ -1,0 +1,4 @@
+{
+	"login":	"vadik",
+	"password":	"vadik1"
+}
