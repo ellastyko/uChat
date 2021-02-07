@@ -4,22 +4,21 @@ void *reading() {
     char buf[BUFSIZ]; ssize_t result;
     while(1) {
         if ( (result = recv(client_socket, buf, sizeof(buf), 0)) == -1) { 
-            write(2, "Fail recieve\n", 14);
+            perror("Fail recieve\n");
             close(client_socket);
             no_connection();
             break;
             
         }
         if ( result == 0 ) {
-            write(2, "\nDisconnect!\n", 14); // Перестаем читать сервер
+            perror("\nDisconnect!\n"); // Перестаем читать сервер
             close(client_socket);
             no_connection();
             break;
         }
         else {
-            //write(STDOUT_FILENO, buf, strlen(buf));
             strcpy(buf, decoding(buf));
-            //write(2, buf, strlen(buf));
+            write(2, buf, strlen(buf));
             struct info *res = parse(buf);
             type_of_response(res);    
         }
@@ -31,24 +30,31 @@ void *reading() {
 void type_of_response(struct info *res) {
     
     if (res->status != 1) {
-        write(2, "Request isn`t executed\n", 24);
+
         write(2, res->message, strlen(res->message));
         if (strcmp(res->action, "availability_of_login") == 0) {
             gtk_widget_show (hint);
             gtk_label_set_text(GTK_LABEL(hint), res->message);
         }
         else if (strcmp(res->action, "sign_in") == 0) {
+
+            //local_storage(2);
             gtk_widget_show (hint);
             gtk_label_set_text(GTK_LABEL(hint), res->message);
+
         }
         else if (strcmp(res->action, "sign_up") == 0) {
             gtk_widget_show (hint);
             gtk_label_set_text(GTK_LABEL(hint), res->message);
         }
+        else if (strcmp(res->action, "is_user_exists") == 0) {
+            write(2, "User not exists\n", 17);
+        }
     }
     else {
         if (strcmp(res->action, "sign_up") == 0) {
-            write(2, "\nSuccessful registration\n", 26);
+            
+            to_log_in();
         }
         else if (strcmp(res->action, "sign_in") == 0) {
 
@@ -56,11 +62,16 @@ void type_of_response(struct info *res) {
             strcpy(cl_info.login, res->login);
             strcpy(cl_info.password, res->password);
             strcpy(cl_info.key, res->key);
+            
+            //local_storage(1); // save login and parol in local storage
+
             gtk_label_set_text(GTK_LABEL(hint), "");
-            // saving(res.login, res.password) save login and parol in local storage
-            get_chats_info();   
-            gtk_container_remove(Main, GTK_WIDGET(Box) );
-            gtk_style_context_add_provider_for_screen(gdk_screen_get_default(), GTK_STYLE_PROVIDER(sign_style), GTK_STYLE_PROVIDER_PRIORITY_USER);
+
+            get_chats_info(); 
+            gtk_widget_hide ( GTK_WIDGET(SignLog) );
+            gtk_widget_hide ( GTK_WIDGET(settings) );
+            gtk_widget_show ( GTK_WIDGET(friends) );  
+            gtk_widget_show ( GTK_WIDGET(Main) );   
         }
         else if (strcmp(res->action, "add_chat") == 0) {
 
@@ -81,9 +92,11 @@ void type_of_response(struct info *res) {
             write(2, "Message deleted\n", 17);
         }
         else if (strcmp(res->action, "availability_of_login") == 0) {
-            //gtk_label_set_text(hint, "");
+            
              if (strcmp(gtk_label_get_text (GTK_LABEL(hint)), "This login isn`t available") == 0) {
+                gtk_label_set_text(GTK_LABEL(hint), "");
                 gtk_widget_hide (hint);
+                
             }
         }
         else if (strcmp(res->action, "load_messages") == 0) {
@@ -97,6 +110,10 @@ void type_of_response(struct info *res) {
                 write(2, "---------", 10);
             }   
             printf("\n");
+        }
+        else if (strcmp(res->action, "is_user_exists") == 0) {
+            write(2, "User exists!!!\n", 16);
+            
         }
 
     }

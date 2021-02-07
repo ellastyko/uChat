@@ -1,3 +1,7 @@
+#define _GNU_SOURCE
+#define PORT 8238
+#define ADDR "localhost"
+
 #include <stdio.h>
 #include <string.h>
 #include <sys/socket.h>
@@ -12,11 +16,10 @@
 #include <pthread.h>
 #include <gtk/gtk.h>
 #include<stdlib.h>
-#define PORT 8237
-#define ADDR "localhost"
 #include "../../lib/cJSON.h"
 #include <malloc.h> // #include <malloc/malloc.h>
 #include <pthread.h>
+#include <time.h>
 int client_socket;
 
 
@@ -31,6 +34,7 @@ struct client_info cl_info;
 
 // universal structure for all types of send and receive
 struct info {
+
     char action[25]; 
     int status; // 0 or 1
 
@@ -69,13 +73,14 @@ void send_message();
 void delete_message();
 void get_chats_info();
 void availability_of_login();
+void search_friend();
 
 // socket
 int Socket();
 
 
 // useful
-char *checking_local_storage();
+int local_storage();
 bool validation();
 void valid_of_log_in();
 struct info *parse(const char *const msg);
@@ -94,12 +99,16 @@ void type_of_response(struct info *res);
 
 // GTK
 void destroy();
+void SIGN_BOXES();
+void MAIN_BOXES();
+void NO_CONNECTION_BOX();  
 void no_connection();
-void entering();
 void to_sign_up();
 void to_log_in();
 void valid_login();
 void valid_password();
+void open_settings();
+void search_friend();
 
 
 int STATE; // 0 - sign in  / 1 - sign up / 2 - main
@@ -108,22 +117,49 @@ GtkBuilder *builder;
 
 GtkWidget *window;
 
-// Styles
-GtkCssProvider *sign_style;
-GtkCssProvider *main_style;
+// Style
+GtkCssProvider *style;
 
-
-GtkContainer *Main;
-GtkContainer *Box;
+// Log in and sign up
+GtkContainer *SignLog;
+GtkContainer *SignBox;
 
 GtkWidget     *login;
 GtkWidget     *password;
 GtkWidget     *repeat;
 GtkWidget     *hint;
 
-// VHOD
+// Log in
 GtkWidget      *To_Sign;
 GtkWidget      *Log_in;
-// REG
+// Sign up
 GtkWidget      *To_Log;
 GtkWidget      *Sign_up;
+
+/////////////////////////////
+
+// Main
+GtkContainer      *Main;
+
+    // Left Sidebar
+    GtkContainer       *friends;
+        GtkWidget       *Open_settings;
+        GtkWidget       *Search_Friends;
+
+    GtkContainer       *settings;
+        GtkWidget       *Open_Friends;
+        GtkWidget       *Change_password;
+        GtkWidget       *Log_out;
+        GtkWidget       *Theme;
+
+    // your chat
+    GtkContainer       *your_chat;
+        GtkWidget       *Message_Box;
+        GtkWidget       *Select_file_button;
+        GtkWidget       *Send_button;
+
+///////////////////////////////
+
+// No connection window
+GtkContainer *Connection_lost;    
+GtkWidget *Reconnect_button; 

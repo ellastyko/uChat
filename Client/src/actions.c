@@ -1,11 +1,29 @@
 #include "../inc/header.h"
 
 void send_to_server(char *buf) {
+    //char * buff = "";
     ssize_t result;
     if ((result = send(client_socket, buf, strlen(buf), 0)) == -1) {
-        write(2, "Fail send\n", 11);
+        perror("Fail send\n");
         
     }
+    //buf = NULL;
+    //memset(&buf, 0 , sizeof(buf));
+    // if ( (result = recv(client_socket, buff, sizeof(buf), 0)) == -1) { 
+    //         perror("Fail recieve\n");
+    //         close(client_socket);
+    //         no_connection();
+            
+    //     }
+    //     if ( result == 0 ) {
+    //         perror("\nDisconnect!\n"); // Перестаем читать сервер
+    //         close(client_socket);
+    //         no_connection();
+    //     }
+    //     else {
+    //         strcpy(buff, decoding(buff));
+    //         write(2, buff, strlen(buff));
+    //     }
 }
 
 //  Функция регистрации
@@ -129,7 +147,10 @@ void sign_in() {
 //  Функция отправки сообщения
 void send_message() {
 
-    struct info req;
+    char buf[500];
+    strcpy(buf ,gtk_entry_get_text( GTK_ENTRY(Message_Box) ));
+    write(2, buf, strlen(buf));
+    /*struct info req;
     char name[20];
     strcpy(req.action, "send_message");
 
@@ -147,13 +168,13 @@ void send_message() {
     }
     req.chat_id = chat[i].chat_id;
     req.friend_id = chat[i].friend_id;
-    printf("Enter message: "); scanf("%s", req.message);
+    strcpy(req.message, gtk_entry_get_text( GTK_ENTRY(message) ));
     req.message_id = -1;
     req.time = time(NULL); 
        
 
     char *buf = stringify(&req);
-    send_to_server(buf);
+    send_to_server(buf);*/
 }
 
 //  Функция удаления пользователя
@@ -203,6 +224,26 @@ void change_password() {
 }
 
 
+void search_friend() {
+
+    struct info req;
+
+    strcpy(req.action, "is_user_exists");
+    req.id = 0;
+    strcpy(req.login, gtk_entry_get_text( GTK_ENTRY(login) ));
+    strcpy(req.password, "");
+    strcpy(req.key, "");
+
+    req.chat_id = 0;
+    req.friend_id = -1;
+    strcpy(req.message, "");
+    req.message_id = -1;
+    req.time = -1;
+    char *buf = stringify(&req);
+    send_to_server(buf);
+}
+
+
 void add_chat() {
 
     struct info req;
@@ -210,7 +251,7 @@ void add_chat() {
 
     req.id = cl_info.id;
     
-    printf("Enter user to add "); scanf("%s", req.login);
+    strcpy(req.login, gtk_entry_get_text(GTK_ENTRY (Search_Friends)));
     strcpy(req.password, "");  
     strcpy(req.key, cl_info.key);
 
@@ -291,45 +332,6 @@ void open_chat() {
     char *buf = stringify(&req);
     send_to_server(buf);
 }
-/*char *checking_local_storage(int act) {
-    char*line; 
-    if (act == 0) { // READ BEFORE SIGN IN
-        // cache
-        FILE *file = fopen("data.txt", "r");
-        fgets(line, 255, file);
-        printf("%s", line);
-        fclose(file);
-        if (strcmp(line, "") == 0) {
-            write(2, "There is nothing!\n", 19);
-            return 1;
-        }
-        else {
-            struct info *req;
-            strcpy(req->action, "signin");
-            strcpy(req.login, _id_);
-            strcpy(req.password, _password_);  
-            strcpy(req.message, "");
-            strcpy(req.time, ""); 
-            strcpy(req.receiver, "");
-            char *buf = stringify(&req);
-            send_to_server(buf);
-        }
-
-    }
-    else if (act == 0) { // WRITE AFTER SIGN UP
-        FILE *file = fopen("data.txt", "r");
-        fgets(line, 255, file);
-        printf("%s", line);
-        fclose(file);
-        if (strcmp(line, "") == 0) {
-            write(2, "There is nothing!\n", 19);
-            return 1;
-        }
-    }
-    else if { // LOGOUT
-        write(2, "Error", 6)
-    }
-}*/
 
 
 void availability_of_login() {

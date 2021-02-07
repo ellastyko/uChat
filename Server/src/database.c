@@ -96,9 +96,11 @@ bool add_user(char *login, char *password, int key)
 
     sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
     if (sqlite3_step(stmt) == SQLITE_DONE) {
+        sqlite3_free(query_f);  
         return true;
     }
     else {
+        sqlite3_free(query_f);  
         return false;
     }   
 }
@@ -168,6 +170,7 @@ void get_id_and_key(struct info *res) {
         }
 
     }
+    sqlite3_free(query_f);  
 }
 
 
@@ -179,6 +182,7 @@ void get_login_by_id(struct info *res) {
     if (sqlite3_step(stmt) == SQLITE_ROW) {
         strcpy(res->login, (char *)sqlite3_column_text(stmt, 0));
     }
+    sqlite3_free(query_f);  
 }
 
 
@@ -191,6 +195,7 @@ int get_id_by_login(char*login) {
         id = sqlite3_column_int(stmt, 0);   
     }
     sqlite3_finalize(stmt);
+    sqlite3_free(query_f);  
     return id;
 }
 
@@ -205,10 +210,12 @@ bool add_chat(struct info *res) {
     sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
     if (sqlite3_step(stmt) == SQLITE_DONE) {
         sqlite3_finalize(stmt);
+        sqlite3_free(query_f);  
         return true;
     }
     else {
         sqlite3_finalize(stmt);
+        sqlite3_free(query_f);  
         return false;
     }   
 }
@@ -229,7 +236,9 @@ void get_chat_id_by_users(struct info *res) {
         if (sqlite3_step(stmt) != SQLITE_DONE) {
             res->chat_id = sqlite3_column_int(stmt, 0);   
         }
+        sqlite3_free(query_2);
     }
+    sqlite3_free(query_1);  
 	sqlite3_finalize(stmt);
 }
 
@@ -251,6 +260,7 @@ void get_chats_info(int client_socket, struct info *res) {
         }
     }
     stmt = NULL;
+    sqlite3_free(query_1);
     char *query_2 = sqlite3_mprintf("SELECT CHAT_ID, USER2 FROM chats WHERE USER1 = '%d';", res->id);
     sqlite3_prepare_v2(db, query_2, -1, &stmt, 0);
     while (sqlite3_step(stmt) != SQLITE_DONE) {
@@ -264,7 +274,7 @@ void get_chats_info(int client_socket, struct info *res) {
             send_response(client_socket, res);
         }
     }
-
+    sqlite3_free(query_2);
 	sqlite3_finalize(stmt);
 }
 
@@ -291,10 +301,12 @@ bool save_message(struct info *res)
             res->message_id = sqlite3_column_int(stmt, 0);
         }
         sqlite3_finalize(stmt);
+        sqlite3_free(query_f);
         return true;
     }
     else {
         strcpy(res->message, "Message hasn`t added!");
+        sqlite3_free(query_f);
         return false;
     }
     sqlite3_finalize(stmt);
@@ -308,11 +320,13 @@ bool delete_message(struct info *res) {
     sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
     if (sqlite3_step(stmt) == SQLITE_DONE) {
         sqlite3_finalize(stmt);
+        sqlite3_free(query_f);
         return true;
     }
     else {
         strcpy(res->message, "Message hasn`t deleted");
         sqlite3_finalize(stmt);
+        sqlite3_free(query_f);
         return false;
     }
 }
@@ -346,6 +360,7 @@ void get_message() {
 		}
 		printf("\n");
      }
+     sqlite3_free(query_f);
 }
 
 bool key_checking(struct info *res) {
@@ -360,6 +375,7 @@ bool key_checking(struct info *res) {
         }
     }
     sqlite3_finalize(stmt);
+    sqlite3_free(query_f);
     return false;
 }
 
@@ -370,11 +386,13 @@ bool delete_user(struct info *res) {
     sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
     if (sqlite3_step(stmt) == SQLITE_DONE) {
         sqlite3_finalize(stmt);
+        sqlite3_free(query_f);
         return true;
     }
     else {
         strcpy(res->message, "User isn`t deleted");
         sqlite3_finalize(stmt);
+        sqlite3_free(query_f);
         return false;
     }
 }
@@ -386,11 +404,13 @@ bool change_password(struct info *res) {
     sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
     if (sqlite3_step(stmt) == SQLITE_DONE) {
         sqlite3_finalize(stmt);
+        sqlite3_free(query_f);
         return true;
     }
     else {
         strcpy(res->message, "Password hasn`t changed");
         sqlite3_finalize(stmt);
+        sqlite3_free(query_f);
         return false;
     }
 }
@@ -413,6 +433,7 @@ void load_messages(int client_socket, struct info *res) {
             send_response(client_socket, res);
         }
     }
+    sqlite3_free(query_1);
     sqlite3_finalize(stmt);
 }
 

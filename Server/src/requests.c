@@ -45,7 +45,19 @@ void type_of_request(char *str, int client_socket)
             send_response(client_socket, req);  
         }
     }
+    else if (strcmp(req->action, "is_user_exists") == 0) {
+        if (check_login(req->login) == false) {      
+
+            req->status = 1; // user exists
+            send_response(client_socket, req);       
+        }
+        else {
+            req->status = 0; // error status
+            send_response(client_socket, req);      
+        }
+    }
     else if (strcmp(req->action, "add_chat") == 0) {
+
         if (check_login(req->login) == false) {    // Если такой пользователь существует
 
             req->friend_id = get_id_by_login(req->login); // Записываем id пользователя по имени
