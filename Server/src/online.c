@@ -40,7 +40,7 @@ void print_all() {
     }
 }
 
-void delete_online(int client_socket) {
+int delete_online(int client_socket) {
 
 
     int size = get_free();
@@ -52,9 +52,10 @@ void delete_online(int client_socket) {
             user[i].client_socket = user[size-1].client_socket;
             user[size-1].id = -1;
             user[size-1].client_socket = -1;
-            break;
+            return 1;
         }
     }
+    return 0;
 
 }
 

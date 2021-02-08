@@ -8,6 +8,36 @@ void send_to_server(char *buf) {
     }
 }
 
+int send_to_server_and_get(char *buf) {
+    
+    char response[BUFSIZ];
+    ssize_t result;
+    if ((result = send(client_socket, buf, strlen(buf), 0)) == -1) {
+        perror("Fail send\n");
+        return 0; //error
+    }
+    if ( (result = recv(client_socket, response, sizeof(response), 0)) == -1) { 
+            perror("Fail recieve\n");
+            close(client_socket);
+            no_connection();
+            return 0; //error
+        }
+        if ( result == 0 ) {
+            perror("\nDisconnect!\n"); // Перестаем читать сервер
+            close(client_socket);
+            no_connection();
+            return 0; //error
+        }
+        else {
+            strcpy(response, decoding(response));
+            write(2, response, strlen(response));
+            struct info *res = parse(response);
+
+            type_of_response(res);   
+            return 1;
+        }
+}
+
 //  Функция регистрации
 void sign_up() {
 
@@ -66,13 +96,6 @@ void sign_up() {
     send_to_server(buf);
 }
 
-void pre_sign_in() {
-    
-    strcpy(cl_info.login, gtk_entry_get_text( GTK_ENTRY(login) ));
-    strcpy(cl_info.password, gtk_entry_get_text( GTK_ENTRY(password) ));
-    sign_in();
-}
-
 //  Функция входа
 void sign_in() {
 
@@ -80,8 +103,8 @@ void sign_in() {
 
     strcpy(req.action, "sign_in");
     req.id = 0;
-    strcpy(req.login, cl_info.login);
-    strcpy(req.password, cl_info.password);
+    strcpy(req.login, gtk_entry_get_text(GTK_ENTRY(login)) );
+    strcpy(req.password, gtk_entry_get_text(GTK_ENTRY(password)) );
     if ((strcmp(req.login, "") == 0) && (strcmp(req.password, "") == 0)) {
             
             gtk_label_set_text(GTK_LABEL(hint),  "Input fields are empty");
@@ -136,10 +159,10 @@ void sign_in() {
 //  Функция отправки сообщения
 void send_message() {
 
-    // char buf[500];
-    // strcpy(buf ,gtk_entry_get_text( GTK_ENTRY(Message_Box) ));
-    // write(2, buf, strlen(buf));
-    gtk_widget_show (notification);
+    char buf[500];
+    strcpy(buf ,gtk_entry_get_text( GTK_ENTRY(Message_Box) ));
+    write(2, buf, strlen(buf));
+
     
     /*struct info req;
     char name[20];

@@ -1,7 +1,4 @@
 #define _GNU_SOURCE
-#define PORT 8235
-#define LD_PATH "Client/storage/data.txt"
-#define ADDR "localhost"
 
 #include <stdio.h>
 #include <string.h>
@@ -21,8 +18,13 @@
 #include <malloc.h> // #include <malloc/malloc.h>
 #include <pthread.h>
 #include <time.h>
-int client_socket;
 
+#define PORT 8233
+#define ADDR "localhost"
+#define LD_PATH "Client/storage/data.txt"
+#define CONFIG_PATH "Client/storage/config.txt"
+
+int client_socket;
 
 typedef struct client_info
 {
@@ -33,11 +35,25 @@ typedef struct client_info
 } client_info_t;
 struct client_info cl_info;
 
-
 client_info_t *parse_localdata(const char *const data);
 client_info_t *get_local_data(char *ld_path);
 int update_localdata(client_info_t *data, const char *const ld_path);
 char *localdata_to_json(client_info_t *data);
+
+/* CONFIG */
+typedef struct config
+{
+    int theme; // 0 - day | 1 - dark
+    int notifications; // 0 - yes | 1 - no
+} config_t;
+struct config Config;
+
+int config();
+config_t *parse_config(const char *const data);
+config_t *get_config(char *config_path);
+int update_config(config_t *data, const char *const config_path);
+char *config_to_json(config_t *data);
+
 
 
 // universal structure for all types of send and receive
@@ -69,7 +85,9 @@ struct chats chat[100];
 void prepare();
 
 //actions
+int send_to_server_and_get(char *buf);
 void send_to_server(char *buf);
+
 void sign_up();
 void sign_in();
 
@@ -85,6 +103,7 @@ void search_friend();
 
 // socket
 int Socket();
+void reading_thread();
 
 
 // useful
@@ -118,10 +137,12 @@ void open_settings();
 void search_friend();
 void open_main();
 void theme ();
+void *pre_update_config();
 
 
 
-int STATE; // 0 - sign in  / 1 - sign up / 2 - main
+int STATE; // 0 - sign in  / 1 - sign up / 2 - main / 3 - reconnect
+
 // Widgets
 GtkBuilder *builder;
 
@@ -174,4 +195,4 @@ GtkContainer      *Main;
 
 // No connection window
 GtkContainer *Connection_lost;    
-GtkWidget *Reconnect_button; 
+    GtkWidget *Reconnect_button; 

@@ -216,7 +216,7 @@
                     <property name="valign">center</property>
                     <property name="margin_bottom">16</property>
                     <property name="relief">none</property>
-                    <signal name="clicked" handler="pre_sign_in" swapped="no"/>
+                    <signal name="clicked" handler="sign_in" swapped="no"/>
                     <style>
                       <class name="button"/>
                     </style>
@@ -308,6 +308,7 @@
                     <property name="receives_default">True</property>
                     <property name="relief">none</property>
                     <signal name="clicked" handler="Socket" swapped="no"/>
+                    <signal name="clicked" handler="reading_thread" swapped="no"/>
                     <style>
                       <class name="reconnect-button"/>
                     </style>
@@ -797,8 +798,8 @@
     <property name="type">popup</property>
     <property name="title" translatable="yes">Notification</property>
     <property name="resizable">False</property>
-    <property name="default_width">400</property>
-    <property name="default_height">200</property>
+    <property name="default_width">350</property>
+    <property name="default_height">150</property>
     <property name="type_hint">notification</property>
     <property name="urgency_hint">True</property>
     <property name="gravity">south-east</property>

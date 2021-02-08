@@ -13,7 +13,7 @@ char *stringify(struct info *res)
     }
     else {
 
-        if (strcmp(res->action, "sign_in") == 0) {
+        if ((strcmp(res->action, "sign_in") == 0) || strcmp(res->action, "auto_sign") == 0) {
     
             cJSON_AddNumberToObject(json_msg, "id", res->id);  
             cJSON_AddStringToObject(json_msg, "login", res->login); 

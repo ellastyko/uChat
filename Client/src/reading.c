@@ -38,6 +38,9 @@ void type_of_response(struct info *res) {
             gtk_widget_show (hint);
             gtk_label_set_text(GTK_LABEL(hint), res->message);
         }
+        else if ( strcmp(res->action, "auto_sign") == 0 ) {
+            STATE = 0; 
+        }
         else if (strcmp(res->action, "sign_in") == 0) {
 
             if (!update_localdata(&cl_info, LD_PATH)) {
@@ -60,7 +63,19 @@ void type_of_response(struct info *res) {
         }
     }
     else {
-        if (strcmp(res->action, "sign_up") == 0) {
+        if ( strcmp(res->action, "auto_sign") == 0 ) {
+
+            reading_thread();
+            cl_info.id = res->id;
+            strcpy(cl_info.login, res->login);
+            strcpy(cl_info.password, res->password);
+            strcpy(cl_info.key, res->key);
+            write(2, "Auto sign ok!", 14);
+            
+            get_chats_info();
+            STATE = 2;
+        }
+        else if (strcmp(res->action, "sign_up") == 0) {
             
             to_log_in();
         }

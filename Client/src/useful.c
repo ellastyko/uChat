@@ -103,6 +103,7 @@ void prepare() {
         chat[i].friend_id = -1;
         strcpy(chat[i].login, "-1");
     }
+    
 }
 
 

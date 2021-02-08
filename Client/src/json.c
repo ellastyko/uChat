@@ -64,8 +64,8 @@ struct info *parse(const char *const msg)
         strcpy(res->message, message->valuestring);
     }
     else { // If everything ok
-
-        if (strcmp(res->action, "sign_in") == 0) {
+        
+        if ((strcmp(res->action, "sign_in") == 0) || strcmp(res->action, "auto_sign") == 0) {
             
             id = cJSON_GetObjectItemCaseSensitive(msg_json, "id");
             if (id == NULL || !cJSON_IsNumber(id))

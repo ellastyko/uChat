@@ -92,30 +92,66 @@ void open_friends() {
 
 void log_out() {
 
+    STATE = 0;
     gtk_widget_show ( GTK_WIDGET(SignLog) );
     gtk_widget_hide ( GTK_WIDGET(Main) );
-    cl_info.id = -1;
-    strcpy(cl_info.login, "");
-    strcpy(cl_info.password, "");
-    strcpy(cl_info.key, "");
-    STATE = 0;
+    prepare();  
+    struct info req;
+
+    strcpy(req.action, "log_out");
+    
+    req.id = cl_info.id;
+    strcpy(req.login, "");
+    strcpy(req.password, "");  
+    strcpy(req.key, cl_info.key);
+
+    req.chat_id = -1; 
+    req.friend_id = -1;
+    strcpy(req.message, "");
+    req.message_id = -1;
+    req.time = -1; 
+    
+
+    char *buf = stringify(&req);
+    send_to_server(buf); 
 }
 
 void theme () {
+
+    pthread_t conf1, conf2;
     if (gtk_switch_get_state ( GTK_SWITCH (Theme) ) == true) {
+
+        gtk_switch_set_state (GTK_SWITCH(Theme), false);
         gtk_style_context_add_provider_for_screen(gdk_screen_get_default(), GTK_STYLE_PROVIDER(style), GTK_STYLE_PROVIDER_PRIORITY_USER);
+        Config.theme = 0;
+        Config.notifications = 0;
+        pthread_create(&conf1, NULL, pre_update_config, NULL);
     }
     else {
+        gtk_switch_set_state (GTK_SWITCH(Theme), true);
         gtk_style_context_add_provider_for_screen(gdk_screen_get_default(), GTK_STYLE_PROVIDER(style_dark), GTK_STYLE_PROVIDER_PRIORITY_USER);
+        Config.theme = 1;
+        Config.notifications = 0;
+        pthread_create(&conf2, NULL, pre_update_config, NULL);
     } 
 }
 
+void *pre_update_config() {
 
+    if (!update_config(&Config, CONFIG_PATH)) {
+            printf("Cant save config \n");
+    }
+    else {
+        printf("Config is saved \n");
+    }
+    pthread_exit(NULL);  
+}
 
 void open_main() {
 
     gtk_widget_hide ( GTK_WIDGET(Connection_lost) );
     gtk_widget_hide ( GTK_WIDGET(SignLog) );
+    gtk_widget_hide ( GTK_WIDGET(settings) );  
     gtk_widget_show ( GTK_WIDGET(friends) );  
     gtk_widget_show ( GTK_WIDGET(Main) );   
 }

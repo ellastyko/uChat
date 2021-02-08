@@ -6,10 +6,27 @@ int auto_sign() {
     ld = get_local_data(LD_PATH);
 
     if (ld) {
-        strcpy(cl_info.login, ld->login);
-        strcpy(cl_info.password, ld->password);
-        //sign_in();
-        return 0;
+
+        struct info req;
+
+        strcpy(req.action, "auto_sign");
+        req.id = 0;
+        strcpy(req.login, ld->login);
+        strcpy(req.password, ld->password);
+        strcpy(req.key, "");
+
+        req.chat_id = 0;
+        req.friend_id = -1;
+        strcpy(req.message, "");
+        req.message_id = -1;
+        req.time = -1;
+        char *buf = stringify(&req);
+        if (send_to_server_and_get(buf) == 1) {
+            return 0;
+        }
+        else {
+            return 1;
+        }
     }
     else { 
         printf("Cannt read localdata");
@@ -129,3 +146,137 @@ char *localdata_to_json(client_info_t *data)
 
     return string;
 }
+
+
+/* Config */
+
+int config() {
+     
+    config_t *ld;
+    ld = get_config(CONFIG_PATH);
+
+    if (ld) {
+        Config.theme = ld->theme;
+        Config.notifications = ld->notifications;
+        return 0;
+    }
+    else { 
+        printf("Cann`t read config");
+        return EXIT_FAILURE;
+    }
+}
+
+
+
+int update_config(config_t *data, const char *const config_path)
+{
+    if (!data) {
+        return 0;
+    }
+
+    char *config_json = config_to_json(data);
+    FILE *fp;
+
+    fp = fopen(config_path, "w");
+
+    if (fp) {
+        fprintf(fp, "%s", config_json);
+        fclose(fp);
+    }
+    else {
+        printf("Error while opening the file\n");
+        return 0;
+    }
+
+    return 1;
+}
+
+config_t *get_config(char *config_path) {
+
+    config_t *res;
+    char *fcontent = NULL;
+    long fsize = 0;
+    FILE *fp;
+
+    fp = fopen(config_path, "rb");
+
+    if (fp)
+    {
+        fseek(fp, 0, SEEK_END);
+        fsize = ftell(fp);
+        fseek(fp, 0, SEEK_SET);
+
+        fcontent = malloc(fsize);
+        fread(fcontent, 1, fsize, fp);
+
+        if (fcontent) {
+            res = parse_config(fcontent);
+
+            if (!res) {
+                printf("Cann`t parse config\n");
+                return NULL;
+            }
+
+            free(fcontent);
+            fclose(fp);
+
+            return res;
+        }
+        else {
+            printf("Data is null\n");
+            return NULL;
+        }
+    }
+    else {
+        printf("File doesn`t exists\n");
+        return NULL;
+    }
+
+    return NULL;
+}
+
+
+config_t *parse_config(const char *const data)
+{
+    config_t *res = malloc(sizeof(config_t));
+    const cJSON *theme = NULL;
+    const cJSON *notifications = NULL;
+
+    cJSON *msg_json = cJSON_Parse(data);
+
+    theme = cJSON_GetObjectItemCaseSensitive(msg_json, "theme");
+    if (theme == NULL || !cJSON_IsNumber(theme))
+        return NULL;
+
+
+    notifications = cJSON_GetObjectItemCaseSensitive(msg_json, "notifications");
+    if (notifications == NULL || !cJSON_IsNumber(notifications))
+        return NULL;
+
+    res->theme = theme->valueint;
+    res->notifications = notifications->valueint;
+
+    cJSON_Delete(msg_json);
+
+    return res;
+}
+
+
+char *config_to_json(config_t *data)
+{
+    char *string = NULL;
+
+    cJSON *json_data = cJSON_CreateObject();
+
+    cJSON_AddNumberToObject(json_data, "theme", data->theme);
+
+    cJSON_AddNumberToObject(json_data, "notifications", data->notifications);
+
+    string = cJSON_Print(json_data);
+
+    cJSON_Delete(json_data);
+
+    return string;
+}
+
+

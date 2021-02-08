@@ -28,7 +28,7 @@ void type_of_request(char *str, int client_socket)
             }
         }     
     }
-    else if (strcmp(req->action, "sign_in") == 0)
+    else if ( (strcmp(req->action, "sign_in") == 0) || (strcmp(req->action, "auto_sign") == 0) )
     {
         
         if(verification(req->login, req->password) == true) {
@@ -166,6 +166,19 @@ void type_of_request(char *str, int client_socket)
             send_response(client_socket, req);    
         }
     }   
+    else if (strcmp(req->action, "log_out") == 0) {
+
+        if (delete_online(client_socket) == true) {      
+
+            req->status = 1; 
+            send_response(client_socket, req);       
+        }
+        else {
+            req->status = 0; // error status
+            strcpy(req->message, "You havn`t loged out");
+            send_response(client_socket, req);    
+        }
+    } 
     else {       
         write(2, "Unknown command!\n", 18);
         return;
