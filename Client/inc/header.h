@@ -19,13 +19,13 @@
 #include <pthread.h>
 #include <time.h>
 
-#define PORT 8231
+#define PORT 8232
 #define ADDR "localhost"
 #define LD_PATH "Client/storage/data.txt"
 #define CONFIG_PATH "Client/storage/config.txt"
 
 int client_socket;
-
+int FOCUS;
 typedef struct client_info
 {
     int id; 
@@ -118,6 +118,7 @@ void print_all();
 int get_free();
 int search_chat_id(char *login);
 int search(char *name);
+int friend_id();
 char *decoding(char *str);
 char *encoding(char *str);
 
@@ -139,6 +140,8 @@ void search_friend();
 void open_main();
 void theme ();
 void *pre_update_config();
+void create_chat(int chat_id, char *login);
+void create_message(char *action, int id, char *message, char* time);
 
 
 
@@ -180,7 +183,7 @@ GtkContainer      *Main;
         GtkWidget       *Open_settings;
         GtkWidget       *Search_Friends;
         GtkWidget       *fbox;
-        GtkWidget       *friend_box;
+            GtkWidget       *friend_box;
 
     GtkContainer       *settings;
         GtkWidget       *Open_Friends;
@@ -193,6 +196,10 @@ GtkContainer      *Main;
         GtkWidget       *Message_Box;
         GtkWidget       *Select_file_button;
         GtkWidget       *Send_button;
+        
+        GtkWidget       *cbox;
+            GtkWidget       *chat_box1;
+            GtkWidget       *chat_box2;
 
 ///////////////////////////////
 
@@ -200,4 +207,3 @@ GtkContainer      *Main;
 GtkContainer *Connection_lost;    
     GtkWidget *Reconnect_button; 
 
-GtkWidget *new_contact();

@@ -109,9 +109,8 @@
 }
 
 .menu-wrapper {
-  /* margin: 0px 5px; */
-  border-radius: 0px 5px 5px 0px;
-  padding: 5px;
+  border: none;
+  /* border-radius: 0px 5px 5px 0px; */
   background: #fff;
 }
 
@@ -167,10 +166,21 @@
   background: url("../img/attach-file.png") center no-repeat;
 }
 
-/* #name_label {
-  background-color: #eb4b79;
-} */
-/* #contact_button {
+
+.friend-list {
   border: none;
-  
-} */
+}
+
+#contact_button {
+  border: none;
+  color:   #362ba9;
+  background: #fff;
+  border-radius: 0px;
+}
+
+#contact_button:focus {
+  border: none;
+  color:   #362ba9;
+  background: #eb4b79;
+  border-radius: 0px;
+}

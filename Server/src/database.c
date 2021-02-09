@@ -276,9 +276,6 @@ void get_chats_info(int client_socket, struct info *res) {
     }
     sqlite3_free(query_2);
 	sqlite3_finalize(stmt);
-
-    res->status = 2; 
-    send_response(client_socket, res); 
 }
 
 
@@ -421,7 +418,7 @@ bool change_password(struct info *res) {
 void load_messages(int client_socket, struct info *res) {
 
     sqlite3_stmt *stmt;
-    char *query_1 = sqlite3_mprintf("SELECT MESSAGE_ID, USER_ID, MESSAGE, TIME FROM messages WHERE CHAT_ID = '%d' ORDER BY TIME ASC;", res->chat_id);
+    char *query_1 = sqlite3_mprintf("SELECT MESSAGE_ID, USER_ID, MESSAGE, TIME FROM messages WHERE CHAT_ID = '%d' ORDER BY TIME DESC;", res->chat_id);
     sqlite3_prepare_v2(db, query_1, -1, &stmt, 0);
     while (sqlite3_step(stmt) != SQLITE_DONE) {
 

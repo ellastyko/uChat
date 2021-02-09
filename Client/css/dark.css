@@ -111,9 +111,9 @@
 }
 
 .menu-wrapper {
-  /* margin: 5px 0px;  */
-  border-radius: 0px 5px 5px 0px;
-  padding: 5px;
+
+  /* border-radius: 0px 5px 5px 0px; */
+  border: none;
   background: #202225;
 }
 
@@ -167,14 +167,29 @@
   background: url("../img/attach-file-dark.png") center no-repeat;
 }
 
-/* #contact_button {
+
+.friend-list {
   border: none;
-  
-} */
- #name_label {
-  background-color: #eb4b79;
+  color: #d4d4d4;
 }
 
 #contact_button {
-  background-color: #eb4b79;
+  border: none;
+  color: #d4d4d4;
+  background: #202225;
+  border-radius: 0px;
+}
+
+#contact_button:focus {
+  border: none;
+  color: white;
+  background: #36393F;
+  border-radius: 0px;
 } 
+
+#message {
+  border: none;
+  color: #d4d4d4;
+  background: #36393F;
+  border-radius: 7px;
+}

@@ -7,6 +7,7 @@ void prepare() {
     strcpy(cl_info.login, "-1");
     strcpy(cl_info.password, "-1");
     strcpy(cl_info.key, "-1");
+    FOCUS = -1;
     // Вносим стандартные значения в структуру с чатами
     for (int i = 0; i < 100; i++) {
 
@@ -67,6 +68,16 @@ int search_chat_id(char *login) {
 
         if (strcmp(login, chat[i].login) == 0) {
             return chat[i].chat_id;
+        }
+    }
+    return -1;
+}
+
+int friend_id () {
+    for (int i = 0; i < get_free(); i++) {
+
+        if (FOCUS == chat[i].chat_id) {
+            return chat[i].friend_id;
         }
     }
     return -1;

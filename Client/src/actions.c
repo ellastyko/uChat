@@ -159,16 +159,18 @@ void sign_in() {
 //  Функция отправки сообщения
 void send_message() {
 
-    gtk_box_pack_start (GTK_BOX(friend_box), new_contact(), FALSE, FALSE, 0);
-    gtk_widget_show_all(friend_box);
-
-
-    /*char buf[500];
-    strcpy(buf , gtk_entry_get_text( GTK_ENTRY(Message_Box) ));
-   
     
     struct info req;
-    char name[20];
+    
+    char text[500];
+
+    strcpy(text, gtk_entry_get_text( GTK_ENTRY(Message_Box) ));
+    if (strcmp(text, "") == 0) {
+        return;
+    }
+    gtk_entry_set_text( GTK_ENTRY(Message_Box), "" );
+    create_message("send_message", req.id, req.message, time_converter(req.time));
+    
     strcpy(req.action, "send_message");
 
     req.id = cl_info.id;
@@ -176,22 +178,23 @@ void send_message() {
     strcpy(req.password, "");  
     strcpy(req.key, cl_info.key);
 
-    printf("Send to: "); scanf("%s", name);
-    int i = search(name);
+    
+    int i = friend_id();
     if (i == -1) {
         write(2, "\nUser is not in your contacts\n", 30);
-        add_chat();
+        //add_chat();
         return;
     }
-    req.chat_id = chat[i].chat_id;
-    req.friend_id = chat[i].friend_id;
-    strcpy(req.message, gtk_entry_get_text( GTK_ENTRY(message) ));
+    req.chat_id = FOCUS;
+    req.friend_id = i;
+    strcpy(req.message, text);
     req.message_id = -1;
     req.time = time(NULL); 
        
 
     char *buf = stringify(&req);
-    send_to_server(buf);*/
+    send_to_server(buf);
+    
 }
 
 //  Функция удаления пользователя
@@ -330,7 +333,19 @@ void get_chats_info() {
 // Open chat
 void open_chat(GtkButton *button, gpointer *user_data) {
 
-    int a2 = GPOINTER_TO_INT (user_data);
+    
+    int id = GPOINTER_TO_INT (user_data);
+    if (id == FOCUS) {
+        return;
+    }
+    gtk_container_remove(GTK_CONTAINER(cbox), chat_box1);
+    gtk_container_remove(GTK_CONTAINER(cbox), chat_box2);
+
+    chat_box1 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    chat_box2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+
+    gtk_container_add(GTK_CONTAINER(cbox), chat_box1);
+    gtk_container_add(GTK_CONTAINER(cbox), chat_box2);
 
     struct info req;
     strcpy(req.action, "load_messages");
@@ -341,7 +356,7 @@ void open_chat(GtkButton *button, gpointer *user_data) {
     strcpy(req.key, cl_info.key);
 
     
-    req.chat_id = a2; /////////
+    req.chat_id = id; 
     req.friend_id = -1;  
     strcpy(req.message, "");
     req.message_id = -1;

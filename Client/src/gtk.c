@@ -26,8 +26,7 @@ void MAIN_BOXES() {
     friends = GTK_CONTAINER(gtk_builder_get_object(builder, "friends"));
     Open_settings = GTK_WIDGET(gtk_builder_get_object(builder, "Open_settings"));
     Search_Friends = GTK_WIDGET(gtk_builder_get_object(builder, "Search_friends"));
-    //fbox = GTK_WIDGET(gtk_builder_get_object(builder, "fbox"));
-    friend_box = GTK_WIDGET(gtk_builder_get_object(builder, "friend_box"));
+    fbox = GTK_WIDGET(gtk_builder_get_object(builder, "fbox"));
 
     settings = GTK_CONTAINER(gtk_builder_get_object(builder, "settings"));
     Open_Friends = GTK_WIDGET(gtk_builder_get_object(builder, "Open_friends"));
@@ -39,6 +38,11 @@ void MAIN_BOXES() {
     Message_Box = GTK_WIDGET(gtk_builder_get_object(builder, "Message_Box"));
     Select_file_button = GTK_WIDGET(gtk_builder_get_object(builder, "Select_file_button"));
     Send_button = GTK_WIDGET(gtk_builder_get_object(builder, "Send_button"));
+    cbox = GTK_WIDGET(gtk_builder_get_object(builder, "cbox"));
+    chat_box1 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    gtk_container_add(GTK_CONTAINER(cbox), chat_box1);
+    chat_box2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    gtk_container_add(GTK_CONTAINER(cbox), chat_box2);
 }
 
 void NO_CONNECTION_BOX() {
@@ -97,6 +101,7 @@ void log_out() {
     STATE = 0;
     gtk_widget_show ( GTK_WIDGET(SignLog) );
     gtk_widget_hide ( GTK_WIDGET(Main) );
+    
     prepare();  
     struct info req;
 
@@ -112,8 +117,9 @@ void log_out() {
     strcpy(req.message, "");
     req.message_id = -1;
     req.time = -1; 
-    
-
+    gtk_container_remove(GTK_CONTAINER(cbox), chat_box1);
+    gtk_container_remove(GTK_CONTAINER(cbox), chat_box2);
+    gtk_container_remove(GTK_CONTAINER(fbox), friend_box);
     char *buf = stringify(&req);
     send_to_server(buf); 
 }
@@ -160,20 +166,74 @@ void open_main() {
 
 
 // adding new contact
-GtkWidget *new_contact()
+void create_chat(int chat_id, char *login)
 {  
        
     GtkWidget *contact_button = gtk_button_new();
+
     GtkWidget *contact_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_container_add(GTK_CONTAINER(contact_button), contact_box);
+
     GtkWidget *contact_name_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     gtk_container_add(GTK_CONTAINER(contact_box), contact_name_box);
 
-    GtkWidget *name_label = gtk_label_new("CONTACT");
+    GtkWidget *name_label = gtk_label_new(login);
     gtk_box_pack_start(GTK_BOX(contact_name_box), name_label, FALSE, FALSE, 0);
 
+    gtk_container_add(GTK_CONTAINER(friend_box), contact_button);
+    
+    gtk_widget_set_name (contact_button, "contact_button");
     gtk_widget_set_focus_on_click (contact_button, TRUE);
-   return contact_button;
+
+    gpointer *ptr = GINT_TO_POINTER(chat_id);
+
+    g_signal_connect(G_OBJECT(contact_button), "clicked",
+        G_CALLBACK(open_chat), ptr);
+
+    gtk_widget_show_all(friend_box);
 }
 
+void create_message(char *action, int id, char *message, char* time)
+{  
+       
+    GtkWidget *message_button = gtk_button_new();
+    gtk_widget_set_margin_top(GTK_WIDGET(message_button), 5);
+    gtk_widget_set_margin_start(GTK_WIDGET(message_button), 10);
+    gtk_widget_set_margin_end(GTK_WIDGET(message_button), 10);
+    gtk_widget_set_margin_bottom(GTK_WIDGET(message_button), 5);
+    
+    if (id == cl_info.id) {
+        gtk_widget_set_halign(GTK_WIDGET(message_button), GTK_ALIGN_END);
+    }
+    else {
+        gtk_widget_set_halign(GTK_WIDGET(message_button), GTK_ALIGN_START);
+    }
 
+    GtkWidget *contact_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_container_add(GTK_CONTAINER(message_button), contact_box);
+
+    GtkWidget *contact_name_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    gtk_container_add(GTK_CONTAINER(contact_box), contact_name_box);
+
+    GtkWidget *name_label = gtk_label_new(message);
+    gtk_label_set_selectable (GTK_LABEL(name_label), TRUE);
+    gtk_box_pack_start(GTK_BOX(contact_name_box), name_label, FALSE, FALSE, 0);
+    gtk_widget_set_name (message_button, "message");
+
+    if (strcmp(action, "load_messages") == 0) {
+        gtk_box_pack_end(GTK_BOX(chat_box1), message_button, FALSE, FALSE, 0);
+        gtk_widget_show_all(cbox);
+    }
+    else {
+        gtk_box_pack_start(GTK_BOX(chat_box2), message_button, FALSE, FALSE, 0);
+        gtk_widget_show_all(cbox);
+    } 
+
+        
+    
+    //gtk_widget_set_focus_on_click (message_button, TRUE);
+    // g_signal_connect(G_OBJECT(contact_button), "clicked",
+    //     G_CALLBACK(open_chat), NULL);
+
+    
+}

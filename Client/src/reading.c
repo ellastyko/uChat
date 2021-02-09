@@ -72,13 +72,12 @@ void type_of_response(struct info *res) {
             strcpy(cl_info.login, res->login);
             strcpy(cl_info.password, res->password);
             strcpy(cl_info.key, res->key);
-            write(2, "Auto sign ok!", 14);
-            
+            friend_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+            gtk_container_add(GTK_CONTAINER(fbox), friend_box);
             get_chats_info();
             STATE = 2;
         }
-        else if (strcmp(res->action, "sign_up") == 0) {
-            
+        else if (strcmp(res->action, "sign_up") == 0) {           
             to_log_in();
         }
         else if (strcmp(res->action, "sign_in") == 0) {
@@ -87,34 +86,35 @@ void type_of_response(struct info *res) {
             strcpy(cl_info.login, res->login);
             strcpy(cl_info.password, res->password);
             strcpy(cl_info.key, res->key);
+            friend_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+            gtk_container_add(GTK_CONTAINER(fbox), friend_box);
+            get_chats_info();
+
             if (!update_localdata(&cl_info, LD_PATH)) {
                 printf("Cant save localdata\n");
             }
-            else {
-                printf("Localdata is saved\n");
-            }
 
             gtk_label_set_text(GTK_LABEL(hint), "");
-
-            get_chats_info();
             open_main();      
         }
         else if (strcmp(res->action, "add_chat") == 0) {
 
             push_chat(res->chat_id, res->friend_id, res->login);
+            create_chat(res->chat_id, res->login);  
         }
         else if (strcmp(res->action, "get_chats_info") == 0) {
             // Запись полученных данных в структуру
             
             push_chat(res->chat_id, res->friend_id, res->login);
-            //get_chat(res->chat_id, res->login);            
+            create_chat(res->chat_id, res->login);            
         }
         else if (strcmp(res->action, "get_message") == 0) {
-            write(2, "\n", 2);
-            write(2, res->message, strlen(res->message));
+
+            create_message("get_message", res->id, res->message, time_converter(res->time));
         }
         else if (strcmp(res->action, "send_message") == 0) {
             write(2, "Message sended\n", 16);
+
         }
         else if (strcmp(res->action, "delete_message") == 0) {
             write(2, "Message deleted\n", 17);
@@ -123,48 +123,17 @@ void type_of_response(struct info *res) {
             
              if (strcmp(gtk_label_get_text (GTK_LABEL(hint)), "This login isn`t available") == 0) {
                 gtk_label_set_text(GTK_LABEL(hint), "");
-                gtk_widget_hide (hint);
-                
+                gtk_widget_hide (hint);         
             }
         }
         else if (strcmp(res->action, "load_messages") == 0) {
-
-            if (res->id == cl_info.id) {
-                write(2, "---------", 10);
-                write(2, res->message, strlen(res->message));
-            }
-            else {
-                write(2, res->message, strlen(res->message));
-                write(2, "---------", 10);
-            }   
-            printf("\n");
+            FOCUS = res->chat_id;
+            create_message("load_messages", res->id, res->message, time_converter(res->time)); 
         }
         else if (strcmp(res->action, "is_user_exists") == 0) {
-            write(2, "User exists!!!\n", 16);
+            write(2, "User exists!\n", 16);
             
         }
         
     }
 }
-
-// void get_chat(int chat_id, char *login) {
-    
-    
-    // contact_button = gtk_button_new();
-    // gtk_box_pack_start (friend_box,
-    //                 contact_button,
-    //                 false,
-    //                 false,
-    //                 0);
-    // gtk_widget_set_name(GTK_WIDGET(contact_button), "contact_button");
-    // cont = gtk_box_new (GTK_ORIENTATION_VERTICAL, 1);
-    // gtk_container_add(GTK_CONTAINER(friend_box), GTK_WIDGET(cont));
-    // gtk_container_add(GTK_CONTAINER(cont), GTK_WIDGET(contact_button));
-    
-    // name_label = gtk_label_new(login);
-    // gtk_container_add(GTK_CONTAINER(contact_button), name_label);
-
-    // gpointer *ptr = GINT_TO_POINTER (chat_id);
-    // g_signal_connect(G_OBJECT(contact_button), "clicked", G_CALLBACK(open_chat), ptr);
-    //gtk_widget_show_all(GTK_WIDGET(fbox));
-//}
