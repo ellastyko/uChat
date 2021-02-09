@@ -159,12 +159,15 @@ void sign_in() {
 //  Функция отправки сообщения
 void send_message() {
 
-    char buf[500];
-    strcpy(buf ,gtk_entry_get_text( GTK_ENTRY(Message_Box) ));
-    write(2, buf, strlen(buf));
+    gtk_box_pack_start (GTK_BOX(friend_box), new_contact(), FALSE, FALSE, 0);
+    gtk_widget_show_all(friend_box);
 
+
+    /*char buf[500];
+    strcpy(buf , gtk_entry_get_text( GTK_ENTRY(Message_Box) ));
+   
     
-    /*struct info req;
+    struct info req;
     char name[20];
     strcpy(req.action, "send_message");
 
@@ -325,7 +328,9 @@ void get_chats_info() {
 }
 
 // Open chat
-void open_chat() {
+void open_chat(GtkButton *button, gpointer *user_data) {
+
+    int a2 = GPOINTER_TO_INT (user_data);
 
     struct info req;
     strcpy(req.action, "load_messages");
@@ -336,7 +341,7 @@ void open_chat() {
     strcpy(req.key, cl_info.key);
 
     
-    printf("Enter chat to open: "); scanf("%d", &req.chat_id);
+    req.chat_id = a2; /////////
     req.friend_id = -1;  
     strcpy(req.message, "");
     req.message_id = -1;

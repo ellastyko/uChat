@@ -6,7 +6,7 @@ SERVER_FILES = Server/src/*.c
 LIBS = lib/*.c 
 
 GTK = `pkg-config --cflags gtk+-3.0` `pkg-config --libs gtk+-3.0` -export-dynamic
-FLAGS = -std=c11 -Wall -Wextra -Wpedantic -Werror
+FLAGS = -std=c11 -Wall -Wextra -Wpedantic #-Werror
 
 sr: 
 	cd Server/src/
@@ -15,6 +15,7 @@ sr:
 	@mv a.out server.o
 
 cl: 
+	rm -rf client.o
 	cd Client/src/
 	$(COMPILER) $(FLAGS) $(LIBS) $(CLIENT_FILES) $(GTK)
 	@mv a.out client.o

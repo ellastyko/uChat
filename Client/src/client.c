@@ -5,15 +5,7 @@ int STATE = 0;
 
 int main(int argc, char *argv[])
 {
-    
-    if (Socket() == 1) {
-        STATE = 3;
-    }
-    prepare();
-    if (auto_sign() == EXIT_FAILURE) {
-        STATE = 0;
-    }
-    
+        
     gtk_init(&argc, &argv);
 
     style = gtk_css_provider_new ();
@@ -32,7 +24,7 @@ int main(int argc, char *argv[])
     SIGN_BOXES();
     MAIN_BOXES();
     NO_CONNECTION_BOX();   
-
+   
 
     if (config() == 0) {
         if (Config.theme != 1) {
@@ -52,8 +44,15 @@ int main(int argc, char *argv[])
     }
     
 
-    gtk_builder_connect_signals(builder, NULL);
+    
 
+    if (Socket() == 1) {
+        STATE = 3;
+    }
+    prepare();
+    if (auto_sign() == EXIT_FAILURE) {
+        STATE = 0;
+    }
     if (STATE == 0) {
         reading_thread();
         gtk_widget_hide ( GTK_WIDGET(Main) );
@@ -68,8 +67,8 @@ int main(int argc, char *argv[])
         gtk_widget_hide ( GTK_WIDGET(SignLog) );
     }
     
-    
-
+    gtk_builder_connect_signals(builder, NULL);
+    g_object_unref(builder);
     gtk_widget_show(window);   
 
     gtk_main();

@@ -19,7 +19,7 @@
 #include <pthread.h>
 #include <time.h>
 
-#define PORT 8233
+#define PORT 8231
 #define ADDR "localhost"
 #define LD_PATH "Client/storage/data.txt"
 #define CONFIG_PATH "Client/storage/config.txt"
@@ -92,7 +92,7 @@ void sign_up();
 void sign_in();
 
 void add_chat();
-void open_chat();
+void open_chat(GtkButton *button, gpointer *user_data);
 void delete_user();
 void change_password();
 void send_message();
@@ -116,6 +116,7 @@ char time_converter(int time);
 void push_chat(int chat_id, int friend_id, char*login);
 void print_all();
 int get_free();
+int search_chat_id(char *login);
 int search(char *name);
 char *decoding(char *str);
 char *encoding(char *str);
@@ -175,9 +176,11 @@ GtkWidget      *Sign_up;
 GtkContainer      *Main;
 
     // Left Sidebar
-    GtkContainer       *friends;
+    GtkContainer      *friends;
         GtkWidget       *Open_settings;
         GtkWidget       *Search_Friends;
+        GtkWidget       *fbox;
+        GtkWidget       *friend_box;
 
     GtkContainer       *settings;
         GtkWidget       *Open_Friends;
@@ -196,3 +199,5 @@ GtkContainer      *Main;
 // No connection window
 GtkContainer *Connection_lost;    
     GtkWidget *Reconnect_button; 
+
+GtkWidget *new_contact();

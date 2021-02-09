@@ -57,13 +57,13 @@ struct info *parse(const char *const msg)
         return NULL;
     res->status = status->valueint;
 
-    if (res->status != 1) { // Message in case of error
+    if (res->status == 0) { // Message in case of error
         message = cJSON_GetObjectItemCaseSensitive(msg_json, "message");
         if (message == NULL || message->valuestring == NULL)
             return NULL;
         strcpy(res->message, message->valuestring);
     }
-    else { // If everything ok
+    else if (res->status == 1) { // If everything ok
         
         if ((strcmp(res->action, "sign_in") == 0) || strcmp(res->action, "auto_sign") == 0) {
             
@@ -175,6 +175,7 @@ struct info *parse(const char *const msg)
             strcpy(res->password, password->valuestring);
         }
     }
+
     
     cJSON_Delete(msg_json);
 

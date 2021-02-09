@@ -3,6 +3,7 @@
 <interface>
   <requires lib="gtk+" version="3.24"/>
   <object class="GtkWindow" id="Window">
+    <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Aest  -  your messenger</property>
     <property name="window_position">center</property>
@@ -342,13 +343,12 @@
               <object class="GtkOverlay" id="sidebar-overlay">
                 <property name="width_request">240</property>
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="halign">start</property>
+                <property name="can_focus">True</property>
                 <child>
                   <object class="GtkBox" id="friends">
                     <property name="width_request">240</property>
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can_focus">True</property>
                     <property name="orientation">vertical</property>
                     <property name="spacing">12</property>
                     <child>
@@ -409,23 +409,54 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkScrolledWindow" id="chat-box">
+                      <object class="GtkBox">
+                        <property name="height_request">400</property>
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="vexpand">True</property>
-                        <property name="shadow_type">in</property>
+                        <property name="can_focus">False</property>
+                        <property name="orientation">vertical</property>
                         <child>
-                          <object class="GtkViewport">
+                          <object class="GtkScrolledWindow">
+                            <property name="height_request">400</property>
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
+                            <property name="can_focus">True</property>
+                            <property name="vscrollbar_policy">always</property>
+                            <property name="shadow_type">in</property>
+                            <property name="propagate_natural_width">True</property>
+                            <property name="propagate_natural_height">True</property>
                             <child>
-                              <placeholder/>
+                              <object class="GtkViewport">
+                                <property name="height_request">400</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="orientation">vertical</property>
+                                    <child>
+                                      <object class="GtkButton">
+                                        <property name="label" translatable="yes">button</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="receives_default">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
                             </child>
                           </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
                         </child>
-                        <style>
-                          <class name="chat-box"/>
-                        </style>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -660,7 +691,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkScrolledWindow" id="chat-box3">
+                      <object class="GtkScrolledWindow">
                         <property name="width_request">660</property>
                         <property name="height_request">60</property>
                         <property name="visible">True</property>
@@ -672,7 +703,14 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <child>
-                              <placeholder/>
+                              <object class="GtkBox" id="chat_box">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="orientation">vertical</property>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                              </object>
                             </child>
                           </object>
                         </child>

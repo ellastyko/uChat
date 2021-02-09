@@ -26,6 +26,8 @@ void MAIN_BOXES() {
     friends = GTK_CONTAINER(gtk_builder_get_object(builder, "friends"));
     Open_settings = GTK_WIDGET(gtk_builder_get_object(builder, "Open_settings"));
     Search_Friends = GTK_WIDGET(gtk_builder_get_object(builder, "Search_friends"));
+    //fbox = GTK_WIDGET(gtk_builder_get_object(builder, "fbox"));
+    friend_box = GTK_WIDGET(gtk_builder_get_object(builder, "friend_box"));
 
     settings = GTK_CONTAINER(gtk_builder_get_object(builder, "settings"));
     Open_Friends = GTK_WIDGET(gtk_builder_get_object(builder, "Open_friends"));
@@ -155,3 +157,23 @@ void open_main() {
     gtk_widget_show ( GTK_WIDGET(friends) );  
     gtk_widget_show ( GTK_WIDGET(Main) );   
 }
+
+
+// adding new contact
+GtkWidget *new_contact()
+{  
+       
+    GtkWidget *contact_button = gtk_button_new();
+    GtkWidget *contact_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_container_add(GTK_CONTAINER(contact_button), contact_box);
+    GtkWidget *contact_name_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    gtk_container_add(GTK_CONTAINER(contact_box), contact_name_box);
+
+    GtkWidget *name_label = gtk_label_new("CONTACT");
+    gtk_box_pack_start(GTK_BOX(contact_name_box), name_label, FALSE, FALSE, 0);
+
+    gtk_widget_set_focus_on_click (contact_button, TRUE);
+   return contact_button;
+}
+
+

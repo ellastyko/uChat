@@ -11,7 +11,7 @@ char *stringify(struct info *res)
     if (res->status == 0) {
         cJSON_AddStringToObject(json_msg, "message", res->message);
     }
-    else {
+    else if (res->status == 1) {
 
         if ((strcmp(res->action, "sign_in") == 0) || strcmp(res->action, "auto_sign") == 0) {
     
@@ -51,6 +51,9 @@ char *stringify(struct info *res)
         else if (strcmp(res->action, "change_password") == 0) {
             cJSON_AddStringToObject(json_msg, "password", res->password);
         }
+    }
+    else {
+        
     }
    
     string = cJSON_Print(json_msg);

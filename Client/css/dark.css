@@ -166,3 +166,15 @@
 #attach-button {
   background: url("../img/attach-file-dark.png") center no-repeat;
 }
+
+/* #contact_button {
+  border: none;
+  
+} */
+ #name_label {
+  background-color: #eb4b79;
+}
+
+#contact_button {
+  background-color: #eb4b79;
+} 

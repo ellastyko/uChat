@@ -276,6 +276,9 @@ void get_chats_info(int client_socket, struct info *res) {
     }
     sqlite3_free(query_2);
 	sqlite3_finalize(stmt);
+
+    res->status = 2; 
+    send_response(client_socket, res); 
 }
 
 
