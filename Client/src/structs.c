@@ -33,22 +33,14 @@ int get_free() {
     for (size_t i = 0; i < 100; i++) {
 
         if ((chat[i].chat_id == -1) && (chat[i].friend_id == -1) && (strcmp(chat[i].login, "-1") == 0)) {
-            //printf("GETFREE %ld", i);
             return i;
         }
     }
     return -1;
 }
 
-void print_all() {
 
-    for (int i = 0; i < get_free(); i++) {
-        
-        printf("\n- %d -", chat[i].chat_id);
-        printf(" %d -", chat[i].friend_id);
-        printf(" %s -", chat[i].login);
-    }
-}
+
 
 int search(char *name) {
 
@@ -61,7 +53,7 @@ int search(char *name) {
     return -1;
 }
 
-
+// useless
 int search_chat_id(char *login) {
 
     for (int i = 0; i < get_free(); i++) {
@@ -81,4 +73,16 @@ int friend_id () {
         }
     }
     return -1;
+}
+
+char *search_login(int chat_id) {
+    char *login = "";
+
+    for (int i = 0; i < get_free(); i++) {
+
+        if (chat_id == chat[i].chat_id) {
+            return chat[i].login;
+        }
+    }
+    return login;
 }

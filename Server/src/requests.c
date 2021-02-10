@@ -17,9 +17,22 @@ void type_of_request(char *str, int client_socket)
         }
         else  { 
             if (add_user(req->login, req->password, key()) == true) {
-                
-                req->status = 1;
-                send_response(client_socket, req);  
+                //goto METKA;
+                req->friend_id = get_id_by_login(req->login);
+                req->id = req->friend_id; 
+                get_chat_id_by_users(req);    // Возвращает id чата 
+                if (add_chat(req) == true) { // Добавляем чат
+
+                    req->status = 1; // Успешно
+                    //get_chat_id_by_users(req);
+                    send_response(client_socket, req);     
+                }
+                else {
+                    req->status = 0; // error status
+                    strcpy(req->message, "Chat with saved messages not created");  
+                    send_response(client_socket, req);  
+                     
+                }
             }
             else {
                 req->status = 0; // error status
@@ -59,28 +72,36 @@ void type_of_request(char *str, int client_socket)
     else if (strcmp(req->action, "add_chat") == 0) {
 
         if (check_login(req->login) == false) {    // Если такой пользователь существует
-
+           
             req->friend_id = get_id_by_login(req->login); // Записываем id пользователя по имени
-            get_chat_id_by_users(req);    // Возвращает id чата 
-            if (req->chat_id == -1) { // Если чата нет то ...
-                write(2, "There is no such chat", 22);
-                if (add_chat(req) == true) { // Добавляем чат
-            
-                    req->status = 1; // Успешно
-                    get_chat_id_by_users(req);
-                    send_response(client_socket, req);     
-                }
-                else {
+            if (req->friend_id != req->id) {
+//METKA:           
+                get_chat_id_by_users(req);    // Возвращает id чата 
+                if (req->chat_id == -1) { // Если чата нет то ...
+
+                    if (add_chat(req) == true) { // Добавляем чат
+                
+                        req->status = 1; // Успешно
+                        get_chat_id_by_users(req);
+                        send_response(client_socket, req);     
+                    }
+                    else {
+                        req->status = 0; // error status
+                        strcpy(req->message, "User hasn`t added to your friends");  
+                        send_response(client_socket, req);   
+                    }
+                }  
+                else {   
                     req->status = 0; // error status
-                    strcpy(req->message, "User hasn`t added to your frinds");  
-                    send_response(client_socket, req);   
-                }
-            }  
-            else {   
+                    strcpy(req->message, "Chat already exists");
+                    send_response(client_socket, req);  
+                }    
+            }
+            else {
                 req->status = 0; // error status
-                strcpy(req->message, "Chat already exists");
+                strcpy(req->message, "You trying to add yourself");
                 send_response(client_socket, req);  
-            }    
+            }
         }
         else {
             req->status = 0; // error status
@@ -148,10 +169,6 @@ void type_of_request(char *str, int client_socket)
     else if (strcmp(req->action, "get_chats_info") == 0) {
 
         get_chats_info(client_socket, req);
-    }
-    else if (strcmp(req->action, "update_chats") == 0) {
-
-        // Updating cache after sign in
     }
     else if (strcmp(req->action, "availability_of_login") == 0) {
 

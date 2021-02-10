@@ -258,15 +258,19 @@ void get_chats_info(int client_socket, struct info *res) {
             res->status = 1; 
             send_response(client_socket, res);
         }
-    }
+    }  
     stmt = NULL;
     sqlite3_free(query_1);
+    
+    
     char *query_2 = sqlite3_mprintf("SELECT CHAT_ID, USER2 FROM chats WHERE USER1 = '%d';", res->id);
     sqlite3_prepare_v2(db, query_2, -1, &stmt, 0);
     while (sqlite3_step(stmt) != SQLITE_DONE) {
 
         res->chat_id = sqlite3_column_int(stmt, 0);      
 		res->friend_id = sqlite3_column_int(stmt, 1);
+        if (res->id == res->friend_id) 
+            continue;
         get_login_by_id(res); 
         if (res->chat_id != -1 && res->friend_id != -1 && strcmp(res->login, "") != 0)	{
 

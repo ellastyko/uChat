@@ -119,6 +119,7 @@ int get_free();
 int search_chat_id(char *login);
 int search(char *name);
 int friend_id();
+char *search_login(int chat_id);
 char *decoding(char *str);
 char *encoding(char *str);
 
@@ -142,6 +143,8 @@ void theme ();
 void *pre_update_config();
 void create_chat(int chat_id, char *login);
 void create_message(char *action, int id, char *message, char* time);
+void scrolling();
+
 
 
 
@@ -193,13 +196,17 @@ GtkContainer      *Main;
 
     // your chat
     GtkContainer       *your_chat;
+        GtkWidget       *your_friend;
+        GtkWidget       *friend_status;
+
         GtkWidget       *Message_Box;
         GtkWidget       *Select_file_button;
         GtkWidget       *Send_button;
         
-        GtkWidget       *cbox;
-            GtkWidget       *chat_box1;
-            GtkWidget       *chat_box2;
+        GtkWidget       *Scroll;
+            GtkWidget       *cbox;
+                GtkWidget       *chat_box1;
+                GtkWidget       *chat_box2;
 
 ///////////////////////////////
 

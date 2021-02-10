@@ -52,9 +52,6 @@ char *stringify(struct info *res)
             cJSON_AddStringToObject(json_msg, "password", res->password);
         }
     }
-    else {
-        
-    }
    
     string = cJSON_Print(json_msg);
 

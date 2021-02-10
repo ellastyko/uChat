@@ -34,11 +34,20 @@ void MAIN_BOXES() {
     Log_out = GTK_WIDGET(gtk_builder_get_object(builder, "Log_out"));
     Theme = GTK_WIDGET(gtk_builder_get_object(builder, "Theme"));
 
+
     your_chat = GTK_CONTAINER(gtk_builder_get_object(builder, "your_chat"));
+
+    your_friend = GTK_WIDGET(gtk_builder_get_object(builder, "your_friend"));
+    friend_status = GTK_WIDGET(gtk_builder_get_object(builder, "friend_status"));
+
+    Scroll = GTK_WIDGET(gtk_builder_get_object(builder, "Scroll"));
+    cbox = GTK_WIDGET(gtk_builder_get_object(builder, "cbox"));
+
     Message_Box = GTK_WIDGET(gtk_builder_get_object(builder, "Message_Box"));
     Select_file_button = GTK_WIDGET(gtk_builder_get_object(builder, "Select_file_button"));
     Send_button = GTK_WIDGET(gtk_builder_get_object(builder, "Send_button"));
-    cbox = GTK_WIDGET(gtk_builder_get_object(builder, "cbox"));
+    
+
     chat_box1 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     gtk_container_add(GTK_CONTAINER(cbox), chat_box1);
     chat_box2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
@@ -168,16 +177,25 @@ void open_main() {
 // adding new contact
 void create_chat(int chat_id, char *login)
 {  
-       
-    GtkWidget *contact_button = gtk_button_new();
+    GtkWidget *name_label; 
+    GtkWidget *contact_button;
+        GtkWidget *contact_box;
+            GtkWidget *contact_name_box;
 
-    GtkWidget *contact_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    contact_button = gtk_button_new();
+    gtk_widget_set_size_request(contact_button, 240, 50);
+    
+    contact_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_container_add(GTK_CONTAINER(contact_button), contact_box);
 
-    GtkWidget *contact_name_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    contact_name_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     gtk_container_add(GTK_CONTAINER(contact_box), contact_name_box);
 
-    GtkWidget *name_label = gtk_label_new(login);
+    if (strcmp(login, cl_info.login) != 0)
+        name_label = gtk_label_new(login);
+    else
+        name_label = gtk_label_new("Saved messages");
+
     gtk_box_pack_start(GTK_BOX(contact_name_box), name_label, FALSE, FALSE, 0);
 
     gtk_container_add(GTK_CONTAINER(friend_box), contact_button);
@@ -219,7 +237,7 @@ void create_message(char *action, int id, char *message, char* time)
     gtk_label_set_selectable (GTK_LABEL(name_label), TRUE);
     gtk_box_pack_start(GTK_BOX(contact_name_box), name_label, FALSE, FALSE, 0);
     gtk_widget_set_name (message_button, "message");
-
+    
     if (strcmp(action, "load_messages") == 0) {
         gtk_box_pack_end(GTK_BOX(chat_box1), message_button, FALSE, FALSE, 0);
         gtk_widget_show_all(cbox);
@@ -228,12 +246,21 @@ void create_message(char *action, int id, char *message, char* time)
         gtk_box_pack_start(GTK_BOX(chat_box2), message_button, FALSE, FALSE, 0);
         gtk_widget_show_all(cbox);
     } 
-
+    
         
     
     //gtk_widget_set_focus_on_click (message_button, TRUE);
     // g_signal_connect(G_OBJECT(contact_button), "clicked",
     //     G_CALLBACK(open_chat), NULL);
 
-    
+    scrolling();
+}
+
+
+void scrolling()
+{
+    GtkAdjustment *adj = gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(Scroll));
+    gtk_adjustment_set_page_size (adj, 0);
+    double value = gtk_adjustment_get_upper(adj);
+    gtk_adjustment_set_value(adj, value);
 }

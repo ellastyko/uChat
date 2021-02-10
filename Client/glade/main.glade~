@@ -354,10 +354,10 @@
                       <object class="GtkScrolledWindow">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
+                        <property name="window_placement">bottom-right</property>
                         <property name="shadow_type">in</property>
                         <child>
                           <object class="GtkViewport">
-                            <property name="height_request">400</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <child>
@@ -401,17 +401,21 @@
                       <packing>
                         <property name="expand">True</property>
                         <property name="fill">True</property>
-                        <property name="position">0</property>
+                        <property name="position">1</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkBox">
+                        <property name="height_request">34</property>
                         <property name="visible">True</property>
+                        <property name="app_paintable">True</property>
                         <property name="can_focus">False</property>
-                        <property name="valign">end</property>
-                        <property name="margin_left">4</property>
+                        <property name="margin_left">5</property>
+                        <property name="margin_right">5</property>
                         <property name="margin_start">4</property>
                         <property name="margin_end">4</property>
+                        <property name="margin_top">5</property>
+                        <property name="margin_bottom">5</property>
                         <property name="spacing">4</property>
                         <child>
                           <object class="GtkButton" id="Open_settings">
@@ -456,9 +460,10 @@
                         </child>
                       </object>
                       <packing>
-                        <property name="expand">True</property>
+                        <property name="expand">False</property>
                         <property name="fill">True</property>
-                        <property name="position">1</property>
+                        <property name="pack_type">end</property>
+                        <property name="position">2</property>
                       </packing>
                     </child>
                     <style>
@@ -467,7 +472,7 @@
                   </object>
                   <packing>
                     <property name="pass_through">True</property>
-                    <property name="index">-1</property>
+                    <property name="index">1</property>
                   </packing>
                 </child>
                 <child type="overlay">
@@ -647,14 +652,13 @@
                         <property name="row_homogeneous">True</property>
                         <property name="column_homogeneous">True</property>
                         <child>
-                          <object class="GtkLabel" id="friend1">
+                          <object class="GtkLabel" id="your_friend">
                             <property name="width_request">50</property>
                             <property name="height_request">-1</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="halign">start</property>
                             <property name="valign">start</property>
-                            <property name="label" translatable="yes">Friend</property>
                             <property name="xalign">0.029999999329447746</property>
                             <style>
                               <class name="chat-label"/>
@@ -666,11 +670,10 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="status1">
+                          <object class="GtkLabel" id="friend_status">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="halign">end</property>
-                            <property name="label" translatable="yes">online</property>
                           </object>
                           <packing>
                             <property name="left_attach">1</property>
@@ -688,7 +691,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkScrolledWindow">
+                      <object class="GtkScrolledWindow" id="Scroll">
                         <property name="width_request">660</property>
                         <property name="height_request">60</property>
                         <property name="visible">True</property>

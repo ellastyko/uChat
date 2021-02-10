@@ -162,15 +162,14 @@ void send_message() {
     
     struct info req;
     
-    char text[500];
+    char text[BUFSIZ];
 
     strcpy(text, gtk_entry_get_text( GTK_ENTRY(Message_Box) ));
     if (strcmp(text, "") == 0) {
         return;
     }
-    gtk_entry_set_text( GTK_ENTRY(Message_Box), "" );
-    create_message("send_message", req.id, req.message, time_converter(req.time));
     
+      
     strcpy(req.action, "send_message");
 
     req.id = cl_info.id;
@@ -191,10 +190,10 @@ void send_message() {
     req.message_id = -1;
     req.time = time(NULL); 
        
-
+    create_message("send_message", req.id, req.message, time_converter(req.time));
+    gtk_entry_set_text( GTK_ENTRY(Message_Box), "" );
     char *buf = stringify(&req);
-    send_to_server(buf);
-    
+    send_to_server(buf); 
 }
 
 //  Функция удаления пользователя
@@ -338,6 +337,15 @@ void open_chat(GtkButton *button, gpointer *user_data) {
     if (id == FOCUS) {
         return;
     }
+    FOCUS = id;
+    char login[20];
+    strcpy(login, search_login(id));
+
+    if (strcmp(login, cl_info.login) == 0)
+        gtk_label_set_text(GTK_LABEL(your_friend), "Saved Messages");            
+    else
+        gtk_label_set_text(GTK_LABEL(your_friend), login);
+               
     gtk_container_remove(GTK_CONTAINER(cbox), chat_box1);
     gtk_container_remove(GTK_CONTAINER(cbox), chat_box2);
 
@@ -365,6 +373,7 @@ void open_chat(GtkButton *button, gpointer *user_data) {
 
     char *buf = stringify(&req);
     send_to_server(buf);
+    
 }
 
 

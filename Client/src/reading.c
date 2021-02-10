@@ -86,6 +86,7 @@ void type_of_response(struct info *res) {
             strcpy(cl_info.login, res->login);
             strcpy(cl_info.password, res->password);
             strcpy(cl_info.key, res->key);
+
             friend_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
             gtk_container_add(GTK_CONTAINER(fbox), friend_box);
             get_chats_info();
@@ -113,11 +114,11 @@ void type_of_response(struct info *res) {
             create_message("get_message", res->id, res->message, time_converter(res->time));
         }
         else if (strcmp(res->action, "send_message") == 0) {
-            write(2, "Message sended\n", 16);
+            
 
         }
         else if (strcmp(res->action, "delete_message") == 0) {
-            write(2, "Message deleted\n", 17);
+            
         }
         else if (strcmp(res->action, "availability_of_login") == 0) {
             
@@ -127,7 +128,8 @@ void type_of_response(struct info *res) {
             }
         }
         else if (strcmp(res->action, "load_messages") == 0) {
-            FOCUS = res->chat_id;
+            
+            
             create_message("load_messages", res->id, res->message, time_converter(res->time)); 
         }
         else if (strcmp(res->action, "is_user_exists") == 0) {
