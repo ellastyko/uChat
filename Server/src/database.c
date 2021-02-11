@@ -3,31 +3,6 @@
 // Из числа в строку itoa()
 // Из строки в число atoi()
 
-// int db_init(char *db_name)
-// {
-//     int ret;
-//     if (SQLITE_OK != (ret = sqlite3_initialize())) {
-//         printf("Failed to initialize library: %d\n", ret);
-//         return -1;
-//         sqlite3_close(db);
-//     }
-//     // open connection to a DB
-//     if (SQLITE_OK != (ret = sqlite3_open_v2(db_name, &db, SQLITE_OPEN_READWRITE, NULL))) {
-//         printf("Failed to open conn: %d\n", ret);
-//         return -1;
-//     }
-//     return 1;
-// }
-
-// void create_db(char* statement, sqlite3* db) {
-//    char* error = 0; 
-//    int rc = sqlite3_exec(db, statement, NULL, 0, &error);
-//    if( rc != SQLITE_OK ) {
-//       fprintf(stderr, "SQL error: %s\n", error);
-//       sqlite3_free(error);
-//    } 
-// } 
-
 int db_init(char *db_name)
 {
     int ret;
@@ -89,10 +64,12 @@ int create_db(const char *up_script_path)
 bool add_user(char *login, char *password, int key)
 {
     sqlite3_stmt *stmt = NULL;
-    char *query_f = sqlite3_mprintf("INSERT INTO users VALUES(NULL,'%s','%s','%i')",
+    int ttime = time(NULL);
+    char *query_f = sqlite3_mprintf("INSERT INTO users VALUES(NULL,'%s','%s','%i', '%i')",
                                     login,
                                     password,
-                                    key);
+                                    key, 
+                                    ttime);
 
     sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
     if (sqlite3_step(stmt) == SQLITE_DONE) {
@@ -103,6 +80,40 @@ bool add_user(char *login, char *password, int key)
         sqlite3_free(query_f);  
         return false;
     }   
+}
+
+
+bool update_time(int id, int ttime)
+{
+    sqlite3_stmt *stmt = NULL;
+    char *query_f = sqlite3_mprintf("UPDATE users SET TIME = '%d' WHERE USER_ID = '%d';", ttime, id);
+
+    sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
+    if (sqlite3_step(stmt) == SQLITE_DONE) {
+        sqlite3_free(query_f);  
+        sqlite3_finalize(stmt);
+        return true;
+    }
+    else {
+        sqlite3_free(query_f);  
+        sqlite3_finalize(stmt);
+        return false;
+    }   
+}
+
+
+bool take_time(struct info *res) {
+    
+    sqlite3_stmt *stmt = NULL;
+    char *query_f = sqlite3_mprintf("SELECT TIME FROM users WHERE USER_ID = '%d';", res->friend_id);
+    sqlite3_prepare_v2(db, query_f, -1, &stmt, NULL);
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        res->time = sqlite3_column_int(stmt, 0);  
+        return true;   
+	} 
+    sqlite3_free(query_f);
+    sqlite3_finalize(stmt);
+    return false;
 }
 
 
@@ -123,31 +134,20 @@ bool check_login(char *login) {
 
 bool verification(char *login, char *password) {
 
-    sqlite3_stmt *stmt;
-    int state = 0; // Need to equel 2
-    sqlite3_prepare_v2(db, "SELECT LOGIN FROM users", -1, &stmt, NULL);
-    while (sqlite3_step(stmt) != SQLITE_DONE) {
-        const char*login2 = (const char *)sqlite3_column_text(stmt, 0);
-        if (strcmp(login, login2) == 0) {   
-            state += 1;    // +1 if login correct
+    sqlite3_stmt *stmt = NULL;
+    char *query_f = sqlite3_mprintf("SELECT PASSWORD FROM users WHERE LOGIN = '%s';", login);
+    sqlite3_prepare_v2(db, query_f, -1, &stmt, NULL);
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        const char*pass = (const char *)sqlite3_column_text(stmt, 0);
+        if (strcmp(password, pass) == 0) {   
+            sqlite3_free(query_f);
+            sqlite3_finalize(stmt);
+            return true;
         }
-	}
-    stmt = NULL;
-    sqlite3_prepare_v2(db, "SELECT PASSWORD FROM users", -1, &stmt, NULL);
-    while (sqlite3_step(stmt) != SQLITE_DONE) {
-        const char*password2 = (const char *)sqlite3_column_text(stmt, 0);
-        if (strcmp(password, password2) == 0) {
-            state += 1; //+1 if password correct
-        }
-	}
-    if (state == 2) {
-        sqlite3_finalize(stmt);
-        return true;
-    }
-    else {
-        sqlite3_finalize(stmt);
-        return false;
-    }  
+	} 
+    sqlite3_free(query_f);
+    sqlite3_finalize(stmt);
+    return false;
 }
 
 
@@ -422,7 +422,7 @@ bool change_password(struct info *res) {
 void load_messages(int client_socket, struct info *res) {
 
     sqlite3_stmt *stmt;
-    char *query_1 = sqlite3_mprintf("SELECT MESSAGE_ID, USER_ID, MESSAGE, TIME FROM messages WHERE CHAT_ID = '%d' ORDER BY TIME DESC;", res->chat_id);
+    char *query_1 = sqlite3_mprintf("SELECT MESSAGE_ID, USER_ID, MESSAGE, TIME FROM messages WHERE CHAT_ID = '%d' ORDER BY TIME ASC;", res->chat_id);
     sqlite3_prepare_v2(db, query_1, -1, &stmt, 0);
     while (sqlite3_step(stmt) != SQLITE_DONE) {
 

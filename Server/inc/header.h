@@ -13,8 +13,8 @@
 #include <time.h>
 #include "../../lib/cJSON.h"
 #include <malloc.h> // #include <malloc/malloc.h>
-#include <time.h>
-#define PORT 8232
+#include <locale.h>
+#define PORT 8231
 #define ADDR "localhost"
 
 
@@ -66,7 +66,6 @@ bool key_checking(struct info *res);
 
 // database
 int db_init(char *db_name);
-//void create_db(char* statement, sqlite3* db);
 int create_db(const char *up_script_path);
 
 // sign up
@@ -77,6 +76,8 @@ bool add_user(char *login, char *password, int key);
 bool verification(char *login, char *password);
 void get_id_and_key(struct info *res);
 void get_chat_id_by_users(struct info *res);
+bool update_time(int id, int ttime);
+
 
 // Get login by id
 void get_login_by_id(struct info *res);
@@ -102,7 +103,8 @@ bool delete_user(struct info *res);
 // Change password
 bool change_password(struct info *res);
 
-// Load messages
+// Open chat and load messages
+bool take_time(struct info *res);
 void load_messages(int client_socket, struct info *res);
 
 // useful

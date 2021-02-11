@@ -5,7 +5,7 @@ int STATE = 0;
 
 int main(int argc, char *argv[])
 {
-        
+    setlocale(LC_ALL, "Rus");    
     gtk_init(&argc, &argv);
 
     style = gtk_css_provider_new ();

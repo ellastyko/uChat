@@ -91,12 +91,15 @@ void valid_of_log_in() {
 
 
 
-char time_converter(int time) {
+ /*
+ Не знаю как очистить память 
+ char time_converter(int time) {
     
-    char str[8];
-    char m[3]; 
+  
+   char *str = malloc(sizeof(char));
+    char *m = malloc(sizeof(char));
 
-    // Find your local time
+     // Find your local time
     time_t local_time = time;
     struct tm lt = {0};
     localtime_r(&local_time, &lt);
@@ -113,9 +116,9 @@ char time_converter(int time) {
     sprintf(m, "%d", minutes);
     strcat(str, ":"); 
     strcat(str, m); 
-
-    return *str;
-}
+    free(m);
+    return str;
+}*/
 
 
 char *decoding(char *str) {

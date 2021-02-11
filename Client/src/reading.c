@@ -110,8 +110,38 @@ void type_of_response(struct info *res) {
             create_chat(res->chat_id, res->login);            
         }
         else if (strcmp(res->action, "get_message") == 0) {
+            char *str = malloc(sizeof(char));
+            char *m = malloc(sizeof(char));
 
-            create_message("get_message", res->id, res->message, time_converter(res->time));
+            // Find your local time
+            time_t local_time = res->time;
+            struct tm lt = {0};
+            localtime_r(&local_time, &lt);
+            
+            res->time += lt.tm_gmtoff; 
+
+            // Converting to hours and minutes
+            res->time %= 86400;
+            int hours = res->time / 3600;
+            int minutes = (res->time % 3600) / 60;
+
+            if (minutes < 10) {
+                sprintf(str, "%d", hours);
+                sprintf(m, "%d", minutes);
+                strcat(str, ":"); 
+                strcat(str, "0"); 
+                strcat(str, m); 
+            }
+            else {
+                sprintf(str, "%d", hours);
+                sprintf(m, "%d", minutes);
+                strcat(str, ":"); 
+                strcat(str, m);  
+            }   
+
+            create_message(res->id, res->message, str);
+            free(m);
+            free(str);
         }
         else if (strcmp(res->action, "send_message") == 0) {
             
@@ -129,13 +159,118 @@ void type_of_response(struct info *res) {
         }
         else if (strcmp(res->action, "load_messages") == 0) {
             
+            char *str = malloc(sizeof(char));
+            char *m = malloc(sizeof(char));
+
+            // Find your local time
+            time_t local_time = res->time;
+            struct tm lt = {0};
+            localtime_r(&local_time, &lt);
             
-            create_message("load_messages", res->id, res->message, time_converter(res->time)); 
+            res->time += lt.tm_gmtoff; 
+
+            // Converting to hours and minutes
+            res->time %= 86400;
+            int hours = res->time / 3600;
+            int minutes = (res->time % 3600) / 60;
+
+            if (minutes < 10) {
+                sprintf(str, "%d", hours);
+                sprintf(m, "%d", minutes);
+                strcat(str, ":"); 
+                strcat(str, "0"); 
+                strcat(str, m); 
+            }
+            else {
+                sprintf(str, "%d", hours);
+                sprintf(m, "%d", minutes);
+                strcat(str, ":"); 
+                strcat(str, m);  
+            }     
+
+            create_message(res->id, res->message, str);
+            free(m);
+            free(str);
         }
         else if (strcmp(res->action, "is_user_exists") == 0) {
             write(2, "User exists!\n", 16);
             
         }
+        else if (strcmp(res->action, "open_chat") == 0) {
+            create_status(res->time);
+            
+        }
+    }
+}
+
+
+void create_status(int ttime) {
+    if (ttime == 0) {
+        gtk_label_set_text(GTK_LABEL(friend_status), "online");
+    }
+    else {
+        int current_time = time(NULL);
+
+        time_t local_time = ttime;
+        struct tm lt = {0};
+        localtime_r(&local_time, &lt);
+                
+        ttime += lt.tm_gmtoff; 
+        current_time += lt.tm_gmtoff;
+
+        ttime %= 86400;
+        current_time %= 86400;
+        int diff = current_time - ttime;
+        if (diff < 86400) {
+
+            char *str = malloc(sizeof(char));
+            char *min = malloc(sizeof(char));
+
+            
+            if (diff < 60)  {  
+                diff /= 60;
+                sprintf(str, "last seen just now", diff);
+                gtk_label_set_text(GTK_LABEL(friend_status), str);
+            }
+            if (diff < 3600)  {  
+                diff /= 60;
+                sprintf(str, "last seen %d minutes ago", diff);
+                gtk_label_set_text(GTK_LABEL(friend_status), str);
+            }
+            else if (diff < 21600) {
+                diff /= 3600;
+                sprintf(str, "last seen %d hours ago", diff);
+                gtk_label_set_text(GTK_LABEL(friend_status), str);
+            }
+            else { 
+                int hours = diff / 3600;
+                int minutes = (diff % 3600) / 60;
+                if (minutes < 10) {
+                    sprintf(str, "last seen in %d", hours);
+                    sprintf(min, "%d", minutes);
+                    strcat(str, ":"); 
+                    strcat(str, "0"); 
+                    strcat(str, min); 
+                    gtk_label_set_text(GTK_LABEL(friend_status), str);
+                }
+                else {
+                    sprintf(str, "last seen in %d", hours);
+                    sprintf(min, "%d", minutes);
+                    strcat(str, ":"); 
+                    strcat(str, min); 
+                    gtk_label_set_text(GTK_LABEL(friend_status), str); 
+                }   
+            }
+            free(min);
+            free(str);
+        }
+        else if (diff < 259200) {
+            gtk_label_set_text(GTK_LABEL(friend_status), "last seen a few days ago");
+        }
+        else if (diff > 259200) {
+            gtk_label_set_text(GTK_LABEL(friend_status), "last seen long ago");
+        }
         
     }
+    
 }

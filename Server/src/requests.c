@@ -17,14 +17,14 @@ void type_of_request(char *str, int client_socket)
         }
         else  { 
             if (add_user(req->login, req->password, key()) == true) {
-                //goto METKA;
+
                 req->friend_id = get_id_by_login(req->login);
                 req->id = req->friend_id; 
                 get_chat_id_by_users(req);    // Возвращает id чата 
                 if (add_chat(req) == true) { // Добавляем чат
 
                     req->status = 1; // Успешно
-                    //get_chat_id_by_users(req);
+
                     send_response(client_socket, req);     
                 }
                 else {
@@ -50,7 +50,8 @@ void type_of_request(char *str, int client_socket)
             req->status = 1; // Successful
             send_response(client_socket, req);
             to_be_online(client_socket, req);
-            print_all();   
+            //print_all();   //- delete function
+            update_time(req->id, 0); 
         }
         else {
             req->status = 0; // error status
@@ -75,7 +76,7 @@ void type_of_request(char *str, int client_socket)
            
             req->friend_id = get_id_by_login(req->login); // Записываем id пользователя по имени
             if (req->friend_id != req->id) {
-//METKA:           
+          
                 get_chat_id_by_users(req);    // Возвращает id чата 
                 if (req->chat_id == -1) { // Если чата нет то ...
 
@@ -161,11 +162,21 @@ void type_of_request(char *str, int client_socket)
             send_response(client_socket, req);
         }
     }
-    else if (strcmp(req->action, "load_messages") == 0) {
-
-        load_messages(client_socket, req);
+    else if (strcmp(req->action, "open_chat") == 0) {
+        if (req->id != req->friend_id) {
+            if (take_time(req) == true) {
+                req->status = 1; 
+                send_response(client_socket, req);
+            }
+            else {
+                req->status = 1; 
+                strcpy(req->message, "Time hasn`t taken");
+                send_response(client_socket, req);
+            }
+        }
+        strcpy(req->action, "load_messages"); 
+        load_messages(client_socket, req);  
     }
-    // Updating local db after sign in
     else if (strcmp(req->action, "get_chats_info") == 0) {
 
         get_chats_info(client_socket, req);
@@ -185,7 +196,7 @@ void type_of_request(char *str, int client_socket)
     }   
     else if (strcmp(req->action, "log_out") == 0) {
 
-        if (delete_online(client_socket) == true) {      
+        if (delete_online(client_socket) == 1) {      
 
             req->status = 1; 
             send_response(client_socket, req);       
@@ -204,6 +215,7 @@ void type_of_request(char *str, int client_socket)
 }
 
 void send_response(int client_socket, struct info *res) {
+
     ssize_t result;
     char *temp;
     char response[BUFSIZ];
@@ -211,6 +223,6 @@ void send_response(int client_socket, struct info *res) {
     strcpy(response, temp);
 
     if ((result = send(client_socket, response, sizeof(response), 0)) == -1) {
-        write(2, "Fail send\n", 11);
+        perror("Fail send");
     }     
 }

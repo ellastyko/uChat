@@ -191,5 +191,10 @@
   border: none;
   color: #d4d4d4;
   background: #36393F;
-  border-radius: 7px;
+  border-radius: 6px;
+}
+
+#time {
+  color: #d4d4d4;
+  font-size: 12px;
 }

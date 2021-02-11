@@ -149,7 +149,7 @@ void sign_in() {
     req.friend_id = -1;
     strcpy(req.message, "");
     req.message_id = -1;
-    req.time = -1;
+    req.time = 0; // means that user online
     gtk_entry_set_text (GTK_ENTRY(login), "");
     gtk_entry_set_text (GTK_ENTRY(password), "");
     char *buf = stringify(&req);
@@ -180,8 +180,7 @@ void send_message() {
     
     int i = friend_id();
     if (i == -1) {
-        write(2, "\nUser is not in your contacts\n", 30);
-        //add_chat();
+        write(2, "User is not in your contacts\n", 30);
         return;
     }
     req.chat_id = FOCUS;
@@ -189,8 +188,39 @@ void send_message() {
     strcpy(req.message, text);
     req.message_id = -1;
     req.time = time(NULL); 
-       
-    create_message("send_message", req.id, req.message, time_converter(req.time));
+            /*Converting time*/
+            char *str = malloc(sizeof(char));
+            char *m = malloc(sizeof(char));
+            int ttime = req.time;
+            // Find your local time
+            time_t local_time = ttime;
+            struct tm lt = {0};
+            localtime_r(&local_time, &lt);
+            
+            ttime += lt.tm_gmtoff; 
+
+            // Converting to hours and minutes
+            ttime %= 86400;
+            int hours = ttime / 3600;
+            int minutes = (ttime % 3600) / 60;
+            // Converting to char
+            if (minutes < 10) {
+                sprintf(str, "%d", hours);
+                sprintf(m, "%d", minutes);
+                strcat(str, ":"); 
+                strcat(str, "0"); 
+                strcat(str, m); 
+            }
+            else {
+                sprintf(str, "%d", hours);
+                sprintf(m, "%d", minutes);
+                strcat(str, ":"); 
+                strcat(str, m);  
+            }
+            create_message(req.id, req.message, str);
+            free(m);
+            free(str);
+            
     gtk_entry_set_text( GTK_ENTRY(Message_Box), "" );
     char *buf = stringify(&req);
     send_to_server(buf); 
@@ -342,21 +372,19 @@ void open_chat(GtkButton *button, gpointer *user_data) {
     strcpy(login, search_login(id));
 
     if (strcmp(login, cl_info.login) == 0)
-        gtk_label_set_text(GTK_LABEL(your_friend), "Saved Messages");            
+        gtk_label_set_text(GTK_LABEL(your_friend), "Saved messages");            
     else
         gtk_label_set_text(GTK_LABEL(your_friend), login);
                
-    gtk_container_remove(GTK_CONTAINER(cbox), chat_box1);
-    gtk_container_remove(GTK_CONTAINER(cbox), chat_box2);
+    gtk_container_remove(GTK_CONTAINER(cbox), chat_box);
 
-    chat_box1 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-    chat_box2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    chat_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
-    gtk_container_add(GTK_CONTAINER(cbox), chat_box1);
-    gtk_container_add(GTK_CONTAINER(cbox), chat_box2);
+    gtk_container_add(GTK_CONTAINER(cbox), chat_box);
+
 
     struct info req;
-    strcpy(req.action, "load_messages");
+    strcpy(req.action, "open_chat");
 
     req.id = cl_info.id;
     strcpy(req.login, "");
@@ -365,7 +393,7 @@ void open_chat(GtkButton *button, gpointer *user_data) {
 
     
     req.chat_id = id; 
-    req.friend_id = -1;  
+    req.friend_id = friend_id(id); 
     strcpy(req.message, "");
     req.message_id = -1;
     req.time = -1; 

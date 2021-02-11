@@ -1,4 +1,4 @@
 {
-	"theme":	0,
+	"theme":	1,
 	"notifications":	0
 }

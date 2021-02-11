@@ -47,11 +47,13 @@ int delete_online(int client_socket) {
     for (int i = 0; i < size; i++) {
 
         if (client_socket == user[i].client_socket) {
-
+            int ttime = time(NULL);
+            update_time(user[i].id, ttime);
             user[i].id =  user[size-1].id;
             user[i].client_socket = user[size-1].client_socket;
             user[size-1].id = -1;
             user[size-1].client_socket = -1;
+            
             return 1;
         }
     }

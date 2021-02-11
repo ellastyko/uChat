@@ -165,7 +165,15 @@ struct info *parse(const char *const msg)
             chat_id = cJSON_GetObjectItemCaseSensitive(msg_json, "chat_id");
             if (chat_id == NULL || !cJSON_IsNumber(chat_id))
                 return NULL;
-            res->chat_id = chat_id->valueint;   
+            res->chat_id = chat_id->valueint;     
+        }
+        else if (strcmp(res->action, "open_chat") == 0) {
+
+            time = cJSON_GetObjectItemCaseSensitive(msg_json, "time");
+            if (time == NULL || !cJSON_IsNumber(time))
+                return NULL;
+            res->time = time->valueint;
+
         }
         else if (strcmp(res->action, "change_password") == 0) {
             

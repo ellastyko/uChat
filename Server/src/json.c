@@ -47,6 +47,12 @@ char *stringify(struct info *res)
             cJSON_AddNumberToObject(json_msg, "message_id", res->message_id); 
             cJSON_AddStringToObject(json_msg, "message", res->message);
             cJSON_AddNumberToObject(json_msg, "time", res->time);
+
+        }
+        else if (strcmp(res->action, "open_chat") == 0) {
+
+            cJSON_AddNumberToObject(json_msg, "time", res->time);
+
         }
         else if (strcmp(res->action, "change_password") == 0) {
             cJSON_AddStringToObject(json_msg, "password", res->password);

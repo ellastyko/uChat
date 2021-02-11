@@ -18,8 +18,9 @@
 #include <malloc.h> // #include <malloc/malloc.h>
 #include <pthread.h>
 #include <time.h>
+#include <locale.h>
 
-#define PORT 8232
+#define PORT 8231
 #define ADDR "localhost"
 #define LD_PATH "Client/storage/data.txt"
 #define CONFIG_PATH "Client/storage/config.txt"
@@ -45,6 +46,7 @@ typedef struct config
 {
     int theme; // 0 - day | 1 - dark
     int notifications; // 0 - yes | 1 - no
+    int localization; // 0 - en | 1 - ru
 } config_t;
 struct config Config;
 
@@ -112,16 +114,10 @@ bool validation();
 void valid_of_log_in();
 struct info *parse(const char *const msg);
 char *stringify(struct info *info);
-char time_converter(int time);
-void push_chat(int chat_id, int friend_id, char*login);
-void print_all();
-int get_free();
-int search_chat_id(char *login);
-int search(char *name);
-int friend_id();
-char *search_login(int chat_id);
+//char time_converter(int time);
 char *decoding(char *str);
 char *encoding(char *str);
+void create_status(int ttime);
 
 // reading
 void *reading();
@@ -142,11 +138,21 @@ void open_main();
 void theme ();
 void *pre_update_config();
 void create_chat(int chat_id, char *login);
-void create_message(char *action, int id, char *message, char* time);
+void create_message(int id, char *message, char* time);
 void scrolling();
 
+void change_lang();
+void notify();
+void attach_file();
 
-
+// structs
+void push_chat(int chat_id, int friend_id, char*login);
+void print_all();
+int get_free();
+int search_chat_id(char *login);
+int search(char *name);
+int friend_id();
+char *search_login(int chat_id);
 
 int STATE; // 0 - sign in  / 1 - sign up / 2 - main / 3 - reconnect
 
@@ -205,8 +211,7 @@ GtkContainer      *Main;
         
         GtkWidget       *Scroll;
             GtkWidget       *cbox;
-                GtkWidget       *chat_box1;
-                GtkWidget       *chat_box2;
+                GtkWidget       *chat_box;
 
 ///////////////////////////////
 
