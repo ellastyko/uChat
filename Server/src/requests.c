@@ -50,7 +50,7 @@ void type_of_request(char *str, int client_socket)
             req->status = 1; // Successful
             send_response(client_socket, req);
             to_be_online(client_socket, req);
-            //print_all();   //- delete function
+            print_all();   //- delete function
             update_time(req->id, 0); 
         }
         else {
@@ -88,7 +88,7 @@ void type_of_request(char *str, int client_socket)
                     }
                     else {
                         req->status = 0; // error status
-                        strcpy(req->message, "User hasn`t added to your friends");  
+                        strcpy(req->message, "Dialog hasn`t added");  
                         send_response(client_socket, req);   
                     }
                 }  
@@ -100,7 +100,7 @@ void type_of_request(char *str, int client_socket)
             }
             else {
                 req->status = 0; // error status
-                strcpy(req->message, "You trying to add yourself");
+                strcpy(req->message, "You can`t add yourself");
                 send_response(client_socket, req);  
             }
         }
@@ -207,11 +207,6 @@ void type_of_request(char *str, int client_socket)
             send_response(client_socket, req);    
         }
     } 
-    else {       
-        write(2, "Unknown command!\n", 18);
-        return;
-    }
-    return;
 }
 
 void send_response(int client_socket, struct info *res) {

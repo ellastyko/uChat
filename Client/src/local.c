@@ -158,9 +158,14 @@ int config() {
     if (ld) {
         Config.theme = ld->theme;
         Config.notifications = ld->notifications;
+        Config.localization = ld->localization;
         return 0;
     }
     else { 
+        // Config.theme = 0;
+        // Config.notifications = 0;
+        // Config.localization = 0;
+        pre_update_config();
         printf("Cann`t read config");
         return EXIT_FAILURE;
     }
@@ -241,6 +246,7 @@ config_t *parse_config(const char *const data)
     config_t *res = malloc(sizeof(config_t));
     const cJSON *theme = NULL;
     const cJSON *notifications = NULL;
+    const cJSON *localization = NULL;
 
     cJSON *msg_json = cJSON_Parse(data);
 
@@ -253,8 +259,13 @@ config_t *parse_config(const char *const data)
     if (notifications == NULL || !cJSON_IsNumber(notifications))
         return NULL;
 
+    localization = cJSON_GetObjectItemCaseSensitive(msg_json, "localization");
+    if (localization == NULL || !cJSON_IsNumber(localization))
+        return NULL;
+
     res->theme = theme->valueint;
     res->notifications = notifications->valueint;
+    res->localization = localization->valueint;
 
     cJSON_Delete(msg_json);
 
@@ -271,6 +282,8 @@ char *config_to_json(config_t *data)
     cJSON_AddNumberToObject(json_data, "theme", data->theme);
 
     cJSON_AddNumberToObject(json_data, "notifications", data->notifications);
+
+    cJSON_AddNumberToObject(json_data, "localization", data->localization);
 
     string = cJSON_Print(json_data);
 

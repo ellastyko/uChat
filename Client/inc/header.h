@@ -20,7 +20,7 @@
 #include <time.h>
 #include <locale.h>
 
-#define PORT 8231
+#define PORT 8230
 #define ADDR "localhost"
 #define LD_PATH "Client/storage/data.txt"
 #define CONFIG_PATH "Client/storage/config.txt"
@@ -48,7 +48,7 @@ typedef struct config
     int notifications; // 0 - yes | 1 - no
     int localization; // 0 - en | 1 - ru
 } config_t;
-struct config Config;
+config_t Config;
 
 int config();
 config_t *parse_config(const char *const data);
@@ -103,6 +103,7 @@ void get_chats_info();
 void availability_of_login();
 void search_friend();
 
+
 // socket
 int Socket();
 void reading_thread();
@@ -111,6 +112,7 @@ void reading_thread();
 // useful
 int auto_sign();
 bool validation();
+bool validation_of_new_password();
 void valid_of_log_in();
 struct info *parse(const char *const msg);
 char *stringify(struct info *info);
@@ -124,10 +126,11 @@ void *reading();
 void type_of_response(struct info *res);
 
 // GTK
-void destroy();
 void SIGN_BOXES();
 void MAIN_BOXES();
 void NO_CONNECTION_BOX();  
+
+void destroy();
 void no_connection();
 void to_sign_up();
 void to_log_in();
@@ -138,7 +141,7 @@ void open_main();
 void theme ();
 void *pre_update_config();
 void create_chat(int chat_id, char *login);
-void create_message(int id, char *message, char* time);
+void create_message(int id, char *message, int message_id, char* time);
 void scrolling();
 
 void change_lang();
@@ -161,6 +164,7 @@ GtkBuilder *builder;
 
 GtkWidget *window;
 GtkWidget *notification;
+GtkWidget *Confirm;
 
 // Style
 GtkCssProvider *style;
@@ -191,12 +195,18 @@ GtkContainer      *Main;
     GtkContainer      *friends;
         GtkWidget       *Open_settings;
         GtkWidget       *Search_Friends;
+            GtkWidget       *error_box1;
+            GtkWidget       *error_message1;
         GtkWidget       *fbox;
             GtkWidget       *friend_box;
 
     GtkContainer       *settings;
         GtkWidget       *Open_Friends;
         GtkWidget       *Change_password;
+            GtkWidget       *new_password;
+            GtkWidget       *error_box2;
+            GtkWidget       *error_message2;
+
         GtkWidget       *Log_out;
         GtkWidget       *Theme;
 

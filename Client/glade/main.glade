@@ -2,83 +2,50 @@
 <!-- Generated with glade 3.22.2 -->
 <interface>
   <requires lib="gtk+" version="3.24"/>
-  <object class="GtkWindow" id="Popup_message">
+  <object class="GtkMessageDialog" id="Confirm">
     <property name="can_focus">False</property>
-    <property name="decorated">False</property>
-    <child type="titlebar">
-      <placeholder/>
-    </child>
-    <child>
-      <object class="GtkOverlay" id="message-overlay">
-        <property name="visible">True</property>
+    <property name="window_position">center</property>
+    <property name="type_hint">dialog</property>
+    <property name="message_type">warning</property>
+    <property name="buttons">yes-no</property>
+    <signal name="close" handler="destroy" swapped="no"/>
+    <signal name="destroy" handler="destroy" swapped="no"/>
+    <signal name="response" handler="delete_user" swapped="no"/>
+    <child internal-child="vbox">
+      <object class="GtkBox">
         <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can_focus">False</property>
+            <property name="halign">center</property>
+            <property name="margin_top">3</property>
+            <property name="margin_bottom">3</property>
+            <property name="homogeneous">True</property>
+            <property name="layout_style">end</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
         <child>
-          <object class="GtkBox" id="message-box">
+          <object class="GtkLabel">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <child>
-              <object class="GtkImage" id="chat-photo">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="pixbuf">../img/send-icon-dark.png</property>
-                <style>
-                  <class name="peer-photo"/>
-                </style>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkBox">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="orientation">vertical</property>
-                <child>
-                  <object class="GtkLabel" id="chat-name">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">name</property>
-                    <style>
-                      <class name="peer-name"/>
-                    </style>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="message">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">message</property>
-                    <style>
-                      <class name="last-message"/>
-                    </style>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
+            <property name="halign">center</property>
+            <property name="valign">center</property>
+            <property name="label" translatable="yes">Are you want to delete account?</property>
             <style>
-              <class name="popup-box"/>
+              <class name="confirm"/>
             </style>
           </object>
           <packing>
-            <property name="index">-1</property>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
           </packing>
         </child>
       </object>
@@ -447,11 +414,9 @@
                                 <property name="visible">True</property>
                                 <property name="app_paintable">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="margin_left">4</property>
-                                <property name="margin_right">7</property>
-                                <property name="margin_start">4</property>
-                                <property name="margin_end">4</property>
-                                <property name="margin_top">5</property>
+                                <property name="margin_start">5</property>
+                                <property name="margin_end">5</property>
+                                <property name="margin_top">6</property>
                                 <property name="margin_bottom">5</property>
                                 <property name="spacing">4</property>
                                 <child>
@@ -460,6 +425,7 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
+                                    <property name="margin_right">4</property>
                                     <property name="relief">none</property>
                                     <signal name="clicked" handler="open_settings" swapped="no"/>
                                     <style>
@@ -474,11 +440,10 @@
                                 </child>
                                 <child>
                                   <object class="GtkSearchEntry" id="Search_friends">
-                                    <property name="width_request">100</property>
+                                    <property name="width_request">190</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">Enter name and press enter to add</property>
-                                    <property name="hexpand">True</property>
                                     <property name="max_length">20</property>
                                     <property name="primary_icon_name">edit-find-symbolic</property>
                                     <property name="primary_icon_activatable">False</property>
@@ -504,7 +469,50 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel">
+                              <object class="GtkBox" id="error-box1">
+                                <property name="can_focus">False</property>
+                                <property name="halign">start</property>
+                                <child>
+                                  <object class="GtkImage" id="error-icon">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="pixbuf">../img/warning_icon.png</property>
+                                    <style>
+                                      <class name="error-icon"/>
+                                    </style>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="error-message1">
+                                    <property name="can_focus">False</property>
+                                    <property name="label" translatable="yes">Error</property>
+                                    <style>
+                                      <class name="error-message"/>
+                                    </style>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                                <style>
+                                  <class name="error-box"/>
+                                </style>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="Contacts">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="halign">center</property>
@@ -517,7 +525,7 @@
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">True</property>
-                                <property name="position">1</property>
+                                <property name="position">2</property>
                               </packing>
                             </child>
                             <child>
@@ -633,7 +641,7 @@
                         <property name="receives_default">True</property>
                         <property name="halign">center</property>
                         <property name="relief">none</property>
-                        <signal name="clicked" handler="change_password" swapped="no"/>
+                        <signal name="clicked" handler="pre_change_password" swapped="no"/>
                         <style>
                           <class name="menu-button"/>
                         </style>
@@ -645,12 +653,72 @@
                       </packing>
                     </child>
                     <child>
+                      <object class="GtkEntry" id="new_password">
+                        <property name="width_request">200</property>
+                        <property name="can_focus">True</property>
+                        <property name="halign">center</property>
+                        <property name="primary_icon_stock">gtk-edit</property>
+                        <property name="placeholder_text" translatable="yes">Enter new password</property>
+                        <signal name="activate" handler="change_password" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkBox" id="error-box2">
+                        <property name="can_focus">False</property>
+                        <property name="halign">start</property>
+                        <property name="margin_left">5</property>
+                        <property name="margin_bottom">5</property>
+                        <child>
+                          <object class="GtkImage" id="error-icon1">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="pixbuf">../img/warning_icon.png</property>
+                            <style>
+                              <class name="error-icon"/>
+                            </style>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="error-message2">
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Error</property>
+                            <style>
+                              <class name="error-message"/>
+                            </style>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                        <style>
+                          <class name="error-box"/>
+                        </style>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">3</property>
+                      </packing>
+                    </child>
+                    <child>
                       <object class="GtkButton">
                         <property name="label" translatable="yes">Delete account</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <signal name="clicked" handler="delete_user" swapped="no"/>
+                        <signal name="clicked" handler="pre_delete_user" swapped="no"/>
                         <style>
                           <class name="menu-button"/>
                         </style>
@@ -658,7 +726,7 @@
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
-                        <property name="position">2</property>
+                        <property name="position">4</property>
                       </packing>
                     </child>
                     <child>
@@ -719,11 +787,11 @@
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
-                        <property name="position">3</property>
+                        <property name="position">5</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkCheckButton">
+                      <object class="GtkCheckButton" id="Notifications">
                         <property name="label" translatable="yes">Notifications</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
@@ -738,7 +806,7 @@
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
-                        <property name="position">4</property>
+                        <property name="position">6</property>
                       </packing>
                     </child>
                     <child>
@@ -758,7 +826,7 @@
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
-                        <property name="position">5</property>
+                        <property name="position">7</property>
                       </packing>
                     </child>
                     <style>
@@ -854,6 +922,7 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="orientation">vertical</property>
+                                <property name="baseline_position">top</property>
                                 <child>
                                   <placeholder/>
                                 </child>
@@ -883,7 +952,6 @@
                             <property name="hexpand">True</property>
                             <property name="max_length">1024</property>
                             <property name="xalign">0.029999999329447746</property>
-                            <property name="truncate_multiline">True</property>
                             <property name="shadow_type">etched-in</property>
                             <property name="secondary_icon_name">face-smile-symbolic</property>
                             <property name="secondary_icon_tooltip_text" translatable="yes">Вставить Emoji</property>
@@ -908,7 +976,6 @@
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
                             <property name="relief">none</property>
-                            <signal name="clicked" handler="attach_file" swapped="no"/>
                             <style>
                               <class name="menu-button"/>
                             </style>
@@ -976,6 +1043,26 @@
           </packing>
         </child>
       </object>
+    </child>
+  </object>
+  <object class="GtkWindow" id="notification">
+    <property name="can_focus">False</property>
+    <property name="type">popup</property>
+    <property name="title" translatable="yes">Notification</property>
+    <property name="resizable">False</property>
+    <property name="default_width">350</property>
+    <property name="default_height">150</property>
+    <property name="destroy_with_parent">True</property>
+    <property name="type_hint">notification</property>
+    <property name="urgency_hint">True</property>
+    <property name="gravity">south-east</property>
+    <property name="transient_for">Window</property>
+    <signal name="destroy" handler="destroy" swapped="no"/>
+    <child type="titlebar">
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
     </child>
   </object>
 </interface>

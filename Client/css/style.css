@@ -84,7 +84,7 @@
   border: none;
   outline: none; 
   background: #fff;
-  font: 300 15px 'Montserrat';
+  font: 300 14px 'Montserrat';
 }
 
 .chat-box {
@@ -110,7 +110,6 @@
 
 .menu-wrapper {
   border: none;
-  /* border-radius: 0px 5px 5px 0px; */
   background: #fff;
 }
 
@@ -163,7 +162,8 @@
 }
 
 #attach-button {
-  background: url("../img/attach-file.png") center no-repeat;
+  background: url("../img/find-icon.png") center no-repeat;
+  margin: 0 5px;
 }
 
 
@@ -173,19 +173,73 @@
 
 #contact_button {
   border: none;
-  color:   #362ba9;
+  color:   #463e9b;
   background: #fff;
   border-radius: 0px;
 }
 
 #contact_button:focus {
   border: none;
-  color:   #362ba9;
-  background: #eb4b79;
+  color:   #ffffff;
+  background: #4c78c9;
   border-radius: 0px;
 }
 
+#message {
+  border: none;
+  color:  #433b9b;
+  background: #fff;
+  border-radius: 5px;
+}
+
+#message:focus {
+  border: none;
+  color: #362ba9;
+  background: #fff;
+  border-radius: 5px;
+}
+
+
 #time {
-  color:   #362ba9;
+  color:   #5e6063;
   font-size: 12px;
+}
+
+.error-message {
+  font: 300 16px 'Montserrat';
+  color: #c33;
+  padding: 0 0 0 5px;
+}
+
+.error-box {
+  margin: 5px 10px;
+}
+
+.confirm {
+  padding: 10px;
+}
+
+#avatar {
+  background: url("../img/send-icon-dark.png") center no-repeat;
+}
+
+#saved {
+  background: url("../img/saved-message-icon.png") center no-repeat;
+}
+
+#contact_name_box {
+  padding: 8px;
+}
+
+#Contacts {
+  
+   color: #5e6063; 
+}
+
+#online {
+  color: #362ba9;
+}
+
+#no_online {
+  color: #5e6063; 
 }

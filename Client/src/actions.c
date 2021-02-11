@@ -217,7 +217,7 @@ void send_message() {
                 strcat(str, ":"); 
                 strcat(str, m);  
             }
-            create_message(req.id, req.message, str);
+            create_message(req.id, req.message, req.message_id, str);
             free(m);
             free(str);
             
@@ -228,29 +228,39 @@ void send_message() {
 
 //  Функция удаления пользователя
 void delete_user() {
-    struct info req;
+    write(2, "HERE", 5);
+    gtk_widget_hide(Confirm);
+    // struct info req;
     
-    strcpy(req.action, "delete_user");
+    // strcpy(req.action, "delete_user");
 
-    req.id = cl_info.id;
-    strcpy(req.login, "");
-    strcpy(req.password, "");  
-    strcpy(req.key, "");
+    // req.id = cl_info.id;
+    // strcpy(req.login, "");
+    // strcpy(req.password, "");  
+    // strcpy(req.key, "");
 
-    req.chat_id = 0;
-    req.friend_id = -1;
-    strcpy(req.message, "");
-    req.message_id = -1;
-    req.time = 0; 
+    // req.chat_id = 0;
+    // req.friend_id = -1;
+    // strcpy(req.message, "");
+    // req.message_id = -1;
+    // req.time = 0; 
     
     
 
-    char *buf = stringify(&req);
-    send_to_server(buf);
+    // char *buf = stringify(&req);
+    // send_to_server(buf);
 }
 
 //  Функция изменения пароля
 void change_password() {
+
+    const char *pass = gtk_entry_get_text(GTK_ENTRY(new_password));
+    if (validation_of_new_password(pass) == false) {
+        gtk_widget_show_all(error_box2);
+        return;
+    }
+    gtk_label_set_text(GTK_LABEL(error_message2), "");
+    gtk_widget_hide(error_box2);
 
     struct info req;
 
@@ -258,7 +268,7 @@ void change_password() {
 
     req.id = cl_info.id;
     strcpy(req.login, "");
-    printf("New password: "); scanf("%s", req.password);
+    strcpy(req.password, pass);
     strcpy(req.key, cl_info.key);
 
     req.chat_id = 0;
@@ -317,12 +327,14 @@ void add_chat() {
 
 
 void delete_message() {
-    struct info req;
+
+    //int to_delete = GPOINTER_TO_INT (user_data);
+    write(2, "HERERERE", 9);
+    // printf("MESSAGE_ID %d", to_delete);
+    /*struct info req;
 
     strcpy(req.action, "delete_message");
-    int to_delete;
-    printf("Enter message id: "); scanf("%d", &to_delete);
-    req.id = cl_info.id;
+    req.id id= cl_info.id;
     strcpy(req.login, "");
     strcpy(req.password, "");  
     strcpy(req.key, cl_info.key);
@@ -335,7 +347,7 @@ void delete_message() {
     
 
     char *buf = stringify(&req);
-    send_to_server(buf);
+    send_to_server(buf);*/
 }
 
 
@@ -382,6 +394,7 @@ void open_chat(GtkButton *button, gpointer *user_data) {
 
     gtk_container_add(GTK_CONTAINER(cbox), chat_box);
 
+    gtk_label_set_text(GTK_LABEL(friend_status), ""); 
 
     struct info req;
     strcpy(req.action, "open_chat");

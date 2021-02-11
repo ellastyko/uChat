@@ -5,6 +5,7 @@ int STATE = 0;
 
 int main(int argc, char *argv[])
 {
+
     setlocale(LC_ALL, "Rus");    
     gtk_init(&argc, &argv);
 
@@ -19,14 +20,14 @@ int main(int argc, char *argv[])
     
     window = GTK_WIDGET(gtk_builder_get_object(builder, "Window"));
     notification = GTK_WIDGET(gtk_builder_get_object(builder, "notification"));
-    
+    Confirm = GTK_WIDGET(gtk_builder_get_object(builder, "Confirm"));
 
     SIGN_BOXES();
     MAIN_BOXES();
     NO_CONNECTION_BOX();   
    
-
-    if (config() == 0) {
+    config();
+    if (Config.theme == 0) {
         if (Config.theme != 1) {
             
             gtk_switch_set_state (GTK_SWITCH(Theme), true);
@@ -49,6 +50,7 @@ int main(int argc, char *argv[])
     if (Socket() == 1) {
         STATE = 3;
     }
+    
     prepare();
     if (auto_sign() == EXIT_FAILURE) {
         STATE = 0;

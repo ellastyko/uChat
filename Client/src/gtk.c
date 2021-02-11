@@ -26,13 +26,20 @@ void MAIN_BOXES() {
     friends = GTK_CONTAINER(gtk_builder_get_object(builder, "friends"));
     Open_settings = GTK_WIDGET(gtk_builder_get_object(builder, "Open_settings"));
     Search_Friends = GTK_WIDGET(gtk_builder_get_object(builder, "Search_friends"));
+        error_box1 = GTK_WIDGET(gtk_builder_get_object(builder, "error-box1"));
+        error_message1 = GTK_WIDGET(gtk_builder_get_object(builder, "error-message1"));
+    GtkWidget   *Contacts = GTK_WIDGET(gtk_builder_get_object(builder, "Contacts")); gtk_widget_set_name(Contacts, "Contacts");
     fbox = GTK_WIDGET(gtk_builder_get_object(builder, "fbox"));
 
     settings = GTK_CONTAINER(gtk_builder_get_object(builder, "settings"));
     Open_Friends = GTK_WIDGET(gtk_builder_get_object(builder, "Open_friends"));
     Change_password = GTK_WIDGET(gtk_builder_get_object(builder, "Change_password"));
+        new_password = GTK_WIDGET(gtk_builder_get_object(builder, "new_password"));      
+        error_box2 = GTK_WIDGET(gtk_builder_get_object(builder, "error-box2"));
+        error_message2 = GTK_WIDGET(gtk_builder_get_object(builder, "error-message2"));
     Log_out = GTK_WIDGET(gtk_builder_get_object(builder, "Log_out"));
     Theme = GTK_WIDGET(gtk_builder_get_object(builder, "Theme"));
+        
 
 
     your_chat = GTK_CONTAINER(gtk_builder_get_object(builder, "your_chat"));
@@ -99,12 +106,24 @@ void open_settings() {
 
 void open_friends() {
 
+    if (gtk_widget_get_visible(new_password) == true) {
+        gtk_widget_hide(new_password);
+    }
+    if (gtk_widget_get_visible(error_box2) == true) {
+        gtk_widget_hide(error_box2);
+    }
     gtk_widget_hide ( GTK_WIDGET(settings) );
     gtk_widget_show ( GTK_WIDGET(friends) );  
 }
 
 void log_out() {
 
+    if (gtk_widget_get_visible(new_password) == true) {
+        gtk_widget_hide(new_password);
+    }
+    if (gtk_widget_get_visible(error_box2) == true) {
+        gtk_widget_hide(new_password);
+    }
     STATE = 0;
     gtk_widget_show ( GTK_WIDGET(SignLog) );
     gtk_widget_hide ( GTK_WIDGET(Main) );
@@ -125,7 +144,6 @@ void log_out() {
     req.message_id = -1;
     req.time = -1; 
     gtk_container_remove(GTK_CONTAINER(cbox), chat_box);
-    //gtk_container_remove(GTK_CONTAINER(cbox), chat_box2);
     gtk_container_remove(GTK_CONTAINER(fbox), friend_box);
     char *buf = stringify(&req);
     send_to_server(buf); 
@@ -139,14 +157,12 @@ void theme () {
         gtk_switch_set_state (GTK_SWITCH(Theme), false);
         gtk_style_context_add_provider_for_screen(gdk_screen_get_default(), GTK_STYLE_PROVIDER(style), GTK_STYLE_PROVIDER_PRIORITY_USER);
         Config.theme = 0;
-        Config.notifications = 0;
         pthread_create(&conf1, NULL, pre_update_config, NULL);
     }
     else {
         gtk_switch_set_state (GTK_SWITCH(Theme), true);
         gtk_style_context_add_provider_for_screen(gdk_screen_get_default(), GTK_STYLE_PROVIDER(style_dark), GTK_STYLE_PROVIDER_PRIORITY_USER);
         Config.theme = 1;
-        Config.notifications = 0;
         pthread_create(&conf2, NULL, pre_update_config, NULL);
     } 
 }
@@ -187,17 +203,22 @@ void create_chat(int chat_id, char *login)
     contact_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_container_add(GTK_CONTAINER(contact_button), contact_box);
 
-    img_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-    gtk_container_add(GTK_CONTAINER(contact_box), img_box);
+        img_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+        gtk_widget_set_size_request(img_box, 40, 50);
+        gtk_container_add(GTK_CONTAINER(contact_box), img_box);
 
+        contact_name_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+        gtk_container_add(GTK_CONTAINER(contact_box), contact_name_box);
+        gtk_widget_set_name (contact_name_box, "contact_name_box");
 
-    contact_name_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-    gtk_container_add(GTK_CONTAINER(contact_box), contact_name_box);
-
-    if (strcmp(login, cl_info.login) != 0)
+    if (strcmp(login, cl_info.login) != 0) { 
         name_label = gtk_label_new(login);
-    else
+        gtk_widget_set_name (img_box, "avatar");
+    }
+    else { 
         name_label = gtk_label_new("Saved messages");
+        gtk_widget_set_name (img_box, "saved");
+    }
 
     gtk_box_pack_start(GTK_BOX(contact_name_box), name_label, FALSE, FALSE, 0);
 
@@ -214,7 +235,8 @@ void create_chat(int chat_id, char *login)
     gtk_widget_show_all(friend_box);
 }
 
-void create_message(int id, char *message, char* time)
+
+void create_message(int id, char *message, int message_id, char* time)
 {  
        
     GtkWidget *message_button = gtk_button_new();
@@ -262,15 +284,17 @@ void create_message(int id, char *message, char* time)
     gtk_widget_set_name (time_label, "time");
 
     gtk_box_pack_start(GTK_BOX(chat_box), message_button, FALSE, FALSE, 0);
-    gtk_widget_show_all(cbox);
+   
 
-        
+    //GtkButton *button, gpointer *user_data
     
-    gtk_widget_set_focus_on_click (message_button, TRUE);
-    // g_signal_connect(G_OBJECT(contact_button), "clicked",
-    //     G_CALLBACK(open_chat), NULL);
-
+    // gtk_widget_set_focus_on_click (message_button, TRUE);
+    // gpointer *ptr = GINT_TO_POINTER(message_id);
+    // g_signal_connect(G_OBJECT(message_button), "clicked", G_CALLBACK(delete_message), NULL);
+     
     scrolling();
+    gtk_widget_show_all(cbox);
+    
 }
 
 
@@ -283,34 +307,57 @@ void scrolling()
 }
 
 
-/*void open_file( char *mass) {
-    write(2, mass, strlen(mass));
-}
-void attach_file() {
 
-    GtkWidget *dialog;
-    GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
-    gint res;
+void pre_delete_user() {
 
-    dialog = gtk_file_chooser_dialog_new ("Open File",
-                                        window,
-                                        action,
-                                        ("Cancel"),
-                                        GTK_RESPONSE_CANCEL,
-                                        ("Open"),
-                                        GTK_RESPONSE_ACCEPT,
-                                        NULL);
-
-    res = gtk_dialog_run (GTK_DIALOG (dialog));
-    if (res == GTK_RESPONSE_ACCEPT)
-    {
-        char *filename;
-        GtkFileChooser *chooser = GTK_FILE_CHOOSER (dialog);
-        filename = gtk_file_chooser_get_file (chooser);
-        open_file (filename);
-        g_free (filename);
+    if (gtk_widget_get_visible(new_password) == true) {
+        gtk_widget_hide(new_password);
     }
-
-    gtk_widget_destroy (dialog);
+    if (gtk_widget_get_visible(error_box2) == true) {
+        gtk_widget_hide(error_box2);
+    }
+    
+    // gtk_widget_set_can_focus (message_button, true);
+    // gtk_widget_grab_focus(message_button);
+    gtk_widget_show (Confirm);
 }
-*/
+
+void pre_change_password() {
+   gtk_widget_show (new_password);
+}
+
+void change_lang() {
+    if (gtk_widget_get_visible(new_password) == true) {
+        gtk_widget_hide(new_password);
+    }
+    if (gtk_widget_get_visible(error_box2) == true) {
+        gtk_widget_hide(error_box2);
+    }
+    pthread_t conf;
+    if (Config.localization == 0) {
+        Config.localization = 1;
+        pthread_create(&conf, NULL, pre_update_config, NULL);
+    }
+    else if (Config.localization == 1) {
+        Config.localization = 0;
+        pthread_create(&conf, NULL, pre_update_config, NULL);
+    }
+}
+
+void notify() {
+    if (gtk_widget_get_visible(new_password) == true) {
+        gtk_widget_hide(new_password);
+    }
+    if (gtk_widget_get_visible(error_box2) == true) {
+        gtk_widget_hide(new_password);
+    }
+    pthread_t conf;
+    if (Config.notifications== 0) {
+        Config.notifications = 1;
+        pthread_create(&conf, NULL, pre_update_config, NULL);
+    }
+    else if (Config.notifications == 1) {
+        Config.notifications = 0;
+        pthread_create(&conf, NULL, pre_update_config, NULL);
+    }
+}

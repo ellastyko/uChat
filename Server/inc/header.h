@@ -14,7 +14,7 @@
 #include "../../lib/cJSON.h"
 #include <malloc.h> // #include <malloc/malloc.h>
 #include <locale.h>
-#define PORT 8231
+#define PORT 8230
 #define ADDR "localhost"
 
 

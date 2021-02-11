@@ -42,13 +42,22 @@ void print_all() {
 
 int delete_online(int client_socket) {
 
-
+    //int state = 0;
     int size = get_free();
     for (int i = 0; i < size; i++) {
 
         if (client_socket == user[i].client_socket) {
+
+            // for (int j = i+1; j < size; j++) {
+            //     if (user[i].id == user[j].id) {
+            //         state+=1;
+            //     }
+            // }
+            // if (state == 0) {
             int ttime = time(NULL);
             update_time(user[i].id, ttime);
+            //}
+           
             user[i].id =  user[size-1].id;
             user[i].client_socket = user[size-1].client_socket;
             user[size-1].id = -1;

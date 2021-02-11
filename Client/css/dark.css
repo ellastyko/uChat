@@ -85,7 +85,7 @@
   outline: none;
   background: #2F3136;
   color: #fff;
-  font: 300 15px 'Montserrat';
+  font: 300 14px 'Montserrat';
 }
 
 .chat-box {
@@ -112,7 +112,6 @@
 
 .menu-wrapper {
 
-  /* border-radius: 0px 5px 5px 0px; */
   border: none;
   background: #202225;
 }
@@ -164,7 +163,8 @@
 }
 
 #attach-button {
-  background: url("../img/attach-file-dark.png") center no-repeat;
+  background: url("../img/find-icon-dark.png") center no-repeat;
+  margin: 0 5px;
 }
 
 
@@ -191,10 +191,55 @@
   border: none;
   color: #d4d4d4;
   background: #36393F;
-  border-radius: 6px;
+  border-radius: 5px;
+}
+
+#message:focus {
+  border: none;
+  color: #d4d4d4;
+  background: #202225;
+  border-radius: 5px;
 }
 
 #time {
   color: #d4d4d4;
   font-size: 12px;
+}
+
+.error-message {
+  font: 300 16px 'Montserrat';
+  color: #c33;
+  padding: 0 0 0 5px;
+}
+
+.error-box {
+  margin: 5px 10px;
+}
+
+.confirm {
+  padding: 10px;
+}
+
+#avatar {
+  background: url("../img/send-icon-dark.png") center no-repeat;
+}
+
+#saved {
+  background: url("../img/saved-message-icon.png") center no-repeat;
+}
+
+#contact_name_box {
+  padding: 8px;
+}
+
+#Contacts {
+  color: #d4d4d4;
+}
+
+#online {
+  color: #5e6063;
+}
+
+#no_online {
+  color: #5e6063; 
 }
