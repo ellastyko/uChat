@@ -240,10 +240,15 @@
   color: #d4d4d4; 
 }
 
- #edit-button {
+#edit-button {
   background: url("../img/edit-icon-dark.png") center no-repeat;
 } 
 
 #delete-button {
   background: url("../img/delete-icon-dark.png") center no-repeat;
+}
+
+#go-chats-button {
+  background: url("../img/send-icon-dark.png") center no-repeat;
+  padding: 10px 5px;
 }

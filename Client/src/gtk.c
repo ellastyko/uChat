@@ -23,6 +23,7 @@ void MAIN_BOXES() {
     
     Main = GTK_CONTAINER(gtk_builder_get_object(builder, "Main"));
 
+    // sidebar
     sidebar_overlay = GTK_OVERLAY(gtk_builder_get_object(builder, "sidebar-overlay"));
     friends = GTK_CONTAINER(gtk_builder_get_object(builder, "friends"));
     Open_settings = GTK_WIDGET(gtk_builder_get_object(builder, "Open_settings"));
@@ -44,6 +45,8 @@ void MAIN_BOXES() {
     Notifications = GTK_WIDGET(gtk_builder_get_object(builder, "Notifications"));
     Localization = GTK_WIDGET(gtk_builder_get_object(builder, "Localization"));
 
+
+    // main chat block
     header_box = GTK_CONTAINER(gtk_builder_get_object(builder, "header-box"));
     your_chat = GTK_CONTAINER(gtk_builder_get_object(builder, "your_chat"));
 
@@ -56,9 +59,12 @@ void MAIN_BOXES() {
     Message_Box = GTK_WIDGET(gtk_builder_get_object(builder, "Message_Box"));
 
     Edit_button = GTK_WIDGET(gtk_builder_get_object(builder, "Edit_button")); 
-    Delete_button = GTK_WIDGET(gtk_builder_get_object(builder, "Delete_button")); gtk_widget_set_name(Delete_button, "delete-button");
+    Delete_button = GTK_WIDGET(gtk_builder_get_object(builder, "Delete_button")); 
     Send_button = GTK_WIDGET(gtk_builder_get_object(builder, "Send_button"));
-    
+    go_to_chats = GTK_WIDGET(gtk_builder_get_object(builder, "go_to_chats"));
+
+    // right side menu
+    go_chats = GTK_CONTAINER(gtk_builder_get_object(builder, "go-chats"));
 
     chat_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     gtk_container_add(GTK_CONTAINER(cbox), chat_box);
@@ -297,13 +303,38 @@ void create_message(int id, char *message, int message_id, char* time)
 
     gtk_box_pack_start(GTK_BOX(chat_box), message_button, FALSE, FALSE, 0);
 
+    gtk_widget_set_sensitive(cbox, FALSE);
+    gtk_widget_set_focus_on_click (message_button, TRUE);
 
-    // gtk_widget_set_focus_on_click (message_button, TRUE);
-    // gpointer *ptr = GINT_TO_POINTER(message_id);
-    // g_signal_connect(G_OBJECT(message_button), "clicked", G_CALLBACK(delete_message), NULL);
+    edit_t *Edit = g_new0(edit_t, 1);
+    Edit->message_id = message_id;
+    strcpy(Edit->message, message);
+    g_signal_connect(G_OBJECT(message_button), "clicked", editing, Edit);
      
     scrolling();
     gtk_widget_show_all(cbox);
+    
+}
+
+void editing(GtkButton *button, edit_t *Edit) {
+    // print(user_data->message_id)
+    write(2, Edit->message, strlen(Edit->message));
+}
+
+void edit_delete() {
+
+    if (gtk_widget_get_visible(GTK_WIDGET(header_box)) == true) {
+        gtk_widget_set_sensitive(cbox, TRUE);
+        gtk_widget_hide(GTK_WIDGET(header_box));
+        gtk_widget_hide(GTK_WIDGET(sidebar_overlay));
+        gtk_widget_show(GTK_WIDGET(go_chats));
+    }
+    else {
+        gtk_widget_set_sensitive(cbox, FALSE);
+        gtk_widget_show(GTK_WIDGET(header_box));
+        gtk_widget_show(GTK_WIDGET(sidebar_overlay));
+        gtk_widget_hide(GTK_WIDGET(go_chats));
+    }
     
 }
 

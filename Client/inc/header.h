@@ -227,14 +227,22 @@ GtkContainer      *Main;
         GtkWidget       *Edit_button;   
         GtkWidget       *Delete_button;
         GtkWidget       *Send_button;
-        
+        GtkWidget       *go_to_chats;
+
         GtkWidget       *Scroll;
             GtkWidget       *cbox;
                 GtkWidget       *chat_box;
-
+    GtkContainer       *go_chats;
 ///////////////////////////////
 
 // No connection window
 GtkContainer *Connection_lost;    
     GtkWidget *Reconnect_button; 
 
+typedef struct edit {
+    int message_id;
+    char message[BUFSIZ];
+} edit_t;
+
+void editing(GtkButton *button, edit_t *Edit);
+void edit_delete();
