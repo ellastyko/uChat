@@ -65,13 +65,13 @@ struct info {
     int status; // 0 or 1
 
     int id;
-    char login[20]; 
-    char password[25]; 
+    char login[40]; 
+    char password[40]; 
     char key[20];
 
     int chat_id; 
     int friend_id;
-    char message[500];
+    char message[BUFSIZ];
     int message_id; 
     int time; // time when message was sended
 };
@@ -159,6 +159,10 @@ char *search_login(int chat_id);
 
 int STATE; // 0 - sign in  / 1 - sign up / 2 - main / 3 - reconnect
 
+void *notific();
+GtkWidget *notification_name;
+GtkWidget *notification_message;
+
 // Widgets
 GtkBuilder *builder;
 
@@ -192,20 +196,21 @@ GtkWidget      *Sign_up;
 GtkContainer      *Main;
 
     // Left Sidebar
-    GtkContainer      *friends;
-        GtkWidget       *Open_settings;
-        GtkWidget       *Search_Friends;
-            GtkWidget       *error_box1;
-            GtkWidget       *error_message1;
-        GtkWidget       *fbox;
-            GtkWidget       *friend_box;
+    GtkOverlay      *sidebar_overlay;
+        GtkContainer      *friends;
+            GtkWidget       *Open_settings;
+            GtkWidget       *Search_Friends;
+                GtkWidget       *error_box1;
+                GtkWidget       *error_message1;
+            GtkWidget       *fbox;
+                GtkWidget       *friend_box;
 
-    GtkContainer       *settings;
-        GtkWidget       *Open_Friends;
-        GtkWidget       *Change_password;
-            GtkWidget       *new_password;
-            GtkWidget       *error_box2;
-            GtkWidget       *error_message2;
+        GtkContainer       *settings;
+            GtkWidget       *Open_Friends;
+            GtkWidget       *Change_password;
+                GtkWidget       *new_password;
+                GtkWidget       *error_box2;
+                GtkWidget       *error_message2;
 
         GtkWidget       *Log_out;
         GtkWidget       *Theme;
@@ -213,12 +218,14 @@ GtkContainer      *Main;
         GtkWidget       *Notifications;
 
     // your chat
+    GtkContainer        *header_box;
     GtkContainer       *your_chat;
         GtkWidget       *your_friend;
         GtkWidget       *friend_status;
 
         GtkWidget       *Message_Box;
-        GtkWidget       *Select_file_button;
+        GtkWidget       *Edit_button;   
+        GtkWidget       *Delete_button;
         GtkWidget       *Send_button;
         
         GtkWidget       *Scroll;

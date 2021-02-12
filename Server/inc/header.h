@@ -27,13 +27,13 @@ struct info
     char action[25];
 
     int id;
-    char login[20];
-    char password[25];
+    char login[40];
+    char password[40];
     char key[20];
 
     int chat_id;
     int friend_id;
-    char message[500];
+    char message[BUFSIZ];
     int message_id;
     int time; 
     

@@ -120,6 +120,15 @@ void type_of_response(struct info *res) {
             create_chat(res->chat_id, res->login);            
         }
         else if (strcmp(res->action, "get_message") == 0) {
+
+            // if (Config.notifications == 1) { 
+            //     char short_message[24];
+            //     strcpy(short_message, res->message);
+            //     gtk_label_set_text(GTK_LABEL(notification_name), "Vasyl");
+            //     gtk_label_set_text(GTK_LABEL(notification_message) , short_message);
+            //     pthread_t notice;
+            //     pthread_create(&notice, NULL, notific, NULL);
+            // }
             char *str = malloc(sizeof(char));
             char *m = malloc(sizeof(char));
 

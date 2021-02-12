@@ -84,7 +84,13 @@ void type_of_request(char *str, int client_socket)
                 
                         req->status = 1; // Успешно
                         get_chat_id_by_users(req);
-                        send_response(client_socket, req);     
+                        send_response(client_socket, req);  
+                        client_socket = find_friend(req->friend_id);  
+                        if (client_socket != -1) {
+                            req->friend_id = req->id;
+                            strcpy(req->login, req->password);
+                            send_response(client_socket, req);    
+                        }
                     }
                     else {
                         req->status = 0; // error status

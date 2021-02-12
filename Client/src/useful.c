@@ -168,7 +168,6 @@ void create_status(int ttime) {
         ttime %= 86400;
         current_time %= 86400;
         int diff = current_time - ttime;
-        printf("%d == %d == %d\n", ttime, current_time, diff);
         if (diff < 86400) {
 
             char *str = malloc(sizeof(char));
@@ -255,4 +254,12 @@ bool validation_of_new_password(char *password) {
     }
     
     return true;
+}
+
+void *notific() {
+    
+    gtk_widget_show_all (notification);
+    sleep(3);
+    gtk_widget_hide (notification);
+    pthread_exit(NULL);
 }

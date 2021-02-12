@@ -20,6 +20,9 @@ int main(int argc, char *argv[])
     
     window = GTK_WIDGET(gtk_builder_get_object(builder, "Window"));
     notification = GTK_WIDGET(gtk_builder_get_object(builder, "notification"));
+        gtk_window_set_gravity (GTK_WINDOW(notification), GDK_GRAVITY_SOUTH_EAST);
+        notification_name = GTK_WIDGET(gtk_builder_get_object(builder, "notification_name"));
+        notification_message = GTK_WIDGET(gtk_builder_get_object(builder, "notification_message"));
     Confirm = GTK_WIDGET(gtk_builder_get_object(builder, "Confirm"));
 
     SIGN_BOXES();

@@ -336,7 +336,7 @@ void add_chat() {
         return;
     }
 
-    strcpy(req.password, "");  
+    strcpy(req.password, cl_info.login);  
     strcpy(req.key, cl_info.key);
     
 
@@ -465,3 +465,4 @@ void availability_of_login() {
     char *buf = stringify(&req);
     send_to_server(buf);
 }
+

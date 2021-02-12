@@ -23,6 +23,7 @@ void MAIN_BOXES() {
     
     Main = GTK_CONTAINER(gtk_builder_get_object(builder, "Main"));
 
+    sidebar_overlay = GTK_OVERLAY(gtk_builder_get_object(builder, "sidebar-overlay"));
     friends = GTK_CONTAINER(gtk_builder_get_object(builder, "friends"));
     Open_settings = GTK_WIDGET(gtk_builder_get_object(builder, "Open_settings"));
     Search_Friends = GTK_WIDGET(gtk_builder_get_object(builder, "Search_friends"));
@@ -43,7 +44,7 @@ void MAIN_BOXES() {
     Notifications = GTK_WIDGET(gtk_builder_get_object(builder, "Notifications"));
     Localization = GTK_WIDGET(gtk_builder_get_object(builder, "Localization"));
 
-
+    header_box = GTK_CONTAINER(gtk_builder_get_object(builder, "header-box"));
     your_chat = GTK_CONTAINER(gtk_builder_get_object(builder, "your_chat"));
 
     your_friend = GTK_WIDGET(gtk_builder_get_object(builder, "your_friend"));
@@ -53,7 +54,9 @@ void MAIN_BOXES() {
     cbox = GTK_WIDGET(gtk_builder_get_object(builder, "cbox"));
 
     Message_Box = GTK_WIDGET(gtk_builder_get_object(builder, "Message_Box"));
-    Select_file_button = GTK_WIDGET(gtk_builder_get_object(builder, "Select_file_button"));
+
+    Edit_button = GTK_WIDGET(gtk_builder_get_object(builder, "Edit_button")); 
+    Delete_button = GTK_WIDGET(gtk_builder_get_object(builder, "Delete_button")); gtk_widget_set_name(Delete_button, "delete-button");
     Send_button = GTK_WIDGET(gtk_builder_get_object(builder, "Send_button"));
     
 
@@ -135,6 +138,9 @@ void log_out() {
     gtk_widget_hide ( GTK_WIDGET(Main) );
     
     prepare();  
+    if (!update_localdata(&cl_info, LD_PATH)) {
+        printf("Can`t save localdata\n");
+    }
     struct info req;
 
     strcpy(req.action, "log_out");
@@ -143,7 +149,7 @@ void log_out() {
     strcpy(req.login, "");
     strcpy(req.password, "");  
     strcpy(req.key, cl_info.key);
-
+    
     req.chat_id = -1; 
     req.friend_id = -1;
     strcpy(req.message, "");
@@ -153,6 +159,7 @@ void log_out() {
     gtk_container_remove(GTK_CONTAINER(fbox), friend_box);
     char *buf = stringify(&req);
     send_to_server(buf); 
+    
 }
 
 void theme () {
@@ -244,13 +251,12 @@ void create_chat(int chat_id, char *login)
 
 void create_message(int id, char *message, int message_id, char* time)
 {  
-       
     GtkWidget *message_button = gtk_button_new();
     
-    gtk_widget_set_margin_top(GTK_WIDGET(message_button), 5);
-    gtk_widget_set_margin_start(GTK_WIDGET(message_button), 10);
-    gtk_widget_set_margin_end(GTK_WIDGET(message_button), 10);
-    gtk_widget_set_margin_bottom(GTK_WIDGET(message_button), 5);
+    // gtk_widget_set_margin_top(GTK_WIDGET(message_button), 5);
+    // gtk_widget_set_margin_start(GTK_WIDGET(message_button), 10);
+    // gtk_widget_set_margin_end(GTK_WIDGET(message_button), 10);
+    // gtk_widget_set_margin_bottom(GTK_WIDGET(message_button), 5);
     
     if (id == cl_info.id) {
         gtk_widget_set_halign(GTK_WIDGET(message_button), GTK_ALIGN_END);
@@ -272,10 +278,10 @@ void create_message(int id, char *message, int message_id, char* time)
 
     GtkWidget *message_label = gtk_label_new("");
     gtk_label_set_text(GTK_LABEL(message_label), message);
-    // gtk_label_set_line_wrap (message_label, false);
-    // gtk_label_set_ellipsize (message_label, PANGO_ELLIPSIZE_START);
-    // gtk_label_set_lines(GTK_LABEL(message_label), 5);
-    // gtk_label_set_justify(GTK_LABEL(message_label), GTK_JUSTIFY_FILL );
+    gtk_label_set_selectable (GTK_LABEL(message_label), TRUE);
+    gtk_label_set_max_width_chars (GTK_LABEL(message_label), 40);
+    gtk_label_set_line_wrap (GTK_LABEL(message_label), TRUE);
+    gtk_label_set_line_wrap_mode (GTK_LABEL(message_label) , PANGO_WRAP_WORD_CHAR);
 
     gtk_label_set_selectable (GTK_LABEL(message_label), TRUE);
     gtk_box_pack_start(GTK_BOX(message_box), message_label, FALSE, FALSE, 0);
@@ -290,10 +296,8 @@ void create_message(int id, char *message, int message_id, char* time)
     gtk_widget_set_name (time_label, "time");
 
     gtk_box_pack_start(GTK_BOX(chat_box), message_button, FALSE, FALSE, 0);
-   
 
-    //GtkButton *button, gpointer *user_data
-    
+
     // gtk_widget_set_focus_on_click (message_button, TRUE);
     // gpointer *ptr = GINT_TO_POINTER(message_id);
     // g_signal_connect(G_OBJECT(message_button), "clicked", G_CALLBACK(delete_message), NULL);
@@ -333,7 +337,7 @@ void pre_change_password() {
 }
 
 void change_lang() {
-    
+
     if (gtk_widget_get_visible(new_password) == true) {
         gtk_widget_hide(new_password);
     }
@@ -368,3 +372,4 @@ void notify() {
         pthread_create(&conf, NULL, pre_update_config, NULL);
     }
 }
+

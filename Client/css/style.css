@@ -161,11 +161,6 @@
   background: url("../img/return.png") center no-repeat;
 }
 
-#attach-button {
-  background: url("../img/find-icon.png") center no-repeat;
-  margin: 0 5px;
-}
-
 
 .friend-list {
   border: none;
@@ -242,4 +237,14 @@
 
 #no_online {
   color: #5e6063; 
+}
+
+
+
+#edit-button {
+  background: url("../img/edit-icon.png") center no-repeat;
+}
+
+#delete-button {
+  background: url("../img/delete-icon.png") center no-repeat;
 }

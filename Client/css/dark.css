@@ -162,10 +162,6 @@
   background: url("../img/return-dark.png") center no-repeat;
 }
 
-#attach-button {
-  background: url("../img/find-icon-dark.png") center no-repeat;
-  margin: 0 5px;
-}
 
 
 .friend-list {
@@ -242,4 +238,12 @@
 
 #no_online {
   color: #d4d4d4; 
+}
+
+ #edit-button {
+  background: url("../img/edit-icon-dark.png") center no-repeat;
+} 
+
+#delete-button {
+  background: url("../img/delete-icon-dark.png") center no-repeat;
 }
