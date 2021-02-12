@@ -154,7 +154,7 @@ void create_status(int ttime) {
         gtk_label_set_text(GTK_LABEL(friend_status), "online");
     }
     else {
-        gtk_widget_set_name(friend_status, "online");
+        gtk_widget_set_name(friend_status, "no_online");
         int current_time = time(NULL);
 
         time_t local_time = ttime;
@@ -163,10 +163,12 @@ void create_status(int ttime) {
                 
         ttime += lt.tm_gmtoff; 
         current_time += lt.tm_gmtoff;
-
+        
+        
         ttime %= 86400;
         current_time %= 86400;
         int diff = current_time - ttime;
+        printf("%d == %d == %d\n", ttime, current_time, diff);
         if (diff < 86400) {
 
             char *str = malloc(sizeof(char));
@@ -187,8 +189,8 @@ void create_status(int ttime) {
                 gtk_label_set_text(GTK_LABEL(friend_status), str);
             }
             else { 
-                int hours = diff / 3600;
-                int minutes = (diff % 3600) / 60;
+                int hours = ttime / 3600;
+                int minutes = (ttime % 3600) / 60;
                 if (minutes < 10) {
                     sprintf(str, "last seen in %d", hours);
                     sprintf(min, "%d", minutes);
@@ -211,8 +213,12 @@ void create_status(int ttime) {
         else if (diff < 259200) {
             gtk_label_set_text(GTK_LABEL(friend_status), "last seen a few days ago");
         }
-        else if (diff > 259200) {
+        else if (diff >= 259200) {
             gtk_label_set_text(GTK_LABEL(friend_status), "last seen long ago");
+        }
+        else {
+            printf("%d", diff);
+            gtk_label_set_text(GTK_LABEL(friend_status), "last seen recently");
         }
         
     }

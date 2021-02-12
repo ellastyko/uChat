@@ -440,7 +440,7 @@
                                 </child>
                                 <child>
                                   <object class="GtkSearchEntry" id="Search_friends">
-                                    <property name="width_request">190</property>
+                                    <property name="width_request">185</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">Enter name and press enter to add</property>
@@ -751,7 +751,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkSwitch" id="Lang">
+                          <object class="GtkSwitch" id="Localization">
                             <property name="name">lang</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>

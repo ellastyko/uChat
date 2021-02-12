@@ -60,12 +60,9 @@ void type_of_response(struct info *res) {
             gtk_widget_show (hint);
             gtk_label_set_text(GTK_LABEL(hint), res->message);
         }
-        else if (strcmp(res->action, "is_user_exists") == 0) {
-            write(2, "User not exists\n", 17);
-        }
         else if (strcmp(res->action, "add_chat") == 0) {
+
             gtk_label_set_text(GTK_LABEL(error_message1), res->message);
-            write(2, "HERE", 5);
             gtk_widget_show_all (error_box1);
         }
     }
@@ -206,9 +203,11 @@ void type_of_response(struct info *res) {
             free(str);
         }
         else if (strcmp(res->action, "is_user_exists") == 0) {
-            write(2, "User exists!\n", 16);
-            // gtk_label_set_text(GTK_LABEL(error_message1), "");
-            // gtk_widget_hide (error_box1);
+
+            gtk_label_set_text(GTK_LABEL(error_message1), "");
+            if (gtk_widget_get_visible(error_box1) == true)
+                gtk_widget_hide (error_box1);
+
         }
         else if (strcmp(res->action, "open_chat") == 0) {
             create_status(res->time);   

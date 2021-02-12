@@ -38,8 +38,10 @@ void MAIN_BOXES() {
         error_box2 = GTK_WIDGET(gtk_builder_get_object(builder, "error-box2"));
         error_message2 = GTK_WIDGET(gtk_builder_get_object(builder, "error-message2"));
     Log_out = GTK_WIDGET(gtk_builder_get_object(builder, "Log_out"));
+
     Theme = GTK_WIDGET(gtk_builder_get_object(builder, "Theme"));
-        
+    Notifications = GTK_WIDGET(gtk_builder_get_object(builder, "Notifications"));
+    Localization = GTK_WIDGET(gtk_builder_get_object(builder, "Localization"));
 
 
     your_chat = GTK_CONTAINER(gtk_builder_get_object(builder, "your_chat"));
@@ -99,7 +101,11 @@ void to_log_in() {
 }
 
 void open_settings() {
-
+    
+    gtk_label_set_text(GTK_LABEL(error_message1), "");
+    gtk_entry_set_text(GTK_ENTRY(Search_Friends), "");
+    if (gtk_widget_get_visible(error_box1) == true)
+        gtk_widget_hide (error_box1);
     gtk_widget_hide ( GTK_WIDGET(friends) );
     gtk_widget_show ( GTK_WIDGET(settings) );     
 }
@@ -327,6 +333,7 @@ void pre_change_password() {
 }
 
 void change_lang() {
+    
     if (gtk_widget_get_visible(new_password) == true) {
         gtk_widget_hide(new_password);
     }

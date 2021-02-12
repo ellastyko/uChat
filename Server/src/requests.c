@@ -50,8 +50,9 @@ void type_of_request(char *str, int client_socket)
             req->status = 1; // Successful
             send_response(client_socket, req);
             to_be_online(client_socket, req);
-            print_all();   //- delete function
-            update_time(req->id, 0); 
+            
+
+            update_time(req->id, 0);            
         }
         else {
             req->status = 0; // error status
@@ -60,14 +61,13 @@ void type_of_request(char *str, int client_socket)
         }
     }
     else if (strcmp(req->action, "is_user_exists") == 0) {
-        if (check_login(req->login) == false) {      
 
-            req->status = 1; // user exists
-            send_response(client_socket, req);       
-        }
-        else {
-            req->status = 0; // error status
-            send_response(client_socket, req);      
+        if (check_login(req->login) == false) {    // Если такой пользователь существует
+           
+            req->status = 1; // Успешно
+            get_chat_id_by_users(req);
+            send_response(client_socket, req);     
+               
         }
     }
     else if (strcmp(req->action, "add_chat") == 0) {

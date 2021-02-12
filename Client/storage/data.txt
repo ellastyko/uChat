@@ -1,4 +1,4 @@
 {
 	"login":	"vadik",
-	"password":	"vadosio"
+	"password":	"vadik1"
 }

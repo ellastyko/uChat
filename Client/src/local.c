@@ -10,7 +10,7 @@ int auto_sign() {
         struct info req;
 
         strcpy(req.action, "auto_sign");
-        req.id = 0;
+        req.id = -1;
         strcpy(req.login, ld->login);
         strcpy(req.password, ld->password);
         strcpy(req.key, "");
@@ -19,7 +19,7 @@ int auto_sign() {
         req.friend_id = -1;
         strcpy(req.message, "");
         req.message_id = -1;
-        req.time = -1;
+        req.time = 0;
         char *buf = stringify(&req);
         if (send_to_server_and_get(buf) == 1) {
             return 0;
@@ -162,9 +162,6 @@ int config() {
         return 0;
     }
     else { 
-        // Config.theme = 0;
-        // Config.notifications = 0;
-        // Config.localization = 0;
         pre_update_config();
         printf("Cann`t read config");
         return EXIT_FAILURE;

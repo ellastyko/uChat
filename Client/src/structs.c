@@ -53,7 +53,7 @@ int search(char *name) {
     return -1;
 }
 
-// useless
+
 int search_chat_id(char *login) {
 
     for (int i = 0; i < get_free(); i++) {
@@ -86,3 +86,4 @@ char *search_login(int chat_id) {
     }
     return login;
 }
+

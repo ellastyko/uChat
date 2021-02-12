@@ -45,7 +45,7 @@ char *localdata_to_json(client_info_t *data);
 typedef struct config
 {
     int theme; // 0 - day | 1 - dark
-    int notifications; // 0 - yes | 1 - no
+    int notifications; // 0 - no | 1 - yes
     int localization; // 0 - en | 1 - ru
 } config_t;
 config_t Config;
@@ -209,6 +209,8 @@ GtkContainer      *Main;
 
         GtkWidget       *Log_out;
         GtkWidget       *Theme;
+        GtkWidget       *Localization;
+        GtkWidget       *Notifications;
 
     // your chat
     GtkContainer       *your_chat;

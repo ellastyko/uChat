@@ -102,7 +102,7 @@ void sign_in() {
     struct info req;
 
     strcpy(req.action, "sign_in");
-    req.id = 0;
+    req.id = -1;
     strcpy(req.login, gtk_entry_get_text(GTK_ENTRY(login)) );
     strcpy(req.password, gtk_entry_get_text(GTK_ENTRY(password)) );
     if ((strcmp(req.login, "") == 0) && (strcmp(req.password, "") == 0)) {
@@ -145,7 +145,7 @@ void sign_in() {
     
     strcpy(req.key, "");
 
-    req.chat_id = 0;
+    req.chat_id = -1;
     req.friend_id = -1;
     strcpy(req.message, "");
     req.message_id = -1;
@@ -288,8 +288,23 @@ void search_friend() {
     struct info req;
 
     strcpy(req.action, "is_user_exists");
-    req.id = 0;
-    strcpy(req.login, gtk_entry_get_text( GTK_ENTRY(login) ));
+    req.id = cl_info.id;
+
+    strcpy(req.login, gtk_entry_get_text(GTK_ENTRY (Search_Friends)));
+    if (strcmp(req.login, "") == 0) {
+        gtk_label_set_text(GTK_LABEL(error_message1), "");
+        gtk_widget_hide(error_box1);
+    }
+    if (strcmp(req.login, cl_info.login) == 0) {
+        gtk_label_set_text(GTK_LABEL(error_message1), "You can`t add yourself");
+        gtk_widget_show_all (error_box1);
+        return;
+    }
+    if (search_chat_id(req.login) != -1) {
+        gtk_label_set_text(GTK_LABEL(error_message1), "Chat already exists");
+        gtk_widget_show_all (error_box1);
+        return;
+    }
     strcpy(req.password, "");
     strcpy(req.key, "");
 
@@ -309,10 +324,21 @@ void add_chat() {
     strcpy(req.action, "add_chat");
 
     req.id = cl_info.id;
-    
     strcpy(req.login, gtk_entry_get_text(GTK_ENTRY (Search_Friends)));
+    if (strcmp(req.login, cl_info.login) == 0) {
+        gtk_label_set_text(GTK_LABEL(error_message1), "You can`t add yourself");
+        gtk_widget_show_all (error_box1);
+        return;
+    }
+    if (search_chat_id(req.login) != -1) {
+        gtk_label_set_text(GTK_LABEL(error_message1), "Chat already exists");
+        gtk_widget_show_all (error_box1);
+        return;
+    }
+
     strcpy(req.password, "");  
     strcpy(req.key, cl_info.key);
+    
 
     req.chat_id = -1; 
     req.friend_id = -1;
@@ -374,7 +400,10 @@ void get_chats_info() {
 // Open chat
 void open_chat(GtkButton *button, gpointer *user_data) {
 
-    
+    gtk_label_set_text(GTK_LABEL(error_message1), "");
+    gtk_entry_set_text(GTK_ENTRY(Search_Friends), "");
+    if (gtk_widget_get_visible(error_box1) == true)
+        gtk_widget_hide (error_box1);
     int id = GPOINTER_TO_INT (user_data);
     if (id == FOCUS) {
         return;

@@ -27,24 +27,29 @@ int main(int argc, char *argv[])
     NO_CONNECTION_BOX();   
    
     config();
-    if (Config.theme == 0) {
-        if (Config.theme != 1) {
-            
-            gtk_switch_set_state (GTK_SWITCH(Theme), true);
-            theme();
-        }
-        else {
-            
-            gtk_switch_set_state (GTK_SWITCH(Theme), false);
-            theme();
-        }
+    if (Config.theme == 1) {
+        gtk_switch_set_state (GTK_SWITCH(Theme), false);
+        theme();
     }
     else {
         gtk_switch_set_state (GTK_SWITCH(Theme), true);
         theme();
     }
     
-
+    if (Config.notifications == 1) {
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(Notifications), true);
+    }
+    else  {
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(Notifications), false);
+    }
+    if (Config.localization == 1) {
+        
+        gtk_switch_set_state (GTK_SWITCH(Localization), true);
+    }
+    else  {
+       
+        gtk_switch_set_state (GTK_SWITCH(Localization), false);
+    }
     
 
     if (Socket() == 1) {

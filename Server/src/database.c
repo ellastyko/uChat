@@ -86,12 +86,14 @@ bool add_user(char *login, char *password, int key)
 bool update_time(int id, int ttime)
 {
     sqlite3_stmt *stmt = NULL;
+
     char *query_f = sqlite3_mprintf("UPDATE users SET TIME = '%d' WHERE USER_ID = '%d';", ttime, id);
 
     sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
     if (sqlite3_step(stmt) == SQLITE_DONE) {
         sqlite3_free(query_f);  
         sqlite3_finalize(stmt);
+        
         return true;
     }
     else {
@@ -171,6 +173,7 @@ void get_id_and_key(struct info *res) {
 
     }
     sqlite3_free(query_f);  
+    sqlite3_finalize(stmt);
 }
 
 
@@ -183,6 +186,7 @@ void get_login_by_id(struct info *res) {
         strcpy(res->login, (char *)sqlite3_column_text(stmt, 0));
     }
     sqlite3_free(query_f);  
+    sqlite3_finalize(stmt);
 }
 
 
@@ -339,7 +343,7 @@ void get_message() {
 
     sqlite3_stmt *stmt = NULL;
 
-    char *query_f = sqlite3_mprintf("SELECT * FROM messages;");
+    char *query_f = sqlite3_mprintf("SELECT * FROM users;");
 
     sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
 
