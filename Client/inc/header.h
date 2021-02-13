@@ -243,6 +243,7 @@ GtkContainer *Connection_lost;
 
 typedef struct edit {
     GtkWidget *message_lab;
+    int id;
     int message_id;
     char message[BUFSIZ];
 } edit_t;
@@ -251,10 +252,11 @@ typedef struct global_edit {
 
     GtkButton *butt;
     GtkWidget *message_lab;
+    int id;
     int message_id;
     char message[BUFSIZ];
 } global_edit_t;
 global_edit_t GlobalEdit;
 
-void editing(GtkButton *button, edit_t *Edit);
+void editing(GtkButton *button, gpointer user_data);
 void edit_delete();

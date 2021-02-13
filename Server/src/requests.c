@@ -119,13 +119,14 @@ void type_of_request(char *str, int client_socket)
     else if (strcmp(req->action, "send_message") == 0)  {
 
         if (save_message(req) == true) { 
-            get_all();
-            int new_socket = find_friend(req->friend_id);
-            if (new_socket != -1) { 
-                strcpy(req->action, "get_message");
-                req->status = 1;
-                send_response(new_socket, req);
-            } 
+            if (req->id != req->friend_id) { 
+                int new_socket = find_friend(req->friend_id);
+                if (new_socket != -1) { 
+                    strcpy(req->action, "get_message");
+                    req->status = 1;
+                    send_response(new_socket, req);
+                } 
+            }
         }
         else {
             req->status = 0; // error status

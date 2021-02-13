@@ -324,7 +324,7 @@ bool save_message(struct info *res)
 bool delete_message(struct info *res) {
 
     sqlite3_stmt *stmt;
-    char *query_f = sqlite3_mprintf("DELETE FROM messages WHERE MESSAGE_ID = '%d' AND USER_ID = '%d';", res->message_id, res->id);
+    char *query_f = sqlite3_mprintf("DELETE FROM messages WHERE MESSAGE_ID = '%d';", res->message_id);
     sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
     if (sqlite3_step(stmt) == SQLITE_DONE) {
         sqlite3_finalize(stmt);

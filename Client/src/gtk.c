@@ -272,7 +272,7 @@ void create_message(int id, char *message, int message_id, char* time)
         gtk_widget_set_halign(GTK_WIDGET(message_button), GTK_ALIGN_START);
     }
 
-    GtkWidget *message_time_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    GtkWidget *message_time_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 8); 
     gtk_container_add(GTK_CONTAINER(message_button), message_time_box);
 
         GtkWidget *message_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
@@ -301,29 +301,46 @@ void create_message(int id, char *message, int message_id, char* time)
     gtk_box_pack_end(GTK_BOX(time_box), time_label, FALSE, FALSE, 0);
     gtk_widget_set_name (time_label, "time");
 
-    gtk_box_pack_start(GTK_BOX(chat_box), message_button, FALSE, FALSE, 4);
+    gtk_box_pack_start(GTK_BOX(chat_box), message_button, FALSE, FALSE, 3); // space between messages
 
     gtk_widget_set_sensitive(cbox, FALSE);
     // gtk_widget_set_focus_on_click (message_button, TRUE);
 
-    edit_t *Edit = g_new(edit_t, 1);
+    edit_t *Edit = malloc(sizeof(edit_t));
+    Edit->id = id;
     Edit->message_lab = message_label;
     Edit->message_id = message_id;
     strcpy(Edit->message, message);
-    g_signal_connect(G_OBJECT(message_button), "clicked", editing, Edit);
+    // edit_t Edit;
+    // Edit.message_lab = message_label;
+    // Edit.message_id = message_id;
+    // strcpy(Edit.message, message);
+    g_signal_connect(G_OBJECT(message_button), "clicked", editing, (gpointer)Edit);
      
     scrolling();
     gtk_widget_show_all(cbox);
     
 }
 
-void editing(GtkButton *button, edit_t *Edit) {
 
+void editing(GtkButton *button, gpointer user_data) {
+
+    edit_t *Edit = user_data;
+
+    // GlobalEdit.message_lab = Edit->message_lab;
+    // GlobalEdit.butt = button;
+    // GlobalEdit.message_id = Edit->message_id;
+    // strcpy(GlobalEdit.message, Edit->message);
+    // gtk_entry_set_text(GTK_ENTRY(Message_Box), Edit->message);
+    GlobalEdit.id = Edit->id;
     GlobalEdit.message_lab = Edit->message_lab;
     GlobalEdit.butt = button;
     GlobalEdit.message_id = Edit->message_id;
     strcpy(GlobalEdit.message, Edit->message);
-    gtk_entry_set_text(GTK_ENTRY(Message_Box), Edit->message);
+    if (GlobalEdit.id == cl_info.id)
+        gtk_entry_set_text(GTK_ENTRY(Message_Box), Edit->message);
+    else 
+        gtk_entry_set_text(GTK_ENTRY(Message_Box), "");
 }
 
 void edit_delete() {
@@ -340,6 +357,7 @@ void edit_delete() {
         gtk_widget_show(GTK_WIDGET(go_chats));
         gtk_entry_set_placeholder_text(GTK_ENTRY(Message_Box), "Choose message to edit");
         g_signal_connect(G_OBJECT(Message_Box), "activate", edit_message, NULL);
+        gtk_entry_set_text(GTK_ENTRY(Message_Box), "");
     }
     else {
         gtk_widget_show(go_edit);
@@ -352,6 +370,7 @@ void edit_delete() {
         gtk_widget_hide(Delete_button);
         gtk_entry_set_placeholder_text(GTK_ENTRY(Message_Box), "Type your message");
         g_signal_connect(G_OBJECT(Message_Box), "activate", send_message, NULL);
+        gtk_entry_set_text(GTK_ENTRY(Message_Box), "");
     }
     
 }

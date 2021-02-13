@@ -355,12 +355,14 @@ void edit_message() {
 
     char new_mess[BUFSIZ];
     strcpy(new_mess, gtk_entry_get_text(GTK_ENTRY(Message_Box)));
-    if (strcmp(new_mess, GlobalEdit.message) == 0) {
+    if (strcmp(new_mess, GlobalEdit.message) == 0) 
         return;
-    }
-    if (strcmp(new_mess, "") == 0) {
+    if (strcmp(new_mess, "") == 0) 
         return;
-    }
+    if (GlobalEdit.message_id == 0) 
+        return;
+    if (GlobalEdit.id != cl_info.id) 
+        return;
     // Change label in reading
     struct info req;
 
@@ -383,6 +385,8 @@ void edit_message() {
 
 void delete_message() {
 
+    if (GlobalEdit.message_id == 0) 
+        return;
     struct info req;
     
     strcpy(req.action, "delete_message");
