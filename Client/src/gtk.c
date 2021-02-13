@@ -59,8 +59,11 @@ void MAIN_BOXES() {
     Message_Box = GTK_WIDGET(gtk_builder_get_object(builder, "Message_Box"));
 
     Edit_button = GTK_WIDGET(gtk_builder_get_object(builder, "Edit_button")); 
+    go_edit = GTK_WIDGET(gtk_builder_get_object(builder, "go-edit"));
     Delete_button = GTK_WIDGET(gtk_builder_get_object(builder, "Delete_button")); 
     Send_button = GTK_WIDGET(gtk_builder_get_object(builder, "Send_button"));
+        g_signal_connect(G_OBJECT(Send_button), "clicked", send_message, NULL);
+        g_signal_connect(G_OBJECT(Send_button), "activate", send_message, NULL);
     go_to_chats = GTK_WIDGET(gtk_builder_get_object(builder, "go_to_chats"));
 
     // right side menu
@@ -259,10 +262,8 @@ void create_message(int id, char *message, int message_id, char* time)
 {  
     GtkWidget *message_button = gtk_button_new();
     
-    // gtk_widget_set_margin_top(GTK_WIDGET(message_button), 5);
-    // gtk_widget_set_margin_start(GTK_WIDGET(message_button), 10);
-    // gtk_widget_set_margin_end(GTK_WIDGET(message_button), 10);
-    // gtk_widget_set_margin_bottom(GTK_WIDGET(message_button), 5);
+    gtk_widget_set_margin_start(GTK_WIDGET(message_button), 10);
+    gtk_widget_set_margin_end(GTK_WIDGET(message_button), 10);
     
     if (id == cl_info.id) {
         gtk_widget_set_halign(GTK_WIDGET(message_button), GTK_ALIGN_END);
@@ -276,7 +277,6 @@ void create_message(int id, char *message, int message_id, char* time)
 
         GtkWidget *message_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
         gtk_container_add(GTK_CONTAINER(message_time_box), message_box);
-        gtk_widget_set_margin_end(GTK_WIDGET(message_box), 10);
         
 
         GtkWidget *time_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
@@ -301,12 +301,13 @@ void create_message(int id, char *message, int message_id, char* time)
     gtk_box_pack_end(GTK_BOX(time_box), time_label, FALSE, FALSE, 0);
     gtk_widget_set_name (time_label, "time");
 
-    gtk_box_pack_start(GTK_BOX(chat_box), message_button, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(chat_box), message_button, FALSE, FALSE, 4);
 
     gtk_widget_set_sensitive(cbox, FALSE);
-    gtk_widget_set_focus_on_click (message_button, TRUE);
+    // gtk_widget_set_focus_on_click (message_button, TRUE);
 
-    edit_t *Edit = g_new0(edit_t, 1);
+    edit_t *Edit = g_new(edit_t, 1);
+    Edit->message_lab = message_label;
     Edit->message_id = message_id;
     strcpy(Edit->message, message);
     g_signal_connect(G_OBJECT(message_button), "clicked", editing, Edit);
@@ -317,23 +318,40 @@ void create_message(int id, char *message, int message_id, char* time)
 }
 
 void editing(GtkButton *button, edit_t *Edit) {
-    // print(user_data->message_id)
-    write(2, Edit->message, strlen(Edit->message));
+
+    GlobalEdit.message_lab = Edit->message_lab;
+    GlobalEdit.butt = button;
+    GlobalEdit.message_id = Edit->message_id;
+    strcpy(GlobalEdit.message, Edit->message);
+    gtk_entry_set_text(GTK_ENTRY(Message_Box), Edit->message);
 }
 
 void edit_delete() {
 
     if (gtk_widget_get_visible(GTK_WIDGET(header_box)) == true) {
+
+        gtk_widget_hide(go_edit);
+        gtk_widget_show(Edit_button);
         gtk_widget_set_sensitive(cbox, TRUE);
         gtk_widget_hide(GTK_WIDGET(header_box));
         gtk_widget_hide(GTK_WIDGET(sidebar_overlay));
+        gtk_widget_show(Delete_button);
+        gtk_widget_hide(Send_button);
         gtk_widget_show(GTK_WIDGET(go_chats));
+        gtk_entry_set_placeholder_text(GTK_ENTRY(Message_Box), "Choose message to edit");
+        g_signal_connect(G_OBJECT(Message_Box), "activate", edit_message, NULL);
     }
     else {
+        gtk_widget_show(go_edit);
+        gtk_widget_hide(Edit_button);
         gtk_widget_set_sensitive(cbox, FALSE);
         gtk_widget_show(GTK_WIDGET(header_box));
         gtk_widget_show(GTK_WIDGET(sidebar_overlay));
         gtk_widget_hide(GTK_WIDGET(go_chats));
+        gtk_widget_show(Send_button);
+        gtk_widget_hide(Delete_button);
+        gtk_entry_set_placeholder_text(GTK_ENTRY(Message_Box), "Type your message");
+        g_signal_connect(G_OBJECT(Message_Box), "activate", send_message, NULL);
     }
     
 }

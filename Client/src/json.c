@@ -144,6 +144,12 @@ struct info *parse(const char *const msg)
                 return NULL;
             res->chat_id = chat_id->valueint;   
         }
+        else if (strcmp(res->action, "edit_message") == 0) {
+            message = cJSON_GetObjectItemCaseSensitive(msg_json, "message");
+            if (message == NULL || message->valuestring == NULL)
+                return NULL;
+            strcpy(res->message, message->valuestring); 
+        }  
         else if (strcmp(res->action, "load_messages") == 0) {
 
             id = cJSON_GetObjectItemCaseSensitive(msg_json, "id");

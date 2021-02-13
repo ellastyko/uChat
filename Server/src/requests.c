@@ -119,7 +119,7 @@ void type_of_request(char *str, int client_socket)
     else if (strcmp(req->action, "send_message") == 0)  {
 
         if (save_message(req) == true) { 
-            get_message();
+            get_all();
             int new_socket = find_friend(req->friend_id);
             if (new_socket != -1) { 
                 strcpy(req->action, "get_message");
@@ -133,9 +133,9 @@ void type_of_request(char *str, int client_socket)
         }    
     }
     else if (strcmp(req->action, "delete_message") == 0) { // Успешно даже когда сообщение не удалено
-        
+
         if (delete_message(req) == true) {
-            get_message(req);
+            get_all(req);
             req->status = 1;
             send_response(client_socket, req);
         }
@@ -143,6 +143,7 @@ void type_of_request(char *str, int client_socket)
             req->status = 0;
             send_response(client_socket, req);
         }
+
     }
     else if (strcmp(req->action, "delete_user") == 0)
     {
@@ -175,7 +176,7 @@ void type_of_request(char *str, int client_socket)
                 send_response(client_socket, req);
             }
             else {
-                req->status = 1; 
+                req->status = 0; 
                 strcpy(req->message, "Time hasn`t taken");
                 send_response(client_socket, req);
             }
@@ -213,6 +214,19 @@ void type_of_request(char *str, int client_socket)
             send_response(client_socket, req);    
         }
     } 
+    else if (strcmp(req->action, "edit_message") == 0) {
+
+        if (edit_message(req) == true) {
+
+            req->status = 1; 
+            send_response(client_socket, req);          
+        }
+        else {
+            req->status = 0; 
+            strcpy(req->message, "Message wasn`t edited");
+            send_response(client_socket, req);
+        }
+    }
 }
 
 void send_response(int client_socket, struct info *res) {

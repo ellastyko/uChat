@@ -220,6 +220,7 @@
   background: url("../img/send-icon-dark.png") center no-repeat;
 }
 
+
 #saved {
   background: url("../img/saved-message-icon.png") center no-repeat;
 }
@@ -251,4 +252,9 @@
 #go-chats-button {
   background: url("../img/send-icon-dark.png") center no-repeat;
   padding: 10px 5px;
+}
+
+#go-chats {
+  border-radius: 6px 0 0 6px;
+  margin: 5px 0px;
 }

@@ -92,10 +92,12 @@ void get_chats_info(int client_socket, struct info *res);
 
 // Send message
 bool save_message(struct info *res);
-void get_message();
+void get_all();
 
 // Delete message
 bool delete_message(struct info *res);
+// Edit message
+bool edit_message(struct info *res);
 
 // Delete user
 bool delete_user(struct info *res);

@@ -96,6 +96,7 @@ void sign_in();
 void add_chat();
 void open_chat(GtkButton *button, gpointer *user_data);
 void delete_user();
+void edit_message();
 void change_password();
 void send_message();
 void delete_message();
@@ -225,6 +226,7 @@ GtkContainer      *Main;
 
         GtkWidget       *Message_Box;
         GtkWidget       *Edit_button;   
+        GtkWidget       *go_edit;
         GtkWidget       *Delete_button;
         GtkWidget       *Send_button;
         GtkWidget       *go_to_chats;
@@ -240,9 +242,19 @@ GtkContainer *Connection_lost;
     GtkWidget *Reconnect_button; 
 
 typedef struct edit {
+    GtkWidget *message_lab;
     int message_id;
     char message[BUFSIZ];
 } edit_t;
+
+typedef struct global_edit {
+
+    GtkButton *butt;
+    GtkWidget *message_lab;
+    int message_id;
+    char message[BUFSIZ];
+} global_edit_t;
+global_edit_t GlobalEdit;
 
 void editing(GtkButton *button, edit_t *Edit);
 void edit_delete();

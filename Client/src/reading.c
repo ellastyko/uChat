@@ -166,8 +166,10 @@ void type_of_response(struct info *res) {
             
 
         }
+        
         else if (strcmp(res->action, "delete_message") == 0) {
-            
+            gtk_entry_set_text(GTK_ENTRY(Message_Box), "");
+            gtk_widget_destroy(GTK_WIDGET(GlobalEdit.butt));
         }
         else if (strcmp(res->action, "availability_of_login") == 0) {
             
@@ -220,6 +222,12 @@ void type_of_response(struct info *res) {
         }
         else if (strcmp(res->action, "open_chat") == 0) {
             create_status(res->time);   
+        }
+        else if (strcmp(res->action, "edit_message") == 0) {
+            
+            gtk_label_set_text(GTK_LABEL(GlobalEdit.message_lab), res->message);
+            gtk_entry_set_text(GTK_ENTRY(Message_Box), "");
+            gtk_entry_set_placeholder_text(GTK_ENTRY(Message_Box), "Choose message to edit");
         }
         else if (strcmp(res->action, "change_password") == 0) {
             gtk_entry_set_text( GTK_ENTRY(new_password), "");

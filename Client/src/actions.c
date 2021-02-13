@@ -351,16 +351,42 @@ void add_chat() {
     send_to_server(buf);
 }
 
+void edit_message() {
+
+    char new_mess[BUFSIZ];
+    strcpy(new_mess, gtk_entry_get_text(GTK_ENTRY(Message_Box)));
+    if (strcmp(new_mess, GlobalEdit.message) == 0) {
+        return;
+    }
+    if (strcmp(new_mess, "") == 0) {
+        return;
+    }
+    // Change label in reading
+    struct info req;
+
+    strcpy(req.action, "edit_message");
+    req.id = cl_info.id;
+    strcpy(req.login, "");
+    strcpy(req.password, "");  
+    strcpy(req.key, cl_info.key);
+
+    req.chat_id = -1; 
+    req.friend_id = -1;
+    strcpy(req.message, new_mess);
+    req.message_id = GlobalEdit.message_id;
+    req.time = -1; 
+    
+
+    char *buf = stringify(&req);
+    send_to_server(buf);
+}
 
 void delete_message() {
 
-    //int to_delete = GPOINTER_TO_INT (user_data);
-    write(2, "HERERERE", 9);
-    // printf("MESSAGE_ID %d", to_delete);
-    /*struct info req;
-
+    struct info req;
+    
     strcpy(req.action, "delete_message");
-    req.id id= cl_info.id;
+    req.id = cl_info.id;
     strcpy(req.login, "");
     strcpy(req.password, "");  
     strcpy(req.key, cl_info.key);
@@ -368,12 +394,12 @@ void delete_message() {
     req.chat_id = -1; 
     req.friend_id = -1;
     strcpy(req.message, "");
-    req.message_id = to_delete;
+    req.message_id = GlobalEdit.message_id;
     req.time = -1; 
     
 
     char *buf = stringify(&req);
-    send_to_server(buf);*/
+    send_to_server(buf);
 }
 
 

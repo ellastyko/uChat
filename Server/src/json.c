@@ -40,6 +40,9 @@ char *stringify(struct info *res)
             cJSON_AddStringToObject(json_msg, "login", res->login); 
             cJSON_AddNumberToObject(json_msg, "friend_id", res->friend_id); 
         }
+        else if (strcmp(res->action, "edit_message") == 0) {
+            cJSON_AddStringToObject(json_msg, "message", res->message);
+        }
         else if (strcmp(res->action, "load_messages") == 0) {
 
             cJSON_AddNumberToObject(json_msg, "id", res->id);  

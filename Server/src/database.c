@@ -339,11 +339,29 @@ bool delete_message(struct info *res) {
     }
 }
 
-void get_message() {
+bool edit_message(struct info *res) {
+
+    sqlite3_stmt *stmt; 
+    char *query_f = sqlite3_mprintf("UPDATE messages SET MESSAGE = '%s' WHERE MESSAGE_ID = '%d' AND USER_ID = '%d';", res->message, res->message_id, res->id);
+    sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
+    if (sqlite3_step(stmt) == SQLITE_DONE) {
+        sqlite3_finalize(stmt);
+        sqlite3_free(query_f);
+        return true;
+    }
+    else {
+        strcpy(res->message, "Message hasn`t deleted");
+        sqlite3_finalize(stmt);
+        sqlite3_free(query_f);
+        return false;
+    }
+}
+
+void get_all() {
 
     sqlite3_stmt *stmt = NULL;
 
-    char *query_f = sqlite3_mprintf("SELECT * FROM users;");
+    char *query_f = sqlite3_mprintf("SELECT * FROM messages;");
 
     sqlite3_prepare_v2(db, query_f, -1, &stmt, 0);
 
