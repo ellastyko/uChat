@@ -1,5 +1,5 @@
 {
-	"theme":	1,
+	"theme":	0,
 	"notifications":	0,
 	"localization":	0
 }
